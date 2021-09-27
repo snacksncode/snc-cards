@@ -1,7 +1,7 @@
 const data = [
   {
     question: "być",
-    answer: "be | was / were | been",
+    answer: "be | was, were | been",
   },
   {
     question: "stawać się",
@@ -25,7 +25,7 @@ const data = [
   },
   {
     question: "palić",
-    answer: "burn | burnt / burned | burnt / burned",
+    answer: "burn | burnt | burnt",
   },
   {
     question: "kupić",
@@ -69,7 +69,7 @@ const data = [
   },
   {
     question: "marzyć, śnić",
-    answer: "dream | dreamed / dreamt | dreamed / dreamt",
+    answer: "dream | dreamt | dreamt",
   },
   {
     question: "prowadzić (samochód)",

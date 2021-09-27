@@ -1,0 +1,14 @@
+.wrapper {
+  margin: auto;
+  position: relative;
+  .title {
+    font-size: 1.5rem;
+    font-weight: 400;
+  }
+  .text {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--clr-accent-blue);
+  }
+}
