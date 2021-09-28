@@ -128,22 +128,22 @@ const FlipCard = ({ data, onAnswer }: Props) => {
         {isFlipped && answeredRight == null && (
           <>
             <motion.button
-              initial={{ x: 0, top: "50%", translateY: "-50%" }}
-              animate={{ x: -150 }}
+              initial={{ x: 0, top: "50%", translateY: "-50%", opacity: 0 }}
+              animate={{ x: -150, opacity: 1 }}
               exit={{ x: 0 }}
-              whileHover={{ scale: 1.1 }}
               transition={{ type: "spring" }}
+              whileHover={{ scale: 1.25 }}
               className={styles.wrong_button}
               onClick={() => setAnsweredRight(false)}
             >
               <Close />
             </motion.button>
             <motion.button
-              initial={{ x: 0, right: 0, top: "50%", translateY: "-50%" }}
-              animate={{ x: 150 }}
+              initial={{ x: 0, right: 0, top: "50%", translateY: "-50%", opacity: 0 }}
+              animate={{ x: 150, opacity: 1 }}
               exit={{ x: 0 }}
-              whileHover={{ scale: 1.1 }}
               transition={{ type: "spring" }}
+              whileHover={{ scale: 1.25 }}
               className={styles.correct_button}
               onClick={() => setAnsweredRight(true)}
             >

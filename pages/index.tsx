@@ -5,13 +5,17 @@ import wordsData from "../data/irregular";
 import React, { useEffect, useRef, useState } from "react";
 import { animate, AnimatePresence, motion } from "framer-motion";
 import shuffle from "../utils/shuffle";
+import Tick from "icons/Tick";
+import Close from "icons/Close";
 // import Button from "@components/Button";
 
 const Home: NextPage = () => {
+  let [data, setData] = useState(wordsData);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const percentageRef = useRef<HTMLParagraphElement>(null);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
-  let [data, setData] = useState(wordsData);
+  const score = ((data.length - incorrectAnswers) / data.length) * 100;
+  const isFinished = selectedIndex === data.length;
 
   useEffect(() => {
     setData(shuffle(wordsData));
@@ -41,23 +45,51 @@ const Home: NextPage = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.progress}>
-        <div className={styles.bar}>
-          <motion.div
-            className={styles.bar__fill}
-            animate={{ width: `${(selectedIndex / data.length) * 100}%` }}
-          ></motion.div>
-        </div>
-        <p className={styles.percentage} ref={percentageRef}></p>
-      </div>
       <AnimatePresence>
-        {data &&
-          data.map((d, i) => {
-            {
-              return selectedIndex === i && <FlipCard onAnswer={onAnswer} key={i} data={d} />;
-            }
-          })}
+        {!isFinished && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <div className={styles.progress}>
+              <div className={styles.bar}>
+                <motion.div
+                  className={styles.bar__fill}
+                  animate={{ width: `${(selectedIndex / data.length) * 100}%` }}
+                  transition={{ ease: "easeInOut" }}
+                ></motion.div>
+              </div>
+              <p className={styles.percentage} ref={percentageRef}></p>
+            </div>
+            <AnimatePresence>
+              {data.map((d, i) => {
+                {
+                  return selectedIndex === i && <FlipCard onAnswer={onAnswer} key={i} data={d} />;
+                }
+              })}
+            </AnimatePresence>
+          </motion.div>
+        )}
       </AnimatePresence>
+
+      {isFinished && (
+        <motion.div
+          initial={{ scale: 0, translateX: "-50%", translateY: "-50%" }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.5 }}
+          className={styles.endCard}
+        >
+          <p className={styles.endCard__subtitle}>Finish!</p>
+          <h1 className={styles.endCard__title}>
+            Your end score was <span>{score}%</span>
+          </h1>
+          <div className={styles.breakdown_grid}>
+            <div>
+              <Tick /> {data.length - incorrectAnswers} Correct
+            </div>
+            <div>
+              <Close /> {incorrectAnswers} Incorrect
+            </div>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

@@ -6,12 +6,12 @@
 
 .progress {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   .percentage {
-    right: 0.5rem;
     font-size: 0.65rem;
+    width: 6ch;
     margin-left: 0.5rem;
     font-weight: 700;
     color: var(--clr-text-muted);
@@ -26,6 +26,30 @@
     border: 2px solid hsl(0, 0%, 20%);
     &__fill {
       background-image: linear-gradient(to right, var(--clr-accent-red), var(--clr-accent-peachy));
+    }
+  }
+}
+
+.endCard {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 4px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  background-color: var(--clr-background-accent);
+  &__subtitle {
+    margin: 0;
+    letter-spacing: 4px;
+    font-weight: 700;
+    opacity: 0.8;
+    text-transform: uppercase;
+    color: var(--clr-accent-blue);
+  }
+  &__title {
+    margin-top: 0.5em;
+    span {
+      color: var(--clr-accent-green);
     }
   }
 }

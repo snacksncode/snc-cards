@@ -15,34 +15,34 @@ const data = [
     question: "łamać",
     answer: "break | broke | broken",
   },
-  {
-    question: "przynosić",
-    answer: "bring | brought | brought",
-  },
-  {
-    question: "budować",
-    answer: "build | built | built",
-  },
-  {
-    question: "palić",
-    answer: "burn | burnt | burnt",
-  },
-  {
-    question: "kupić",
-    answer: "buy | bought | bought",
-  },
-  {
-    question: "łapać",
-    answer: "catch | caught | caught",
-  },
-  {
-    question: "wybierać",
-    answer: "choose | chose | chosen",
-  },
-  {
-    question: "przychodzić",
-    answer: "come | came | come",
-  },
+  // {
+  //   question: "przynosić",
+  //   answer: "bring | brought | brought",
+  // },
+  // {
+  //   question: "budować",
+  //   answer: "build | built | built",
+  // },
+  // {
+  //   question: "palić",
+  //   answer: "burn | burnt | burnt",
+  // },
+  // {
+  //   question: "kupić",
+  //   answer: "buy | bought | bought",
+  // },
+  // {
+  //   question: "łapać",
+  //   answer: "catch | caught | caught",
+  // },
+  // {
+  //   question: "wybierać",
+  //   answer: "choose | chose | chosen",
+  // },
+  // {
+  //   question: "przychodzić",
+  //   answer: "come | came | come",
+  // },
   // {
   //   question: "kosztować",
   //   answer: "cost | cost | cost",
