@@ -4,9 +4,28 @@
   position: relative;
 }
 
-.buttons {
-  position: absolute;
-  left: 50%;
-  bottom: 20%;
-  transform: translate(-50%, -50%);
+.progress {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  .percentage {
+    right: 0.5rem;
+    font-size: 0.65rem;
+    margin-left: 0.5rem;
+    font-weight: 700;
+    color: var(--clr-text-muted);
+  }
+  .bar {
+    width: 400px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid hsl(0, 0%, 20%);
+    &__fill {
+      background-image: linear-gradient(to right, var(--clr-accent-red), var(--clr-accent-peachy));
+    }
+  }
 }

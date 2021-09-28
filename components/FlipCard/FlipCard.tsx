@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Back from "../Back";
 import Front from "../Front";
 import styles from "./FlipCard.module.scss";
 import classNames from "classnames";
 import Close from "../../icons/Close";
 import Tick from "../../icons/Tick";
+import Button from "@components/Button";
 
 const variants = {
   unflipped: { transform: "rotateX(0deg)" },
@@ -20,32 +21,28 @@ interface Data {
 interface Props {
   data: Data;
   onAnswer: Function;
-  // onCorrect: Function;
-  // onWrong: Function;
-  // onClick: Function;
-  // isFlipped: boolean;
-  // isCorrect: boolean | null;
 }
 
 const Correct = ({ onAnimationComplete }: { onAnimationComplete: Function }) => {
   return (
     <motion.div
       className={styles.correct_blob}
+      style={{ backgroundColor: "var(--clr-accent-green-darker)" }}
       initial={{ clipPath: "circle(0% at center)" }}
       animate={{ clipPath: "circle(100% at center)" }}
-      exit={{ clipPath: "circle(0% at center)" }}
-      transition={{ type: "spring", damping: 25 }}
+      transition={{ duration: 0.75 }}
     >
-      <motion.span
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        onAnimationComplete={() => {
-          setTimeout(onAnimationComplete(), 750);
-        }}
-        transition={{ delay: 0.25 }}
+      <motion.div
+        className={styles.correct_blob}
+        initial={{ clipPath: "circle(0% at center)" }}
+        animate={{ clipPath: "circle(100% at center)" }}
+        transition={{ delay: 0.25, duration: 0.5 }}
+        onAnimationComplete={() => onAnimationComplete()}
       >
-        <Tick />
-      </motion.span>
+        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5 }}>
+          <Tick />
+        </motion.span>
+      </motion.div>
     </motion.div>
   );
 };
@@ -54,29 +51,30 @@ const Wrong = ({ onAnimationComplete }: { onAnimationComplete: Function }) => {
   return (
     <motion.div
       className={styles.wrong_blob}
+      style={{ backgroundColor: "var(--clr-accent-red-darker)" }}
       initial={{ clipPath: "circle(0% at center)" }}
       animate={{ clipPath: "circle(100% at center)" }}
-      exit={{ clipPath: "circle(0% at center)" }}
-      transition={{ type: "spring", damping: 25 }}
+      transition={{ duration: 0.75 }}
     >
-      <motion.span
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        onAnimationComplete={() => {
-          setTimeout(onAnimationComplete(), 750);
-        }}
-        transition={{ delay: 0.25 }}
+      <motion.div
+        className={styles.wrong_blob}
+        initial={{ clipPath: "circle(0% at center)" }}
+        animate={{ clipPath: "circle(100% at center)" }}
+        transition={{ delay: 0.25, duration: 0.5 }}
+        onAnimationComplete={() => onAnimationComplete()}
       >
-        <Close />
-      </motion.span>
+        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5 }}>
+          <Close />
+        </motion.span>
+      </motion.div>
     </motion.div>
   );
 };
 
 const FlipCard = ({ data, onAnswer }: Props) => {
-  const [allowKeyboardEvents, setAllowKeyboardEvents] = useState(false);
-  const [answeredRight, setAnsweredRight] = useState<boolean | null>(null);
+  const allowKeyboardEvents = useRef(false);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [answeredRight, setAnsweredRight] = useState<boolean | null>(null);
   const wrapperClasses = classNames(styles.wrapper, {
     [`${styles["wrapper--correct"]}`]: answeredRight === true,
     [`${styles["wrapper--wrong"]}`]: answeredRight === false,
@@ -84,24 +82,24 @@ const FlipCard = ({ data, onAnswer }: Props) => {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (isFlipped || !allowKeyboardEvents) return;
+      if (isFlipped || answeredRight != null) return;
       if (e.key === "Enter") setIsFlipped(true);
     };
     document.addEventListener("keyup", handler);
     return () => {
       document.removeEventListener("keyup", handler);
     };
-  }, [isFlipped, allowKeyboardEvents]);
+  }, [isFlipped, answeredRight]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (!isFlipped || !allowKeyboardEvents) return;
+      if (!isFlipped || !allowKeyboardEvents.current || answeredRight != null) return;
       if (e.key === "Enter" || e.key === " ") {
-        setAllowKeyboardEvents(false);
+        allowKeyboardEvents.current = false;
         setAnsweredRight(true);
       }
       if (e.key === "Backspace") {
-        setAllowKeyboardEvents(false);
+        allowKeyboardEvents.current = false;
         setAnsweredRight(false);
       }
     };
@@ -109,7 +107,9 @@ const FlipCard = ({ data, onAnswer }: Props) => {
     return () => {
       document.removeEventListener("keydown", handler);
     };
-  }, [isFlipped, allowKeyboardEvents]);
+  }, [isFlipped, answeredRight]);
+
+  const forwardAnswer = () => onAnswer(answeredRight);
 
   return (
     <motion.main
@@ -118,19 +118,47 @@ const FlipCard = ({ data, onAnswer }: Props) => {
       exit={{ opacity: 0, x: "-150%", scale: 0.5 }}
       transition={{ type: "spring", damping: 12 }}
       onClick={() => setIsFlipped(true)}
-      onAnimationComplete={() => setAllowKeyboardEvents(true)}
+      onAnimationComplete={() => (allowKeyboardEvents.current = true)}
       className={wrapperClasses}
       style={{
         maxWidth: `calc(${Math.max(data.answer.replace(" | ", "").length, data.question.length)}ch * 2 + 14rem)`,
       }}
     >
+      <AnimatePresence>
+        {isFlipped && answeredRight == null && (
+          <>
+            <motion.button
+              initial={{ x: 0, top: "50%", translateY: "-50%" }}
+              animate={{ x: -150 }}
+              exit={{ x: 0 }}
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring" }}
+              className={styles.wrong_button}
+              onClick={() => setAnsweredRight(false)}
+            >
+              <Close />
+            </motion.button>
+            <motion.button
+              initial={{ x: 0, right: 0, top: "50%", translateY: "-50%" }}
+              animate={{ x: 150 }}
+              exit={{ x: 0 }}
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring" }}
+              className={styles.correct_button}
+              onClick={() => setAnsweredRight(true)}
+            >
+              <Tick />
+            </motion.button>
+          </>
+        )}
+      </AnimatePresence>
       <motion.div
         variants={variants}
         initial="unflipped"
         transition={{ type: "spring", stiffness: 100 }}
         animate={isFlipped ? "flipped" : "unflipped"}
-        onAnimationStart={() => setAllowKeyboardEvents(false)}
-        onAnimationComplete={() => setAllowKeyboardEvents(true)}
+        onAnimationStart={() => (allowKeyboardEvents.current = false)}
+        onAnimationComplete={() => (allowKeyboardEvents.current = true)}
         className={styles.content}
       >
         <div className={styles.front}>
@@ -141,8 +169,8 @@ const FlipCard = ({ data, onAnswer }: Props) => {
         </div>
         <div className={styles.back}>
           <AnimatePresence>
-            {answeredRight === true && <Correct onAnimationComplete={onAnswer} />}
-            {answeredRight === false && <Wrong onAnimationComplete={onAnswer} />}
+            {answeredRight === true && <Correct onAnimationComplete={forwardAnswer} />}
+            {answeredRight === false && <Wrong onAnimationComplete={forwardAnswer} />}
           </AnimatePresence>
           <Back data={data.answer} />
           <div className={styles.repeated_watermark} data-text="answer">

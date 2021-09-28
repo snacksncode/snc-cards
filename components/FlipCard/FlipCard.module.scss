@@ -12,12 +12,12 @@
   will-change: transform;
   &--correct {
     .back {
-      border-color: var(--clr-background);
+      border-color: var(--clr-accent-green);
     }
   }
   &--wrong {
     .back {
-      border-color: var(--clr-background);
+      border-color: var(--clr-accent-red);
     }
   }
 }
@@ -128,4 +128,24 @@
     font-weight: 700;
     font-size: 2rem;
   }
+}
+
+.wrong_button,
+.correct_button {
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 1.5rem;
+  svg {
+    width: 75px;
+    height: 75px;
+  }
+}
+
+.wrong_button {
+  color: var(--clr-accent-red);
+}
+.correct_button {
+  color: var(--clr-accent-green);
 }
