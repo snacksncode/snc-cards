@@ -5,9 +5,7 @@ import wordsData from "../data/irregular";
 import React, { useEffect, useRef, useState } from "react";
 import { animate, AnimatePresence, motion } from "framer-motion";
 import shuffle from "../utils/shuffle";
-import Tick from "icons/Tick";
-import Close from "icons/Close";
-// import Button from "@components/Button";
+import Play from "icons/Play";
 
 const Home: NextPage = () => {
   let [data, setData] = useState(wordsData);
@@ -43,6 +41,10 @@ const Home: NextPage = () => {
     nextCard();
   };
 
+  const onRestart = () => {
+    setSelectedIndex(0);
+  };
+
   return (
     <div className={styles.container}>
       <AnimatePresence>
@@ -70,25 +72,33 @@ const Home: NextPage = () => {
       </AnimatePresence>
 
       {isFinished && (
-        <motion.div
-          initial={{ scale: 0, translateX: "-50%", translateY: "-50%" }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.5 }}
-          className={styles.endCard}
-        >
-          <p className={styles.endCard__subtitle}>Finish!</p>
-          <h1 className={styles.endCard__title}>
-            Your end score was <span>{score}%</span>
-          </h1>
-          <div className={styles.breakdown_grid}>
-            <div>
-              <Tick /> {data.length - incorrectAnswers} Correct
+        <>
+          <motion.div
+            initial={{ scale: 0, translateX: "-50%", translateY: "-50%" }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.5 }}
+            className={styles.endCard}
+          >
+            <p className={styles.endCard__subtitle}>Finish!</p>
+            <h1 className={styles.endCard__title}>
+              Your end score was <span>{score}%</span>
+            </h1>
+            <div className={styles.ratio}>
+              Correct to wrong answers ratio:{" "}
+              <span style={{ color: "var(--clr-accent-green)" }}>{data.length - incorrectAnswers}</span> /{" "}
+              <span style={{ color: "var(--clr-accent-red)" }}>{incorrectAnswers}</span>
             </div>
-            <div>
-              <Close /> {incorrectAnswers} Incorrect
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
+          <motion.span
+            initial={{ translateX: "-50%", scale: 1, translateY: "-50%", y: 0, opacity: 0 }}
+            animate={{ y: 150, opacity: 1, transition: { delay: 1 } }}
+            onClick={onRestart}
+            className={styles.reload}
+          >
+            <Play />
+            Restart
+          </motion.span>
+        </>
       )}
     </div>
   );

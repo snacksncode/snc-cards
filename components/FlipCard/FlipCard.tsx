@@ -113,9 +113,9 @@ const FlipCard = ({ data, onAnswer }: Props) => {
 
   return (
     <motion.main
-      initial={{ opacity: 0, x: "50%", y: "-50%", scale: 0.5 }}
+      initial={{ opacity: 0, x: "50%", y: "-50%", scale: 0.25 }}
       animate={{ opacity: 1, x: "-50%", scale: 1 }}
-      exit={{ opacity: 0, x: "-150%", scale: 0.5 }}
+      exit={{ opacity: 0, x: "-150%", scale: 0.25 }}
       transition={{ type: "spring", damping: 12 }}
       onClick={() => setIsFlipped(true)}
       onAnimationComplete={() => (allowKeyboardEvents.current = true)}
