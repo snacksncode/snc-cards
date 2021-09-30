@@ -1,8 +1,10 @@
+import classNames from "classnames";
 import React from "react";
 import styles from "./Back.module.scss";
 
 interface Props {
   data: string;
+  isMobile: boolean | undefined;
 }
 
 // function formatData(data: string) {
@@ -29,9 +31,12 @@ function formatData(data: string) {
   return <div className={styles.answer__text}>{data}</div>;
 }
 
-const Back = ({ data }: Props) => {
+const Back = ({ data, isMobile }: Props) => {
+  const wrapperClasses = classNames(styles.wrapper, {
+    [`${styles["wrapper--mobile"]}`]: isMobile,
+  });
   return (
-    <div className={styles.wrapper}>
+    <div className={wrapperClasses}>
       <h1 className={styles.title}>Answer</h1>
       {formatData(data)}
     </div>

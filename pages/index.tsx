@@ -12,6 +12,7 @@ const Home: NextPage = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const percentageRef = useRef<HTMLParagraphElement>(null);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
+  const [restarted, setRestarted] = useState(false);
   const score = ((data.length - incorrectAnswers) / data.length) * 100;
   const isFinished = selectedIndex === data.length;
 
@@ -43,13 +44,14 @@ const Home: NextPage = () => {
 
   const onRestart = () => {
     setSelectedIndex(0);
+    setRestarted(true);
   };
 
   return (
     <div className={styles.container}>
-      <AnimatePresence>
-        {!isFinished && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <AnimatePresence exitBeforeEnter>
+        {!isFinished ? (
+          <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <div className={styles.progress}>
               <div className={styles.bar}>
                 <motion.div
@@ -58,7 +60,9 @@ const Home: NextPage = () => {
                   transition={{ ease: "easeInOut" }}
                 ></motion.div>
               </div>
-              <p className={styles.percentage} ref={percentageRef}></p>
+              <p className={styles.percentage} ref={percentageRef}>
+                0.00%
+              </p>
             </div>
             <AnimatePresence>
               {data.map((d, i) => {
@@ -68,38 +72,38 @@ const Home: NextPage = () => {
               })}
             </AnimatePresence>
           </motion.div>
+        ) : (
+          <>
+            <motion.div
+              initial={{ scale: 0, translateX: "-50%", translateY: "-50%" }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              key="endcard"
+              className={styles.endCard}
+            >
+              <p className={styles.endCard__subtitle}>Finish!</p>
+              <h1 className={styles.endCard__title}>
+                Your end score was <span>{score}%</span>
+              </h1>
+              <div className={styles.ratio}>
+                Correct to wrong answers ratio:{" "}
+                <span style={{ color: "var(--clr-accent-green)" }}>{data.length - incorrectAnswers}</span> /{" "}
+                <span style={{ color: "var(--clr-accent-red)" }}>{incorrectAnswers}</span>
+              </div>
+              <motion.span
+                initial={{ scale: 1, translateY: "-50%", y: 0, opacity: 0 }}
+                animate={{ y: 125, opacity: 1 }}
+                exit={{ scale: 0 }}
+                onClick={onRestart}
+                className={styles.reload}
+              >
+                <Play />
+                Restart
+              </motion.span>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-
-      {isFinished && (
-        <>
-          <motion.div
-            initial={{ scale: 0, translateX: "-50%", translateY: "-50%" }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.5 }}
-            className={styles.endCard}
-          >
-            <p className={styles.endCard__subtitle}>Finish!</p>
-            <h1 className={styles.endCard__title}>
-              Your end score was <span>{score}%</span>
-            </h1>
-            <div className={styles.ratio}>
-              Correct to wrong answers ratio:{" "}
-              <span style={{ color: "var(--clr-accent-green)" }}>{data.length - incorrectAnswers}</span> /{" "}
-              <span style={{ color: "var(--clr-accent-red)" }}>{incorrectAnswers}</span>
-            </div>
-          </motion.div>
-          <motion.span
-            initial={{ translateX: "-50%", scale: 1, translateY: "-50%", y: 0, opacity: 0 }}
-            animate={{ y: 150, opacity: 1, transition: { delay: 1 } }}
-            onClick={onRestart}
-            className={styles.reload}
-          >
-            <Play />
-            Restart
-          </motion.span>
-        </>
-      )}
     </div>
   );
 };

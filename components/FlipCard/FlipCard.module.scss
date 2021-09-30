@@ -20,6 +20,15 @@
       border-color: var(--clr-accent-red);
     }
   }
+  &--mobile {
+    .correct_button,
+    .wrong_button {
+      svg {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  }
 }
 .front,
 .back {
@@ -141,6 +150,9 @@
     width: 75px;
     height: 75px;
   }
+  &--mobile {
+    width: 50%;
+  }
 }
 
 .wrong_button {
@@ -149,3 +161,9 @@
 .correct_button {
   color: var(--clr-accent-green);
 }
+
+// @media screen and (max-width: 960px) {
+//   .wrapper {
+//     max-width: calc(100% - 3rem) !important;
+//   }
+// }

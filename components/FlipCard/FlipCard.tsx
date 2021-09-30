@@ -6,7 +6,7 @@ import styles from "./FlipCard.module.scss";
 import classNames from "classnames";
 import Close from "../../icons/Close";
 import Tick from "../../icons/Tick";
-import Button from "@components/Button";
+import useWindowSize from "utils/useWindowSize";
 
 const variants = {
   unflipped: { transform: "rotateX(0deg)" },
@@ -75,9 +75,23 @@ const FlipCard = ({ data, onAnswer }: Props) => {
   const allowKeyboardEvents = useRef(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [answeredRight, setAnsweredRight] = useState<boolean | null>(null);
+  const { width } = useWindowSize();
+
+  const getCardWidth = () => {
+    if (!width) return { isMobile: undefined, cardWidth: undefined };
+    const contentSize = Math.max(data.answer.replace(" | ", "").length, data.question.length);
+    let calculatedWidth = contentSize * 32;
+    const isMobile = width - 320 < contentSize * 32;
+    if (isMobile) calculatedWidth = width - 64;
+    return { isMobile: isMobile, cardWidth: calculatedWidth };
+  };
+
+  const { isMobile, cardWidth } = getCardWidth();
+
   const wrapperClasses = classNames(styles.wrapper, {
     [`${styles["wrapper--correct"]}`]: answeredRight === true,
     [`${styles["wrapper--wrong"]}`]: answeredRight === false,
+    [`${styles["wrapper--mobile"]}`]: isMobile,
   });
 
   useEffect(() => {
@@ -121,7 +135,7 @@ const FlipCard = ({ data, onAnswer }: Props) => {
       onAnimationComplete={() => (allowKeyboardEvents.current = true)}
       className={wrapperClasses}
       style={{
-        maxWidth: `calc(${Math.max(data.answer.replace(" | ", "").length, data.question.length)}ch * 2 + 14rem)`,
+        maxWidth: cardWidth,
       }}
     >
       <AnimatePresence>
@@ -129,22 +143,22 @@ const FlipCard = ({ data, onAnswer }: Props) => {
           <>
             <motion.button
               initial={{ x: 0, top: "50%", translateY: "-50%", opacity: 0 }}
-              animate={{ x: -150, opacity: 1 }}
-              exit={{ x: 0 }}
+              animate={{ x: isMobile ? 0 : -150, y: isMobile ? 200 : 0, opacity: 1 }}
+              exit={{ x: 0, y: 0 }}
               transition={{ type: "spring" }}
               whileHover={{ scale: 1.25 }}
-              className={styles.wrong_button}
+              className={classNames(styles.wrong_button, { [`${styles["wrong_button--mobile"]}`]: isMobile })}
               onClick={() => setAnsweredRight(false)}
             >
               <Close />
             </motion.button>
             <motion.button
               initial={{ x: 0, right: 0, top: "50%", translateY: "-50%", opacity: 0 }}
-              animate={{ x: 150, opacity: 1 }}
-              exit={{ x: 0 }}
+              animate={{ x: isMobile ? 0 : 150, y: isMobile ? 200 : 0, opacity: 1 }}
+              exit={{ x: 0, y: 0 }}
               transition={{ type: "spring" }}
               whileHover={{ scale: 1.25 }}
-              className={styles.correct_button}
+              className={classNames(styles.correct_button, { [`${styles["correct_button--mobile"]}`]: isMobile })}
               onClick={() => setAnsweredRight(true)}
             >
               <Tick />
@@ -162,7 +176,7 @@ const FlipCard = ({ data, onAnswer }: Props) => {
         className={styles.content}
       >
         <div className={styles.front}>
-          <Front data={data.question} />
+          <Front isMobile={isMobile} data={data.question} />
           <div className={styles.repeated_watermark} data-text="question">
             question
           </div>
@@ -172,7 +186,7 @@ const FlipCard = ({ data, onAnswer }: Props) => {
             {answeredRight === true && <Correct onAnimationComplete={forwardAnswer} />}
             {answeredRight === false && <Wrong onAnimationComplete={forwardAnswer} />}
           </AnimatePresence>
-          <Back data={data.answer} />
+          <Back isMobile={isMobile} data={data.answer} />
           <div className={styles.repeated_watermark} data-text="answer">
             answer
           </div>
