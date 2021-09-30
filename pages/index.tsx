@@ -12,8 +12,7 @@ const Home: NextPage = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const percentageRef = useRef<HTMLParagraphElement>(null);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
-  const [restarted, setRestarted] = useState(false);
-  const score = ((data.length - incorrectAnswers) / data.length) * 100;
+  const score = (((data.length - incorrectAnswers) / data.length) * 100).toFixed(1);
   const isFinished = selectedIndex === data.length;
 
   useEffect(() => {
@@ -44,7 +43,6 @@ const Home: NextPage = () => {
 
   const onRestart = () => {
     setSelectedIndex(0);
-    setRestarted(true);
   };
 
   return (

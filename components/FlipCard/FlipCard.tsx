@@ -144,7 +144,7 @@ const FlipCard = ({ data, onAnswer }: Props) => {
             <motion.button
               initial={{ x: 0, top: "50%", translateY: "-50%", opacity: 0 }}
               animate={{ x: isMobile ? 0 : -150, y: isMobile ? 200 : 0, opacity: 1 }}
-              exit={{ x: 0, y: 0 }}
+              exit={{ x: 0, y: 0, opacity: 0 }}
               transition={{ type: "spring" }}
               whileHover={{ scale: 1.25 }}
               className={classNames(styles.wrong_button, { [`${styles["wrong_button--mobile"]}`]: isMobile })}
@@ -155,7 +155,7 @@ const FlipCard = ({ data, onAnswer }: Props) => {
             <motion.button
               initial={{ x: 0, right: 0, top: "50%", translateY: "-50%", opacity: 0 }}
               animate={{ x: isMobile ? 0 : 150, y: isMobile ? 200 : 0, opacity: 1 }}
-              exit={{ x: 0, y: 0 }}
+              exit={{ x: 0, y: 0, opacity: 0 }}
               transition={{ type: "spring" }}
               whileHover={{ scale: 1.25 }}
               className={classNames(styles.correct_button, { [`${styles["correct_button--mobile"]}`]: isMobile })}
