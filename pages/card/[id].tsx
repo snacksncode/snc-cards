@@ -1,6 +1,6 @@
 import Viewer from "@components/Viewer";
 import React from "react";
-import allData from "../api/data/files";
+import allData from "@data/exporter";
 
 interface Props {
   data: any[];

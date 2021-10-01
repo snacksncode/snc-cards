@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import Link from "next/link";
 import React from "react";
-import allData from "./api/data/files";
+import allData from "@data/exporter";
 
 interface Props {
   data: any[];
