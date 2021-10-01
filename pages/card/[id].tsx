@@ -1,26 +1,26 @@
 import Viewer from "@components/Viewer";
-import { NextPage } from "next";
-import { useRouter } from "next/dist/client/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import allData from "../api/data/files";
 
-const API_PATH = "/api/data";
+interface Props {
+  data: any[];
+}
 
-const Home: NextPage = () => {
-  const { id } = useRouter().query;
-  const [data, setData] = useState<null | any[]>(null);
-  useEffect(() => {
-    if (!id) return;
-    fetch(`${API_PATH}/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Data fetching failed");
-        return res.json();
-      })
-      .then((d) => {
-        setData(d.data);
-      });
-  }, [id]);
-  if (!data) return <p>Loading...</p>;
+export default function CardId({ data }: Props) {
   return <Viewer data={data} />;
-};
+}
 
-export default Home;
+export async function getStaticPaths() {
+  const paths = allData.map((d) => ({
+    params: { id: d.id },
+  }));
+
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }: any) {
+  const data = allData.find((d) => d.id === params.id)?.data;
+  return {
+    props: { data: data },
+  };
+}

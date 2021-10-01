@@ -1,21 +1,13 @@
 import { NextPage } from "next";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import allData from "./api/data/files";
 
-const API_PATH = "/api/data";
+interface Props {
+  data: any[];
+}
 
-const Home: NextPage = () => {
-  const [data, setData] = useState<null | any[]>(null);
-  useEffect(() => {
-    fetch(API_PATH)
-      .then((res) => {
-        if (!res.ok) throw new Error("Data fetching failed");
-        return res.json();
-      })
-      .then((d) => {
-        setData(d.data);
-      });
-  }, []);
+const Home: NextPage<Props> = ({ data }) => {
   if (!data) return <p>Loading...</p>;
   return (
     <p>
@@ -29,5 +21,14 @@ const Home: NextPage = () => {
     </p>
   );
 };
+
+export async function getStaticProps() {
+  const data = allData;
+  return {
+    props: {
+      data,
+    },
+  };
+}
 
 export default Home;
