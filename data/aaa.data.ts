@@ -1,12 +1,12 @@
 const wordsData = [
   {
-    question: "Test Q",
-    answer: "Answer Q",
+    question: "aaa",
+    answer: "bbb",
   },
 ];
 
 const exported = {
-  id: "test",
+  id: "aaa",
   data: wordsData,
   lang: "test",
   tags: ["test"],

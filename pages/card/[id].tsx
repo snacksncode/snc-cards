@@ -1,6 +1,6 @@
 import Viewer from "@components/Viewer";
 import React from "react";
-import allData from "@data/exporter";
+import { getData } from "@data/exporter";
 
 interface Props {
   data: any[];
@@ -11,7 +11,7 @@ export default function CardId({ data }: Props) {
 }
 
 export async function getStaticPaths() {
-  const paths = allData.map((d) => ({
+  const paths = (await getData()).map((d) => ({
     params: { id: d.id },
   }));
 
@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: any) {
-  const data = allData.find((d) => d.id === params.id)?.data;
+  const data = (await getData()).find((d) => d.id === params.id)?.data;
   return {
     props: { data: data },
   };

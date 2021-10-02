@@ -1,14 +1,13 @@
 import { NextPage } from "next";
 import Link from "next/link";
 import React from "react";
-import allData from "@data/exporter";
+import { getData } from "@data/exporter";
 
 interface Props {
   data: any[];
 }
 
 const Home: NextPage<Props> = ({ data }) => {
-  if (!data) return <p>Loading...</p>;
   return (
     <p>
       {data.map((d: any) => {
@@ -23,7 +22,7 @@ const Home: NextPage<Props> = ({ data }) => {
 };
 
 export async function getStaticProps() {
-  const data = allData;
+  const data = await getData();
   return {
     props: {
       data,

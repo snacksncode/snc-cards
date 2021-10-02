@@ -1,4 +1,4 @@
-const data = [
+const wordsData = [
   {
     question: "być",
     answer: "be | was, were | been",
@@ -345,4 +345,11 @@ const data = [
   },
 ];
 
-export default data;
+const exported = {
+  id: "irregular-words-english",
+  data: wordsData,
+  lang: "english",
+  tags: ["english", "irregular"],
+};
+
+export default exported;

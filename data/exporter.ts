@@ -1,18 +1,27 @@
-import irregular from "./irregular.data";
-import test from "./test.data";
-const data = [
-  {
-    id: "irregular-words-english",
-    data: irregular,
-    lang: "english",
-    tags: ["english", "irregular"],
-  },
-  {
-    id: "test",
-    data: test,
-    lang: "test",
-    tags: ["test"],
-  },
-];
+import fg from "fast-glob";
 
-export default data;
+const FILE_PATTERN = "**/*.data.*";
+
+export async function getData() {
+  const paths = await fg(FILE_PATTERN, { objectMode: true });
+  const data = await loadData(paths.map((p) => p.name));
+  return data;
+}
+
+let loadedData: any[] | null = null;
+
+async function loadData(paths: string[]): Promise<any[]> {
+  if (loadedData != null) return loadedData;
+  loadedData = [];
+  for (const path of paths) {
+    const importedData = (await import(`./${path}`)).default;
+    const dataObject = {
+      id: importedData.id,
+      data: importedData.data,
+      lang: importedData.lang,
+      tags: importedData.tags,
+    };
+    loadedData.push(dataObject);
+  }
+  return loadedData;
+}
