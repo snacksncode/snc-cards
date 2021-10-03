@@ -1,13 +1,18 @@
 import Viewer from "@components/Viewer";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { getData } from "@data/exporter";
+import shuffle from "utils/shuffle";
 
 interface Props {
   data: any[];
 }
 
 export default function CardId({ data }: Props) {
-  return <Viewer data={data} />;
+  const [shuffledData, setShuffledData] = useState(data);
+  useEffect(() => {
+    setShuffledData((data) => shuffle(data));
+  }, [data]);
+  return <Viewer data={shuffledData} />;
 }
 
 export async function getStaticPaths() {
