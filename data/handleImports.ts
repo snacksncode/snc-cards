@@ -10,7 +10,7 @@ export async function importFiles() {
     const newFileName = `${fileNameWithoutExt}.data.ts`;
     const data = [];
     for (const line of fileLines) {
-      const [question, answer] = line.split(" - ");
+      const [answer, question] = line.split(" - ");
       data.push({ question, answer });
     }
     const dataAsString = JSON.stringify(data, null, 2);
