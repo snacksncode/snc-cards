@@ -228,8 +228,8 @@ const wordsData = [
 const exported = {
   id: "english",
   data: wordsData,
-  lang: "lang",
-  tags: ["tag"],
+  lang: "english",
+  tags: ["english"],
 };
 
 export default exported;
