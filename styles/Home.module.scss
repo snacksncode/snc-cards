@@ -34,7 +34,7 @@
   margin-top: 1.5rem;
   gap: 1.5rem;
   flex: 1;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   grid-template-rows: repeat(auto-fill, 75px);
 }
 
@@ -48,6 +48,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border: 2px solid var(--clr-background-accent);
   background-color: var(--clr-background-accent);
+  overflow: hidden;
   &:hover,
   &:focus-within {
     border-color: var(--clr-accent-peachy);

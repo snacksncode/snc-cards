@@ -19,6 +19,7 @@ const Home: NextPage<Props> = ({ dataObject }) => {
   const [filteredData, setFilteredData] = useState(dataObject);
   const fuse = useRef(
     new Fuse(dataObject, {
+      // shouldSort: false,
       keys: [
         {
           name: "id",
@@ -75,17 +76,16 @@ const Home: NextPage<Props> = ({ dataObject }) => {
             return (
               <motion.div
                 layout
-                layoutId={entryData.id}
                 key={entryData.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className={styles.entry}
                 exit={{ opacity: 0 }}
               >
-                <Link key={entryData.id} href={`card/${entryData.id}`}>
-                  <a className={styles.entry__title} style={{ display: "block" }}>
+                <Link passHref={true} key={entryData.id} href={`card/${entryData.id}`}>
+                  <motion.a layout="position" className={styles.entry__title} style={{ display: "block" }}>
                     {entryData.id}
-                  </a>
+                  </motion.a>
                 </Link>
               </motion.div>
             );
