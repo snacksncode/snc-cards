@@ -8,6 +8,13 @@ body {
   color: var(--clr-text);
   font-family: "Poppins", sans-serif;
   overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#__next {
+  height: 100%;
 }
 
 a {
