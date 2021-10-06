@@ -39,7 +39,6 @@
 }
 
 .entry {
-  padding: 1rem;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -54,6 +53,7 @@
     border-color: var(--clr-accent-peachy);
   }
   &__title {
+    padding: 1rem;
     width: 100%;
     max-width: 100%;
     text-overflow: ellipsis;

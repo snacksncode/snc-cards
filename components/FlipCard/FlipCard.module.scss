@@ -2,7 +2,7 @@
   perspective: 1000px;
   width: 100%;
   height: 50vh;
-  max-height: 300px;
+  max-height: 250px;
   user-select: none;
   position: absolute;
   top: 50%;
@@ -10,6 +10,10 @@
   border-radius: 8px;
   left: 50%;
   will-change: transform;
+  &:focus-visible {
+    outline: 2px dashed var(--clr-accent-blue);
+    outline-offset: 2rem;
+  }
   &--correct {
     .back {
       border-color: var(--clr-accent-green);
@@ -157,13 +161,15 @@
 
 .wrong_button {
   color: var(--clr-accent-red);
+  &:focus-visible {
+    outline: 2px dashed var(--clr-accent-red);
+    outline-offset: 0.5rem;
+  }
 }
 .correct_button {
   color: var(--clr-accent-green);
+  &:focus-visible {
+    outline: 2px dashed var(--clr-accent-green);
+    outline-offset: 0.5rem;
+  }
 }
-
-// @media screen and (max-width: 960px) {
-//   .wrapper {
-//     max-width: calc(100% - 3rem) !important;
-//   }
-// }

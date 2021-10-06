@@ -1,26 +1,26 @@
 const wordsData = [
   {
     question: "Pokój jednoosobowy",
-    answer: "Einzel-Zimmer",
+    answer: "Einzelzimmer",
   },
   {
     question: "Pokój dwuosobowy",
-    answer: "Doppel-Zimmer",
+    answer: "Doppelzimmer",
   },
   {
-    question: "połączenie internetowe / haslo do internetu",
-    answer: "Internet anschluss",
+    question: "Łącze internetowe",
+    answer: "Internet Anschluss",
   },
   {
     question: "Miejsce kampingowe",
-    answer: "Camping platz",
+    answer: "Campingplatz",
   },
   {
-    question: "Schronisko Młodzieżowe",
-    answer: "Jugenherberge",
+    question: "Schronisko młodzieżowe",
+    answer: "Jugendherberge",
   },
   {
-    question: "Zwierzeta dozwolone",
+    question: "Zwierzeta są dozwolone",
     answer: "Haustiere erlaubt",
   },
   {
@@ -28,108 +28,100 @@ const wordsData = [
     answer: "Telefon im Zimmer",
   },
   {
-    question: "Tv w pokoju",
+    question: "TV w pokoju",
     answer: "Fernseher im Zimmer",
   },
   {
-    question: "miejsce parkingowe",
+    question: "Miejsce parkingowe",
     answer: "Parkplatz",
   },
   {
-    question: "pokoj z prysznicem",
+    question: "Pokój z prysznicem",
     answer: "Zimmer mit Dusche",
   },
   {
-    question: "liczyć",
+    question: "Liczyć",
     answer: "rechnen",
   },
   {
-    question: "rezerwacje",
-    answer: "reservieren",
-  },
-  {
-    question: "meldować się",
+    question: "Zameldować się (a...)",
     answer: "anmelden",
   },
   {
-    question: "nocowac",
-    answer: "ubernachten",
+    question: "Imię / Nazwisko (?)",
+    answer: "Namen",
   },
   {
-    question: "nazwy",
-    answer: "namen",
+    question: "Pokój",
+    answer: "das Zimmer",
   },
   {
-    question: "pokój",
-    answer: "zimmer",
-  },
-  {
-    question: "zarejestrowac sie",
+    question: "Zameldowanie",
     answer: "Anmeldung",
   },
   {
-    question: "rezerwacja",
-    answer: "reservierung",
+    question: "Rezerwacja",
+    answer: "Reservierung",
   },
   {
     question: "Nocleg",
-    answer: "Ubernachtungen",
+    answer: "Übernachtung",
   },
   {
     question: "wypełniać",
-    answer: "ausfullen",
+    answer: "ausfüllen",
   },
   {
-    question: "zameldować się",
+    question: "Zameldować się (e...)",
     answer: "einchecken",
   },
   {
-    question: "zdzierać",
+    question: "wyjechać (czas. od podróż)",
     answer: "abreisen",
   },
   {
-    question: "knuc",
-    answer: "aushecken",
+    question: "Wymeldować się",
+    answer: "auschecken",
   },
   {
-    question: "zwiedzać",
+    question: "Zwiedzać",
     answer: "besichtigen",
   },
   {
-    question: "obóz",
+    question: '"Namiotować"',
     answer: "zelten",
   },
   {
-    question: "rezerwować",
+    question: "Zarezerwować",
     answer: "reservieren",
   },
   {
-    question: "pozostać",
+    question: "zostać / pozostać",
     answer: "bleiben",
   },
   {
-    question: "podróż",
-    answer: "reisen",
+    question: "podróż(e)",
+    answer: "Reise(n)",
   },
   {
     question: "spędzać",
-    answer: "verbringe",
+    answer: "verbringen",
   },
   {
     question: "życzyć",
-    answer: "wunsche",
+    answer: "wünschen",
   },
   {
-    question: "przenocować",
-    answer: "ubernachte",
+    question: "nocować / przenocować",
+    answer: "übernachten",
   },
 ];
 
 const exported = {
   id: "german",
   data: wordsData,
-  lang: "lang",
-  tags: ["tag"],
+  lang: "german",
+  tags: ["german"],
 };
 
 export default exported;

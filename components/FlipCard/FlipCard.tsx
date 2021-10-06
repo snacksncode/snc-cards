@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Ref, useEffect, useRef, useState } from "react";
 import Back from "../Back";
 import Front from "../Front";
 import styles from "./FlipCard.module.scss";
@@ -26,6 +26,7 @@ interface Props {
 const Correct = ({ onAnimationComplete }: { onAnimationComplete: Function }) => {
   return (
     <motion.div
+      tabIndex={0}
       className={styles.correct_blob}
       style={{ backgroundColor: "var(--clr-accent-green-darker)" }}
       initial={{ clipPath: "circle(0% at center)" }}
@@ -50,6 +51,7 @@ const Correct = ({ onAnimationComplete }: { onAnimationComplete: Function }) => 
 const Wrong = ({ onAnimationComplete }: { onAnimationComplete: Function }) => {
   return (
     <motion.div
+      tabIndex={0}
       className={styles.wrong_blob}
       style={{ backgroundColor: "var(--clr-accent-red-darker)" }}
       initial={{ clipPath: "circle(0% at center)" }}
@@ -99,9 +101,9 @@ const FlipCard = ({ data, onAnswer }: Props) => {
       if (isFlipped || answeredRight != null) return;
       if (e.key === "Enter") setIsFlipped(true);
     };
-    document.addEventListener("keyup", handler);
+    document.addEventListener("keydown", handler);
     return () => {
-      document.removeEventListener("keyup", handler);
+      document.removeEventListener("keydown", handler);
     };
   }, [isFlipped, answeredRight]);
 
@@ -112,7 +114,7 @@ const FlipCard = ({ data, onAnswer }: Props) => {
         allowKeyboardEvents.current = false;
         setAnsweredRight(true);
       }
-      if (e.key === "Backspace") {
+      if (e.key === "Backspace" || e.key === "Escape") {
         allowKeyboardEvents.current = false;
         setAnsweredRight(false);
       }
@@ -126,7 +128,7 @@ const FlipCard = ({ data, onAnswer }: Props) => {
   const forwardAnswer = () => onAnswer(answeredRight);
 
   return (
-    <motion.main
+    <motion.div
       initial={{ opacity: 0, x: "50%", y: "-50%", scale: 0.25 }}
       animate={{ opacity: 1, x: "-50%", scale: 1 }}
       exit={{ opacity: 0, x: "-150%", scale: 0.25 }}
@@ -134,6 +136,7 @@ const FlipCard = ({ data, onAnswer }: Props) => {
       onClick={() => setIsFlipped(true)}
       onAnimationComplete={() => (allowKeyboardEvents.current = true)}
       className={wrapperClasses}
+      tabIndex={0}
       style={{
         maxWidth: cardWidth,
       }}
@@ -192,7 +195,7 @@ const FlipCard = ({ data, onAnswer }: Props) => {
           </div>
         </div>
       </motion.div>
-    </motion.main>
+    </motion.div>
   );
 };
 
