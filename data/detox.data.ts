@@ -45,7 +45,7 @@ const wordsData = [
   },
   {
     question: "odwrotne konsekwencje",
-    answer: "adverse consquences",
+    answer: "adverse consequences",
   },
   {
     question: "wątpliwe dowody",
