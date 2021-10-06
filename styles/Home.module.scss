@@ -1,85 +1,32 @@
-.container {
-  min-height: 100vh;
-  padding: 1rem;
-  position: relative;
-}
-
-.progress {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  .percentage {
-    font-size: 0.65rem;
-    width: 6ch;
-    margin-left: 0.5rem;
-    font-weight: 700;
-    color: var(--clr-text-muted);
-  }
-  .bar {
-    width: 100%;
-    max-width: 400px;
-    height: 20px;
-    border-radius: 4px;
-    display: flex;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid hsl(0, 0%, 20%);
-    &__fill {
-      background-image: linear-gradient(to right, var(--clr-accent-red), var(--clr-accent-peachy));
-    }
-  }
-}
-
-.endCard {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(100% - 2rem);
-  max-width: 500px;
-  border-radius: 4px;
-  z-index: 2;
+.wrapper {
   padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  background-color: var(--clr-background-accent);
-  &__subtitle {
-    margin: 0;
-    letter-spacing: 4px;
+  margin: 0 auto;
+  max-width: 700px;
+  h1 {
+    font-size: 3rem;
+    font-weight: 500;
+    line-height: 125%;
+  }
+  label {
+    display: block;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+  }
+  input {
+    width: 100%;
+    background-color: var(--clr-background-accent);
+    border: 2px solid rgb(63, 63, 63);
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    color: var(--clr-text);
     font-weight: 700;
-    opacity: 0.8;
-    text-transform: uppercase;
-    color: var(--clr-accent-blue);
-  }
-  &__title {
-    margin: 0;
-    font-size: 2rem;
-    span {
-      font-size: 3rem;
-      color: var(--clr-accent-green);
-    }
-  }
-  .ratio {
-    font-size: 1rem;
-    font-weight: 300;
-    span {
-      font-size: 1.25rem;
-      font-weight: 500;
+    &:focus {
+      outline: none;
+      border-color: var(--clr-accent-blue);
     }
   }
 }
-.reload {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-  svg {
-    width: 50px;
-    height: 50px;
-    color: var(--clr-accent-peachy);
-  }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }

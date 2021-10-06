@@ -1,8 +1,10 @@
 import { NextPage } from "next";
 import Link from "next/link";
 import Fuse from "fuse.js";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { getData } from "@data/exporter";
+import styles from "@styles/Home.module.scss";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface Props {
   dataObject: {
@@ -17,6 +19,7 @@ const Home: NextPage<Props> = ({ dataObject }) => {
   const [filteredData, setFilteredData] = useState(dataObject);
   const fuse = useRef(
     new Fuse(dataObject, {
+      shouldSort: false,
       keys: [
         {
           name: "id",
@@ -50,22 +53,24 @@ const Home: NextPage<Props> = ({ dataObject }) => {
   };
 
   return (
-    <main>
-      <input type="text" value={inputValue} onChange={handleInputChange} />
-      {filteredData.map((d: any) => {
-        if (!d.item) {
-          return (
-            <Link key={d.id} href={`card/${d.id}`}>
-              <a style={{ display: "block" }}>Go to: {d.id}</a>
-            </Link>
-          );
-        }
-        return (
-          <Link key={d.item.id} href={`card/${d.item.id}`}>
-            <a style={{ display: "block" }}>Go to: {d.item.id}</a>
-          </Link>
-        );
-      })}
+    <main className={styles.wrapper}>
+      <h1>Select the topic that you want to revise</h1>
+      <label htmlFor="search">Look for topics</label>
+      <input id="search" type="text" value={inputValue} onChange={handleInputChange} />
+      <div className={styles.grid}>
+        <AnimatePresence>
+          {filteredData.map((d: any) => {
+            const entryData = d.item ? d.item : d;
+            return (
+              <motion.div key={entryData.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <Link key={entryData.id} href={`card/${entryData.id}`}>
+                  <a style={{ display: "block" }}>Go to: {entryData.id}</a>
+                </Link>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
     </main>
   );
 };

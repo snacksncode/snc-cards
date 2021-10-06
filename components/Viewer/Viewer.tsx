@@ -1,4 +1,4 @@
-import styles from "@styles/Home.module.scss";
+import styles from "./Viewer.module.scss";
 import FlipCard from "@components/FlipCard";
 import React, { useEffect, useRef, useState } from "react";
 import { animate, AnimatePresence, motion } from "framer-motion";
