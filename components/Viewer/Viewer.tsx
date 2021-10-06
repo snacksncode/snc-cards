@@ -39,6 +39,7 @@ const Viewer = ({ data }: Props) => {
 
   const onRestart = () => {
     setSelectedIndex(0);
+    setIncorrectAnswers(0);
   };
 
   return (
