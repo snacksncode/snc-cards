@@ -9,7 +9,7 @@ const wordsData = [
   },
   {
     question: "nieporozumienie",
-    answer: "miscoception",
+    answer: "misconception",
   },
   {
     question: "błędne koło",
@@ -28,7 +28,7 @@ const wordsData = [
     answer: "in full swing",
   },
   {
-    question: "ograniczony",
+    question: "ograniczyć",
     answer: "cut down on",
   },
   {
@@ -37,7 +37,7 @@ const wordsData = [
   },
   {
     question: "przesadzony",
-    answer: "overstold",
+    answer: "overstated",
   },
   {
     question: "toksyczny",
