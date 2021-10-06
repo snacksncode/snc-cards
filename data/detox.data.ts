@@ -36,7 +36,7 @@ const wordsData = [
     answer: "inherently harmful",
   },
   {
-    question: "przesadzony",
+    question: "przesadzony (o...)",
     answer: "overstated",
   },
   {
@@ -45,14 +45,14 @@ const wordsData = [
   },
   {
     question: "odwrotne konsekwencje",
-    answer: "advers consquences",
+    answer: "adverse consquences",
   },
   {
     question: "wątpliwe dowody",
     answer: "questionable evidence",
   },
   {
-    question: "przesadzony",
+    question: "przesadzony (e...)",
     answer: "exaggerated",
   },
   {
@@ -64,7 +64,7 @@ const wordsData = [
     answer: "burn out",
   },
   {
-    question: "millenialsi ",
+    question: "millenialsi",
     answer: "millennials",
   },
   {
@@ -76,20 +76,20 @@ const wordsData = [
     answer: "commonplace",
   },
   {
-    question: "skłonność ",
-    answer: "tendecy",
+    question: "(mieć) skłonność",
+    answer: "(to have a) tendency",
   },
   {
     question: "izolacja",
     answer: "isolation",
   },
   {
-    question: "szkodliwa",
+    question: "szkodliwe (d...)",
     answer: "detrimental",
   },
   {
-    question: "przewyższać",
-    answer: "outweigh",
+    question: "przewyższać (coś)",
+    answer: "outweigh (sth)",
   },
   {
     question: "replikować",
