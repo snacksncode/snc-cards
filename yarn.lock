@@ -2213,6 +2213,13 @@ node-releases@^1.1.71:
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.76.tgz#df245b062b0cafbd5282ab6792f7dccc2d97f36e"
   integrity sha512-9/IECtNr8dXNmPWmFXepT0/7o5eolGesHUa3mtr0KlgnCvnZxwh2qensKL42JJY2vQKC3nIBXetFAqR+PW1CmA==
 
+normalize-diacritics@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/normalize-diacritics/-/normalize-diacritics-3.0.0.tgz#2bbc118ab6530d06e36aa19a68dd77cf6f3f9800"
+  integrity sha512-nKPoE/FhCyS/c4GdowcEvTm8mOb9Q+r9T+HCr0h90JK339aibyx0wiYTj0FbV2MGvqp1MUcodWLXV7o4z1wzBA==
+  dependencies:
+    tslib "^2.1.0"
+
 normalize-package-data@^2.3.2:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/normalize-package-data/-/normalize-package-data-2.5.0.tgz#e66db1838b200c1dfc233225d12cb36520e234a8"

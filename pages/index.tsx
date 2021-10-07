@@ -82,7 +82,7 @@ const Home: NextPage<Props> = ({ dataObject }) => {
                 className={styles.entry}
                 exit={{ opacity: 0 }}
               >
-                <Link passHref={true} key={entryData.id} href={`card/${entryData.id}`}>
+                <Link passHref={true} key={entryData.id} href={`${entryData.id}/card`}>
                   <motion.a layout="position" className={styles.entry__title} style={{ display: "block" }}>
                     {entryData.id}
                   </motion.a>

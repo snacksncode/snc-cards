@@ -1,0 +1,69 @@
+import React, { useEffect, useRef, useState } from "react";
+import { normalizeSync } from "normalize-diacritics";
+import { getData } from "@data/exporter";
+import shuffle from "utils/shuffle";
+interface Props {
+  data: any[];
+}
+
+export default function CardId({ data }: Props) {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [shuffledData, setShuffledData] = useState(data);
+  const [input, setInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [showResult, setShowResult] = useState(false);
+  const selectedData = shuffledData[selectedIndex];
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+  const check = () => {
+    setShowResult(true);
+  };
+  const verdict = () => {
+    if (!inputRef.current) return "bruh";
+    const normalized = normalizeSync(selectedData.answer);
+    const result = normalized === input ? "Correct" : "Nahhh";
+    inputRef.current.value = "";
+    return result;
+  };
+  const next = () => {
+    setShowResult(false);
+    setSelectedIndex((i) => i + 1);
+  };
+  useEffect(() => {
+    setShuffledData((data) => shuffle(data));
+  }, [data]);
+
+  return (
+    <>
+      <h1>Question: {selectedData.question}</h1>
+      <input ref={inputRef} type="text" onChange={handleInput} />
+      <button onClick={check}>Check</button>
+      {showResult && (
+        <>
+          <p>
+            Answer: {selectedData.answer} | Your input: {input}
+          </p>
+          {verdict()}
+          <br />
+          <button onClick={next}>Go next</button>
+        </>
+      )}
+    </>
+  );
+}
+
+export async function getStaticPaths() {
+  const paths = (await getData()).map((d) => ({
+    params: { id: d.id },
+  }));
+
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }: any) {
+  const data = (await getData()).find((d) => d.id === params.id)?.data;
+  return {
+    props: { data: data },
+  };
+}
