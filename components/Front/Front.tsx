@@ -13,7 +13,6 @@ const Front = ({ data, isMobile }: Props) => {
   });
   return (
     <div className={wrapperClasses}>
-      <h1 className={styles.title}>Question</h1>
       <p className={styles.text}>{data}</p>
     </div>
   );

@@ -2,7 +2,7 @@
   perspective: 1000px;
   width: 100%;
   height: 50vh;
-  max-height: 250px;
+  max-height: calc(5 * 3em);
   user-select: none;
   position: absolute;
   top: 50%;

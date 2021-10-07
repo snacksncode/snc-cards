@@ -35,12 +35,7 @@ const Back = ({ data, isMobile }: Props) => {
   const wrapperClasses = classNames(styles.wrapper, {
     [`${styles["wrapper--mobile"]}`]: isMobile,
   });
-  return (
-    <div className={wrapperClasses}>
-      <h1 className={styles.title}>Answer</h1>
-      {formatData(data)}
-    </div>
-  );
+  return <div className={wrapperClasses}>{formatData(data)}</div>;
 };
 
 export default Back;
