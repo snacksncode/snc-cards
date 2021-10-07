@@ -16,13 +16,14 @@ export default function CardId({ data }: Props) {
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
-  const check = () => {
+  const check = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setShowResult(true);
   };
   const verdict = () => {
     if (!inputRef.current) return "bruh";
-    const normalized = normalizeSync(selectedData.answer);
-    const result = normalized === input ? "Correct" : "Nahhh";
+    const normalized = normalizeSync(selectedData.answer).toLowerCase();
+    const result = normalized === input.toLowerCase() ? "Correct" : "Nahhh";
     inputRef.current.value = "";
     return result;
   };
@@ -37,8 +38,10 @@ export default function CardId({ data }: Props) {
   return (
     <>
       <h1>Question: {selectedData.question}</h1>
-      <input ref={inputRef} type="text" onChange={handleInput} />
-      <button onClick={check}>Check</button>
+      <form onSubmit={check}>
+        <input ref={inputRef} type="text" onChange={handleInput} />
+        <button type="submit">Check</button>
+      </form>
       {showResult && (
         <>
           <p>
