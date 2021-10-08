@@ -1,0 +1,9 @@
+.wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: hsla(0, 0%, 5%, 70%);
+}

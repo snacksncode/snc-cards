@@ -10,6 +10,8 @@
   &--mobile {
     .text {
       font-size: 1.75rem;
+      padding: 0 1rem;
+      word-break: normal;
     }
   }
 }
