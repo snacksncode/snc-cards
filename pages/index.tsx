@@ -87,14 +87,15 @@ const Home: NextPage<Props> = ({ dataObject }) => {
       <AnimateSharedLayout type="crossfade">
         <motion.div className={styles.grid}>
           <AnimatePresence>
-            {filteredData.map((d) => {
+            {filteredData.map((d, i) => {
               const entryData = (d as Fuse.FuseResult<Data>).item ? (d as Fuse.FuseResult<Data>).item : (d as Data);
               return (
                 <motion.div
                   layout
                   key={entryData.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (i + 1) } }}
+                  exit={{ opacity: 0 }}
                   className={styles.entry}
                   style={{ "--clr-card-accent": getAccentForClass(entryData.class) } as any}
                   layoutId={`container_${entryData.id}`}
@@ -102,7 +103,7 @@ const Home: NextPage<Props> = ({ dataObject }) => {
                 >
                   {/* <Link passHref={true} key={entryData.id} href={`${entryData.id}/card`}> */}
                   <motion.p
-                    layout
+                    layout={selectedEntryId ? true : "position"}
                     layoutId={`title_${entryData.id}`}
                     className={styles.entry__title}
                     style={{ display: "block" }}
@@ -150,15 +151,8 @@ const Home: NextPage<Props> = ({ dataObject }) => {
                 >
                   title
                 </motion.div>
-                <motion.p
-                  initial={{ fontSize: "16px" }}
-                  animate={{ fontSize: "48px" }}
-                  layout
-                  exit={{ fontSize: "24px" }}
-                  className={styles.expanded__title}
-                  layoutId={`title_${selectedEntryId}`}
-                >
-                  {dataObject.find((d) => d.id === selectedEntryId)?.id}
+                <motion.p layout className={styles.expanded__title} layoutId={`title_${selectedEntryId}`}>
+                  {selectedObject?.id}
                 </motion.p>
                 <motion.div
                   initial={{ scaleX: 0 }}
