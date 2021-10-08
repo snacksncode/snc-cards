@@ -225,10 +225,10 @@ const wordsData = [
   },
 ];
 
-const exported = {
+const exported: Data = {
   id: "english",
   data: wordsData,
-  lang: "english",
+  class: "EN",
   tags: ["english"],
 };
 

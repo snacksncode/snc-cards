@@ -1,6 +1,10 @@
 interface Data {
-  data: any[];
+  data: WordData[];
   id: string;
   tags: string[];
-  lang: string;
+  class: "EN" | "DE" | "?MATH";
+}
+interface WordData {
+  question: string;
+  answer: string;
 }

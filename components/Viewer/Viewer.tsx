@@ -1,14 +1,21 @@
 import styles from "./Viewer.module.scss";
 import FlipCard from "@components/FlipCard";
-import React, { useEffect, useRef, useState } from "react";
+import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { animate, AnimatePresence, motion } from "framer-motion";
 import Play from "icons/Play";
+import { MathJaxContext } from "better-react-mathjax";
 
 interface Props {
-  data: any;
+  data: WordData[];
+  dataClass: Data["class"];
 }
 
-const Viewer = ({ data }: Props) => {
+const DataWrapper = ({ type, children }: PropsWithChildren<{ type: Data["class"] }>) => {
+  if (type === "?MATH") return <MathJaxContext>{children}</MathJaxContext>;
+  return <>{children}</>;
+};
+
+const Viewer = ({ data, dataClass }: Props) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const percentageRef = useRef<HTMLParagraphElement>(null);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
@@ -59,13 +66,17 @@ const Viewer = ({ data }: Props) => {
                 0.00%
               </p>
             </div>
-            <AnimatePresence>
-              {data.map((d: any, i: number) => {
-                {
-                  return selectedIndex === i && <FlipCard onAnswer={onAnswer} key={i} data={d} />;
-                }
-              })}
-            </AnimatePresence>
+            <DataWrapper type={dataClass}>
+              <AnimatePresence>
+                {data.map((d: any, i: number) => {
+                  {
+                    return (
+                      selectedIndex === i && <FlipCard dataClass={dataClass} onAnswer={onAnswer} key={i} data={d} />
+                    );
+                  }
+                })}
+              </AnimatePresence>
+            </DataWrapper>
           </motion.div>
         ) : (
           <>

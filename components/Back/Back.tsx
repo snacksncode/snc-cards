@@ -1,3 +1,4 @@
+import { MathJax } from "better-react-mathjax";
 import classNames from "classnames";
 import React from "react";
 import styles from "./Back.module.scss";
@@ -5,6 +6,7 @@ import styles from "./Back.module.scss";
 interface Props {
   data: string;
   isMobile: boolean | undefined;
+  dataClass: Data["class"];
 }
 
 // function formatData(data: string) {
@@ -27,15 +29,23 @@ interface Props {
 //   );
 // }
 
-function formatData(data: string) {
+function formatData(data: string, dataClass: Data["class"]) {
+  if (dataClass === "?MATH") {
+    return (
+      <div className={styles.answer__text}>
+        <MathJax>{String.raw`${data}`}</MathJax>
+        {/* <MathJax>{"\\(\\frac{10}{4x} \\approx 2^{12}\\)"}</MathJax> */}
+      </div>
+    );
+  }
   return <div className={styles.answer__text}>{data}</div>;
 }
 
-const Back = ({ data, isMobile }: Props) => {
+const Back = ({ data, isMobile, dataClass }: Props) => {
   const wrapperClasses = classNames(styles.wrapper, {
     [`${styles["wrapper--mobile"]}`]: isMobile,
   });
-  return <div className={wrapperClasses}>{formatData(data)}</div>;
+  return <div className={wrapperClasses}>{formatData(data, dataClass)}</div>;
 };
 
 export default Back;

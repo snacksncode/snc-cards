@@ -14,17 +14,17 @@ export async function getData() {
   return data;
 }
 
-let loadedData: any[] | null = null;
+let loadedData: Data[] | null = null;
 
-async function loadData(paths: string[]): Promise<any[]> {
+async function loadData(paths: string[]) {
   if (loadedData != null) return loadedData;
   loadedData = [];
   for (const path of paths) {
-    const importedData = (await import(`./${path}`)).default;
+    const importedData: Data = (await import(`./${path}`)).default;
     const dataObject = {
       id: importedData.id,
       data: importedData.data,
-      lang: importedData.lang,
+      class: importedData.class,
       tags: importedData.tags,
     };
     loadedData.push(dataObject);

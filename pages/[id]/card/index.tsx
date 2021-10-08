@@ -4,15 +4,16 @@ import { getData } from "@data/exporter";
 import shuffle from "utils/shuffle";
 
 interface Props {
-  data: any[];
+  data: WordData[];
+  dataClass: Data["class"];
 }
 
-export default function CardId({ data }: Props) {
+export default function CardId({ data, dataClass }: Props) {
   const [shuffledData, setShuffledData] = useState(data);
   useEffect(() => {
     setShuffledData((data) => shuffle(data));
   }, [data]);
-  return <Viewer data={shuffledData} />;
+  return <Viewer dataClass={dataClass} data={shuffledData} />;
 }
 
 export async function getStaticPaths() {
@@ -24,8 +25,8 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: any) {
-  const data = (await getData()).find((d) => d.id === params.id)?.data;
+  const data = (await getData()).find((d) => d.id === params.id);
   return {
-    props: { data: data },
+    props: { data: data?.data, dataClass: data?.class },
   };
 }

@@ -47,11 +47,12 @@
   border: 2px solid var(--clr-background-accent);
   background-color: var(--clr-background-accent);
   overflow: hidden;
+  transition: border-color 250ms ease;
   padding: 1rem;
   cursor: pointer;
   &:hover,
   &:focus-within {
-    border-color: var(--clr-accent-peachy);
+    border-color: var(--clr-card-accent);
   }
   &__title {
     margin: 0;
@@ -84,17 +85,55 @@
   position: fixed;
   inset: 0;
   margin: auto;
-  max-width: 450px;
+  max-width: 550px;
   width: calc(100% - 2rem);
   height: fit-content;
+  max-height: 90vh;
   border-radius: 4px;
   padding: 2rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border: 2px solid var(--clr-background-accent);
   background-color: var(--clr-background-accent);
   &__title {
-    margin: 0;
+    margin: 0.25em 0;
     font-size: 2.5rem;
-    font-weight: 700;
+    font-weight: 500;
+    line-height: 120%;
+  }
+  &__subheading {
+    font-size: 0.85rem;
+    color: var(--clr-card-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  &__close {
+    background-color: transparent;
+    cursor: pointer;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    svg {
+      width: 2rem;
+      height: 2rem;
+      color: var(--clr-card-accent);
+    }
+  }
+  &__buttons {
+    display: flex;
+    gap: 2rem;
+    a {
+      color: var(--clr-card-accent);
+    }
+  }
+  &__underline {
+    width: 100%;
+    transform-origin: left;
+    height: 3px;
+    background-color: var(--clr-card-accent);
   }
 }

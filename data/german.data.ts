@@ -117,10 +117,10 @@ const wordsData = [
   },
 ];
 
-const exported = {
+const exported: Data = {
   id: "german",
   data: wordsData,
-  lang: "german",
+  class: "DE",
   tags: ["german"],
 };
 

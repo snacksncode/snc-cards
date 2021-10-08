@@ -13,14 +13,10 @@ const variants = {
   flipped: { transform: "rotateX(180deg)" },
 };
 
-interface Data {
-  question: string;
-  answer: string;
-}
-
 interface Props {
-  data: Data;
+  data: WordData;
   onAnswer: Function;
+  dataClass: Data["class"];
 }
 
 const Correct = ({ onAnimationComplete }: { onAnimationComplete: Function }) => {
@@ -73,7 +69,7 @@ const Wrong = ({ onAnimationComplete }: { onAnimationComplete: Function }) => {
   );
 };
 
-const FlipCard = ({ data, onAnswer }: Props) => {
+const FlipCard = ({ data, onAnswer, dataClass }: Props) => {
   const allowKeyboardEvents = useRef(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [answeredRight, setAnsweredRight] = useState<boolean | null>(null);
@@ -81,8 +77,12 @@ const FlipCard = ({ data, onAnswer }: Props) => {
 
   const getCardWidth = () => {
     if (!width) return { isMobile: undefined, cardWidth: undefined };
-    const contentSize = Math.max(data.answer.replace(" | ", "").length, data.question.length);
-    let calculatedWidth = Math.max(contentSize * 48, 300);
+    // math breaks stuff
+    const contentSize =
+      dataClass !== "?MATH"
+        ? Math.max(data.answer.replace(" | ", "").length, data.question.length)
+        : data.question.length;
+    let calculatedWidth = Math.max(contentSize * 8 * 2.85 + 128, 350);
     const isMobile = width - 320 < calculatedWidth;
     if (isMobile) calculatedWidth = width - 64;
     return { isMobile: isMobile, cardWidth: calculatedWidth };
@@ -189,7 +189,7 @@ const FlipCard = ({ data, onAnswer }: Props) => {
             {answeredRight === true && <Correct onAnimationComplete={forwardAnswer} />}
             {answeredRight === false && <Wrong onAnimationComplete={forwardAnswer} />}
           </AnimatePresence>
-          <Back isMobile={isMobile} data={data.answer} />
+          <Back dataClass={dataClass} isMobile={isMobile} data={data.answer} />
           <div className={styles.repeated_watermark} data-text="answer">
             answer
           </div>

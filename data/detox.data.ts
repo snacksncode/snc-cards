@@ -109,10 +109,10 @@ const wordsData = [
   },
 ];
 
-const exported = {
+const exported: Data = {
   id: "detox",
   data: wordsData,
-  lang: "german",
+  class: "DE",
   tags: ["tag"],
 };
 
