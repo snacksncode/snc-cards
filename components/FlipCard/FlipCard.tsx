@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { Ref, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Back from "../Back";
 import Front from "../Front";
 import styles from "./FlipCard.module.scss";
@@ -70,7 +70,6 @@ const Wrong = ({ onAnimationComplete }: { onAnimationComplete: Function }) => {
 };
 
 const FlipCard = ({ data, onAnswer, dataClass }: Props) => {
-  const allowKeyboardEvents = useRef(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [answeredRight, setAnsweredRight] = useState<boolean | null>(null);
   const { width } = useWindowSize();
@@ -98,8 +97,13 @@ const FlipCard = ({ data, onAnswer, dataClass }: Props) => {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (isFlipped || answeredRight != null) return;
-      if (e.key === "Enter") setIsFlipped(true);
+      if (!isFlipped || answeredRight != null) return;
+      if (e.key === "Enter" || e.key === " ") {
+        setAnsweredRight(true);
+      }
+      if (e.key === "Backspace" || e.key === "Escape") {
+        setAnsweredRight(false);
+      }
     };
     document.addEventListener("keydown", handler);
     return () => {
@@ -109,15 +113,8 @@ const FlipCard = ({ data, onAnswer, dataClass }: Props) => {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (!isFlipped || !allowKeyboardEvents.current || answeredRight != null) return;
-      if (e.key === "Enter" || e.key === " ") {
-        allowKeyboardEvents.current = false;
-        setAnsweredRight(true);
-      }
-      if (e.key === "Backspace" || e.key === "Escape") {
-        allowKeyboardEvents.current = false;
-        setAnsweredRight(false);
-      }
+      if (isFlipped || answeredRight != null) return;
+      if (e.key === "Enter") setIsFlipped(true);
     };
     document.addEventListener("keydown", handler);
     return () => {
@@ -134,7 +131,6 @@ const FlipCard = ({ data, onAnswer, dataClass }: Props) => {
       exit={{ opacity: 0, x: "-150%", scale: 0.25 }}
       transition={{ type: "spring", damping: 12 }}
       onClick={() => setIsFlipped(true)}
-      onAnimationComplete={() => (allowKeyboardEvents.current = true)}
       className={wrapperClasses}
       tabIndex={0}
       style={{
@@ -174,8 +170,6 @@ const FlipCard = ({ data, onAnswer, dataClass }: Props) => {
         initial="unflipped"
         transition={{ type: "spring", stiffness: 100 }}
         animate={isFlipped ? "flipped" : "unflipped"}
-        onAnimationStart={() => (allowKeyboardEvents.current = false)}
-        onAnimationComplete={() => (allowKeyboardEvents.current = true)}
         className={styles.content}
       >
         <div className={styles.front}>
