@@ -115,7 +115,7 @@ const Home: NextPage<Props> = ({ dataObject }) => {
                       className={styles.entry__title}
                       style={{ display: "block" }}
                     >
-                      {entryData.id}
+                      {entryData.title}
                     </motion.p>
                   </motion.div>
                 );
@@ -134,6 +134,7 @@ const Home: NextPage<Props> = ({ dataObject }) => {
           </AnimatePresence>
         </motion.div>
         <AnimatePresence>
+          {console.log(selectedObject)}
           {selectedEntryId && (
             <>
               <Overlay
@@ -153,79 +154,58 @@ const Home: NextPage<Props> = ({ dataObject }) => {
               >
                 <motion.button
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, transition: { delay: 0.25 } }}
+                  animate={{ opacity: 1 }}
                   exit={{ opacity: 0, transition: { duration: 0.1 } }}
                   onClick={() => setSelectedEntryId(null)}
                   className={styles.expanded__close}
                 >
                   <Close />
                 </motion.button>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, transition: { delay: 0.25 } }}
-                  exit={{ opacity: 0, transition: { duration: 0.1 } }}
-                  className={styles.expanded__subheading}
-                >
-                  title
-                </motion.div>
                 <motion.p layout className={styles.expanded__title} layoutId={`title_${selectedEntryId}`}>
-                  {selectedObject?.id}
+                  {selectedObject?.title}
                 </motion.p>
-                <motion.div
+                {/* <motion.div className={styles.expanded__subheading}>title</motion.div> */}
+                {/* <motion.div
                   initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1, transition: { delay: 0.5, damping: 20 } }}
+                  animate={{ scaleX: 1, transition: { delay: 0.25, damping: 20 } }}
                   exit={{ opacity: 0, transition: { duration: 0.05 } }}
                   className={styles.expanded__underline}
-                ></motion.div>
-                <motion.p
-                  exit={{ opacity: 0, transition: { duration: 0.1 } }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt at temporibus ullam aperiam alias
-                  fugiat itaque. Dicta commodi adipisci officia.
-                </motion.p>
-                <motion.div className={styles.expanded__buttons}>
+                ></motion.div> */}
+                <p className={styles.expanded__date}>
+                  {new Date().toLocaleString("en-US", {
+                    dateStyle: "long",
+                    timeStyle: "medium",
+                  })}
+                </p>
+                <div className={styles.expanded__label}>Description</div>
+                <p className={styles.expanded__desc}>
+                  {selectedObject?.description == null ? "No description provided" : selectedObject.description}
+                </p>
+
+                <div className={styles.expanded__label}>Class</div>
+                <p className={styles.expanded__desc}>Unspecified</p>
+
+                <div className={styles.expanded__buttons}>
                   <Link passHref={true} href={`${selectedObject?.id}/card`}>
-                    <motion.a
-                      key={selectedObject?.id}
-                      whileHover={{ y: -6 }}
-                      initial={{ opacity: 0, y: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0, transition: { duration: 0.1 } }}
-                    >
+                    <a key={selectedObject?.id}>
                       <Cards />
                       Cards
-                    </motion.a>
+                    </a>
                   </Link>
 
                   <Link passHref={true} href={`${selectedObject?.id}/list`}>
-                    <motion.a
-                      key={selectedObject?.id}
-                      whileHover={{ y: -6 }}
-                      initial={{ opacity: 0, y: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0, transition: { duration: 0.1 } }}
-                      data-new-tag
-                    >
+                    <a key={selectedObject?.id} data-new-tag>
                       <List />
                       List
-                    </motion.a>
+                    </a>
                   </Link>
                   <Link passHref={true} href={`${selectedObject?.id}/spelling`}>
-                    <motion.a
-                      key={selectedObject?.id}
-                      whileHover={{ y: -6 }}
-                      initial={{ opacity: 0, y: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0, transition: { duration: 0.1 } }}
-                      data-new-tag
-                    >
+                    <a key={selectedObject?.id} data-new-tag>
                       <Edit />
                       Spelling
-                    </motion.a>
+                    </a>
                   </Link>
-                </motion.div>
+                </div>
               </motion.div>
             </>
           )}

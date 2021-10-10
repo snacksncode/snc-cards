@@ -51,10 +51,7 @@
   transition: border-color 250ms ease;
   padding: 1rem;
   cursor: pointer;
-  &:hover,
-  &:focus-within {
-    border-color: var(--clr-card-accent);
-  }
+
   &__title {
     margin: 0;
     font-size: 1rem;
@@ -95,27 +92,41 @@
   max-height: 90vh;
   overflow: auto;
   border-radius: 4px;
+  will-change: transform, opacity;
   padding: 2rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border: 2px solid var(--clr-background-400);
   background-color: var(--clr-background-400);
   &__title {
-    margin: 0.25em 0;
-    font-size: 2.5rem;
-    font-weight: 500;
+    margin: 0;
+    font-size: 2rem;
+    max-width: 80%;
+    font-weight: 700;
     line-height: 120%;
   }
-  &__subheading {
-    font-size: 0.85rem;
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5em;
     color: var(--clr-card-accent);
     text-transform: uppercase;
     letter-spacing: 2px;
+  }
+  &__desc {
+    margin-top: 0;
+  }
+  &__date {
+    font-weight: 500;
+    font-size: 0.75rem;
+    margin-top: 0.5em;
+    margin-bottom: 2rem;
+    color: var(--clr-text-muted);
   }
   &__close {
     background-color: transparent;
     cursor: pointer;
     position: absolute;
-    top: 1rem;
+    top: 1.25rem;
     right: 1rem;
     padding: 1rem;
     display: flex;
@@ -136,17 +147,15 @@
     margin-top: 1rem;
     gap: 1.5rem;
     a {
+      flex-basis: 100%;
       display: flex;
       padding: 1rem;
-      flex-basis: 100%;
       border-radius: 4px;
       flex-direction: column;
       align-items: center;
       font-size: 0.75rem;
-      isolation: isolate;
       justify-content: center;
       position: relative;
-      will-change: transform;
       font-weight: 700;
       background-color: var(--clr-background-500);
       color: var(--clr-card-accent);
@@ -213,6 +222,12 @@
 }
 
 @media screen and (min-width: 400px) {
+  .entry {
+    &:hover,
+    &:focus-within {
+      border-color: var(--clr-card-accent);
+    }
+  }
   .grid {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
@@ -222,10 +237,17 @@
       grid-template-columns: 1fr 1fr 1fr;
       gap: 2rem;
       a {
+        will-change: transform;
+        transform: translateY(0px);
+        transition: transform 250ms ease;
         font-size: 1rem;
         svg {
           width: 1.5rem;
           height: 1.5rem;
+        }
+        &:hover,
+        &:focus {
+          transform: translateY(-6px);
         }
         &[data-new-tag]::after {
           font-size: 0.75rem;

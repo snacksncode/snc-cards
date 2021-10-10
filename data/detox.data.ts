@@ -112,8 +112,10 @@ const wordsData = [
 const exported: Data = {
   id: "detox",
   data: wordsData,
-  class: "DE",
-  tags: ["tag"],
+  description: 'Words needed for short test on topic "Digital Detox"',
+  title: "Digital Detox",
+  class: "EN",
+  tags: ["detox", "prof", "digital"],
 };
 
 export default exported;

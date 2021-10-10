@@ -120,6 +120,8 @@ const wordsData = [
 const exported: Data = {
   id: "german",
   data: wordsData,
+  description: null,
+  title: "Reservierung",
   class: "DE",
   tags: ["german"],
 };

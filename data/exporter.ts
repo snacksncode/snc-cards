@@ -21,10 +21,12 @@ async function loadData(paths: string[]) {
   loadedData = [];
   for (const path of paths) {
     const importedData: Data = (await import(`./${path}`)).default;
-    const dataObject = {
+    const dataObject: Data = {
       id: importedData.id,
       data: importedData.data,
       class: importedData.class,
+      description: importedData.description,
+      title: importedData.title,
       tags: importedData.tags,
     };
     loadedData.push(dataObject);

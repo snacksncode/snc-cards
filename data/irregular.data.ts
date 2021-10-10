@@ -348,6 +348,8 @@ const wordsData = [
 const exported: Data = {
   id: "irregular-words-english",
   data: wordsData,
+  description: "Just some irregular verbs",
+  title: "Irregular Verbs",
   class: "EN",
   tags: ["english", "irregular"],
 };

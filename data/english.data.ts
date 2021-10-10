@@ -228,6 +228,8 @@ const wordsData = [
 const exported: Data = {
   id: "english",
   data: wordsData,
+  description: "Some words needed for a short test on Professional English",
+  title: "Prof. Eng. Short test",
   class: "EN",
   tags: ["english"],
 };

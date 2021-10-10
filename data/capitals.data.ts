@@ -152,7 +152,9 @@ const wordData: WordData[] = [
 const exported: Data = {
   data: wordData,
   class: "OTHER",
-  id: "capitals",
+  id: "geo-capitals",
+  title: "Capitals of Cities",
+  description: null,
   tags: ["capitials", "geography"],
 };
 
