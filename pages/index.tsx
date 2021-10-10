@@ -77,9 +77,6 @@ const Home: NextPage<Props> = ({ dataObject }) => {
   return (
     <main className={styles.wrapper}>
       <h1>Select the topic that you want to revise</h1>
-      {/* <MathJaxContext>
-        <MathJax>{"\\(\\frac{10}{4x} \\approx 2^{12}\\)"}</MathJax>
-      </MathJaxContext> */}
       <label htmlFor="search">Look for topics</label>
       <div className={styles.field}>
         <input id="search" type="text" value={inputValue} onChange={handleInputChange} />
@@ -101,7 +98,6 @@ const Home: NextPage<Props> = ({ dataObject }) => {
                   layoutId={`container_${entryData.id}`}
                   onClick={() => setSelectedEntryId(entryData.id)}
                 >
-                  {/* <Link passHref={true} key={entryData.id} href={`${entryData.id}/card`}> */}
                   <motion.p
                     layout={selectedEntryId ? true : "position"}
                     layoutId={`title_${entryData.id}`}
@@ -110,7 +106,6 @@ const Home: NextPage<Props> = ({ dataObject }) => {
                   >
                     {entryData.id}
                   </motion.p>
-                  {/* </Link> */}
                 </motion.div>
               );
             })}
@@ -156,7 +151,7 @@ const Home: NextPage<Props> = ({ dataObject }) => {
                 </motion.p>
                 <motion.div
                   initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1, transition: { delay: 0.5 } }}
+                  animate={{ scaleX: 1, transition: { delay: 0.5, damping: 20 } }}
                   exit={{ opacity: 0, transition: { duration: 0.05 } }}
                   className={styles.expanded__underline}
                 ></motion.div>
