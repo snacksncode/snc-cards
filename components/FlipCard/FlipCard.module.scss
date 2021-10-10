@@ -43,7 +43,7 @@
   display: flex;
   height: 100%;
   backface-visibility: hidden;
-  background-color: var(--clr-background-accent);
+  background-color: var(--clr-background-400);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -109,7 +109,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   > span {
-    color: var(--clr-background-accent);
+    color: var(--clr-background-400);
     font-weight: 700;
     font-size: 2rem;
   }
@@ -137,7 +137,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   > span {
-    color: var(--clr-background-accent);
+    color: var(--clr-background-400);
     font-weight: 700;
     font-size: 2rem;
   }
