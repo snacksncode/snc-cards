@@ -65,7 +65,7 @@ const Home: NextPage<Props> = ({ dataObject }) => {
   );
 
   useEffect(() => {
-    const TIMEOUT_MS = inputValue.length === 0 ? 0 : 250;
+    const TIMEOUT_MS = inputValue.length === 0 ? 0 : 400;
     const timeoutId = window.setTimeout(() => {
       filter(inputValue);
     }, TIMEOUT_MS);
@@ -84,31 +84,43 @@ const Home: NextPage<Props> = ({ dataObject }) => {
       <AnimateSharedLayout type="crossfade">
         <motion.div className={styles.grid}>
           <AnimatePresence>
-            {filteredData.map((d, i) => {
-              const entryData = (d as Fuse.FuseResult<Data>).item ? (d as Fuse.FuseResult<Data>).item : (d as Data);
-              return (
-                <motion.div
-                  layout
-                  key={entryData.id}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (i + 1) } }}
-                  exit={{ opacity: 0 }}
-                  className={styles.entry}
-                  style={{ "--clr-card-accent": getAccentForClass(entryData.class) } as any}
-                  layoutId={`container_${entryData.id}`}
-                  onClick={() => setSelectedEntryId(entryData.id)}
-                >
-                  <motion.p
-                    layout={selectedEntryId ? true : "position"}
-                    layoutId={`title_${entryData.id}`}
-                    className={styles.entry__title}
-                    style={{ display: "block" }}
+            {filteredData.length > 0 ? (
+              filteredData.map((d, i) => {
+                const entryData = (d as Fuse.FuseResult<Data>).item ? (d as Fuse.FuseResult<Data>).item : (d as Data);
+                return (
+                  <motion.div
+                    layout
+                    key={entryData.id}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (i + 1) } }}
+                    exit={{ opacity: 0 }}
+                    className={styles.entry}
+                    style={{ "--clr-card-accent": getAccentForClass(entryData.class) } as any}
+                    layoutId={`container_${entryData.id}`}
+                    onClick={() => setSelectedEntryId(entryData.id)}
                   >
-                    {entryData.id}
-                  </motion.p>
-                </motion.div>
-              );
-            })}
+                    <motion.p
+                      layout={selectedEntryId ? true : "position"}
+                      layoutId={`title_${entryData.id}`}
+                      className={styles.entry__title}
+                      style={{ display: "block" }}
+                    >
+                      {entryData.id}
+                    </motion.p>
+                  </motion.div>
+                );
+              })
+            ) : (
+              <motion.div
+                className={styles.no_results}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                key="no-results"
+              >
+                <h1>No Results</h1>
+              </motion.div>
+            )}
           </AnimatePresence>
         </motion.div>
         <AnimatePresence>

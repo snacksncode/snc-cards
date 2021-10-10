@@ -31,14 +31,16 @@ a {
   display: flex;
   align-items: center;
   &::after {
-    content: "BETA";
+    content: "Alpha";
+    position: relative;
     margin-left: 0.5em;
     font-size: 0.65rem;
     font-weight: 700;
     white-space: nowrap;
     padding: 0.125em 0.35em;
-    background-color: var(--clr-text);
+    background-color: var(--clr-card-accent);
     color: var(--clr-background);
+    transition: transform 350ms ease, opacity 450ms ease-out;
     border-radius: 2px;
   }
 }
