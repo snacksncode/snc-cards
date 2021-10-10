@@ -25,3 +25,20 @@ a {
 * {
   box-sizing: border-box;
 }
+
+[data-beta-tag] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  &::after {
+    content: "BETA";
+    margin-left: 0.5em;
+    font-size: 0.65rem;
+    font-weight: 700;
+    white-space: nowrap;
+    padding: 0.125em 0.35em;
+    background-color: var(--clr-text);
+    color: var(--clr-background);
+    border-radius: 2px;
+  }
+}

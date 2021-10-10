@@ -163,18 +163,23 @@ const Home: NextPage<Props> = ({ dataObject }) => {
                   Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt at temporibus ullam aperiam alias
                   fugiat itaque. Dicta commodi adipisci officia.
                 </motion.p>
-                <div className={styles.expanded__buttons}>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1, transition: { delay: 0.5 } }}
+                  exit={{ opacity: 0, transition: { duration: 0.05 } }}
+                  className={styles.expanded__buttons}
+                >
                   <Link href={`${selectedObject?.id}/card`}>
                     <a>Cards</a>
                   </Link>
 
                   <Link href={`${selectedObject?.id}/list`}>
-                    <a>List</a>
+                    <a data-beta-tag>List</a>
                   </Link>
                   <Link href={`${selectedObject?.id}/spelling`}>
-                    <a>Spelling</a>
+                    <a data-beta-tag>Spelling</a>
                   </Link>
-                </div>
+                </motion.div>
               </motion.div>
             </>
           )}

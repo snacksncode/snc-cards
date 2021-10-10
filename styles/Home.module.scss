@@ -126,9 +126,12 @@
     }
   }
   &__buttons {
-    display: flex;
+    display: grid;
     gap: 2rem;
+    grid-template-columns: repeat(3, auto);
     a {
+      text-align: left;
+      font-weight: 700;
       color: var(--clr-card-accent);
     }
   }
