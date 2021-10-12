@@ -5,7 +5,7 @@ import Close from "icons/Close";
 import Edit from "icons/Edit";
 import List from "icons/List";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "./EntryExpanded.module.scss";
 
 interface Props {
@@ -15,9 +15,23 @@ interface Props {
 }
 
 const EntryExpanded = ({ data, selectedId, selectEntry }: Props) => {
+  const ref = useRef<null | HTMLDivElement>(null);
+
   const handleClose = () => {
     selectEntry(null);
   };
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") selectEntry(null);
+    };
+    window.addEventListener("keydown", handler);
+    ref.current?.focus();
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
+  }, [selectEntry]);
+
   return (
     <motion.div
       style={
@@ -25,6 +39,8 @@ const EntryExpanded = ({ data, selectedId, selectEntry }: Props) => {
           "--clr-card-accent": getAccentForClass(data.class),
         } as any
       }
+      ref={ref}
+      tabIndex={0}
       className={styles.container}
       layout
       layoutId={`container_${selectedId}`}

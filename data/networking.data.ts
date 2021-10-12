@@ -52,7 +52,7 @@ const wordData: WordData[] = [
     answer: "under scrutiny",
   },
   {
-    question: '"to increase or make something increase, especially an emotion or effect"',
+    question: '"to increase, especially an emotion or effect"',
     answer: "to heighten / heightened",
   },
   {
@@ -96,7 +96,7 @@ const wordData: WordData[] = [
     answer: "develop rapport",
   },
   {
-    question: "spotkanie biznesowe / nazwiazywanie kontaktów biznesowych / tworzenie sieci",
+    question: "nazwiazywanie kontaktów biznesowych",
     answer: "networking",
   },
   {

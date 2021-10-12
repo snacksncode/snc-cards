@@ -2,7 +2,6 @@ import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./ListEntries.module.scss";
 import Fuse from "fuse.js";
-import useBlockScrolling from "@utils/useBlockScrolling";
 import EntryCollapsed from "@components/EntryCollapsed";
 import Overlay from "@components/Overlay";
 import EntryExpanded from "@components/EntryExpanded";
@@ -14,8 +13,6 @@ interface Props {
 type FilteredData = Fuse.FuseResult<Data>[] | Data[];
 
 const ListEntries = ({ dataArray, filterString }: Props) => {
-  const blockScrolling = useBlockScrolling();
-  const expandedRef = useRef<HTMLDivElement | null>(null);
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const [filteredData, setFilteredData] = useState<FilteredData>(dataArray);
   const fuse = useRef(
@@ -38,9 +35,12 @@ const ListEntries = ({ dataArray, filterString }: Props) => {
   };
 
   useEffect(() => {
-    const shouldBlock = selectedEntryId == null ? false : true;
-    blockScrolling(shouldBlock);
-  }, [selectedEntryId, blockScrolling]);
+    const shouldBlock = selectedEntryId == null ? "auto" : "hidden";
+    document.body.style.overflowY = shouldBlock;
+    return () => {
+      document.body.style.overflowY = "auto";
+    };
+  }, [selectedEntryId]);
 
   useEffect(() => {
     if (!filterString) {

@@ -13,6 +13,7 @@ export default function CardId({ data }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [showResult, setShowResult] = useState(false);
   const selectedData = shuffledData[selectedIndex];
+
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };

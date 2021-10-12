@@ -113,6 +113,7 @@ const FlipCard = ({ data, onAnswer, dataClass }: Props) => {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if (answeredRight != null) return;
       if (isFlipped || answeredRight != null) return;
       if (e.key === "Enter") setIsFlipped(true);
     };
