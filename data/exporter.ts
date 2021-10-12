@@ -1,10 +1,10 @@
 import fg from "fast-glob";
-import { importNewFiles } from "./handleImports";
+// import { importNewFiles } from "./handleImports";
 
 // this is used for faster convertion from .txt inside of /import to a .data.ts file
 // env variable is only set locally within dev enviroment
-const shouldImportNewFiles = process.env.IMPORT_NEW_FILES === "1";
-if (shouldImportNewFiles) importNewFiles();
+// const shouldImportNewFiles = process.env.IMPORT_NEW_FILES === "1";
+// if (shouldImportNewFiles) importNewFiles(["wear-german.import.txt"]);
 
 const FILE_PATTERN = "**/*.data.*";
 

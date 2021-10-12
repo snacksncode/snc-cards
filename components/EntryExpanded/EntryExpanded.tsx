@@ -50,9 +50,9 @@ const EntryExpanded = ({ data, selectedId, selectEntry }: Props) => {
       </p>
       <div className={styles.label}>Description</div>
       <p className={styles.info}>{data.description || "No description provided"}</p>
-
+      {/* 
       <div className={styles.label}>Class</div>
-      <p className={styles.info}>Unspecified</p>
+      <p className={styles.info}>Unspecified</p> */}
 
       <div className={styles.buttons}>
         <Link href={`${data.id}/card`}>
