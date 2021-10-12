@@ -1,18 +1,17 @@
 .wrapper {
   padding: 2rem;
   margin: 0 auto;
-  max-width: 700px;
-  height: 100%;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
-  h1 {
-    font-size: 3rem;
-    font-weight: 500;
-    line-height: 125%;
-  }
+}
+
+.field {
   label {
     display: block;
     cursor: pointer;
+    font-size: 1.125rem;
+    font-weight: 500;
     margin-bottom: 0.5rem;
   }
   input {
@@ -31,21 +30,16 @@
   }
 }
 
-.field {
-  display: flex;
+.heading {
+  margin-top: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 125%;
 }
 
-.center {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  isolation: isolate;
-}
-
-.no_results {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media (min-width: 450px) {
+  .heading {
+    font-size: clamp(2.5rem, 10vw, 3rem);
+    font-weight: 700;
+  }
 }

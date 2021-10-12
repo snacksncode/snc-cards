@@ -1,20 +1,27 @@
 import React from "react";
 import { getData } from "@data/exporter";
+import styles from "@styles/List.module.scss";
 interface Props {
   data: any[];
 }
 
 export default function CardId({ data }: Props) {
   return (
-    <ul>
-      {data.map((d) => {
-        return (
-          <li key={`${d.question}-${d.answer}`}>
-            {d.question} -&gt; {d.answer}
-          </li>
-        );
-      })}
-    </ul>
+    <div className={styles.container}>
+      <header className={styles.top}>
+        <p>Question</p>
+        <p>Answer</p>
+      </header>
+      <ul className={styles.list}>
+        {data.map((d) => {
+          return (
+            <li className={styles.list__item} key={`${d.question}-${d.answer}`}>
+              {d.question} -&gt; {d.answer}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 

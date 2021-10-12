@@ -1,0 +1,19 @@
+.container {
+  margin: 0 auto;
+  width: calc(100% - 3rem);
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  .top {
+    display: flex;
+    p {
+      flex-basis: 100%;
+    }
+  }
+  .list {
+    list-style-type: none;
+    &__item {
+      color: lightskyblue;
+    }
+  }
+}

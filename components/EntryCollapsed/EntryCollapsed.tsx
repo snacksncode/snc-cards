@@ -1,6 +1,6 @@
 import getAccentForClass from "@utils/getAccentForClass";
 import { motion } from "framer-motion";
-import { KeyboardEventHandler, MouseEvent, MutableRefObject, Ref } from "react";
+import { KeyboardEventHandler, MouseEvent } from "react";
 import styles from "./EntryCollapsed.module.scss";
 
 interface Props {
@@ -16,6 +16,10 @@ const Fade = () => {
 
 const EntryIcon = () => {
   return <motion.div layout className={styles.icon}></motion.div>;
+};
+
+const WordsCount = ({ amount }: { amount: number }) => {
+  return <div className={styles.count}>{amount}</div>;
 };
 
 const EntryCollapsed = ({ data, onSelect, selectedId, entryIndex }: Props) => {
@@ -53,6 +57,7 @@ const EntryCollapsed = ({ data, onSelect, selectedId, entryIndex }: Props) => {
       >
         {data.title}
       </motion.p>
+      <WordsCount amount={data.data.length} />
     </motion.div>
   );
 };
