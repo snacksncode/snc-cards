@@ -11,6 +11,9 @@ body {
   font-family: "Poppins", sans-serif;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent; //remove annoying highlight on mobile chrome
+  &.no-scroll {
+    overflow-y: hidden;
+  }
 }
 
 #__next {

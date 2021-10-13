@@ -1,5 +1,5 @@
 import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import styles from "./ListEntries.module.scss";
 import Fuse from "fuse.js";
 import EntryCollapsed from "@components/EntryCollapsed";
@@ -35,10 +35,10 @@ const ListEntries = ({ dataArray, filterString }: Props) => {
   };
 
   useEffect(() => {
-    const shouldBlock = selectedEntryId == null ? "auto" : "hidden";
-    document.body.style.overflowY = shouldBlock;
+    const shouldBlock = selectedEntryId == null ? false : true;
+    document.body.classList.toggle("no-scroll", shouldBlock);
     return () => {
-      document.body.style.overflowY = "auto";
+      document.body.classList.remove("no-scroll");
     };
   }, [selectedEntryId]);
 
