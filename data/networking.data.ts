@@ -12,8 +12,8 @@ const wordData: WordData[] = [
     answer: "grooming",
   },
   {
-    question: "wpłacać coś",
-    answer: "deposit (something)",
+    question: "to leave something somewhere",
+    answer: "deposit something",
   },
   {
     question: "nosowy",

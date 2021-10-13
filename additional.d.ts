@@ -11,3 +11,5 @@ interface WordData {
   question: string;
   answer: string;
 }
+
+declare module "shoetest";

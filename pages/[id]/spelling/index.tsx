@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { normalizeSync } from "normalize-diacritics";
+import shoetest from "shoetest";
 import { getData } from "@data/exporter";
 import shuffle from "utils/shuffle";
 interface Props {
@@ -23,8 +23,8 @@ export default function CardId({ data }: Props) {
   };
   const verdict = () => {
     if (!inputRef.current) return "bruh";
-    const normalized = normalizeSync(selectedData.answer).toLowerCase();
-    const result = normalized === input.toLowerCase() ? "Correct" : "Nahhh";
+    const match = shoetest.test(selectedData.answer.toLowerCase(), input.toLowerCase()) as boolean;
+    const result = match === true ? "Correct" : "Nahhh";
     inputRef.current.value = "";
     return result;
   };
