@@ -112,7 +112,7 @@ const wordData: WordData[] = [
     answer: "mole/beauty spot",
   },
   {
-    question: "kolczk",
+    question: "kolczyk",
     answer: "piercing",
   },
   {
@@ -201,7 +201,7 @@ const wordData: WordData[] = [
   },
   {
     question: "rozwiązać buty",
-    answer: "unite the shoes",
+    answer: "untie the shoes",
   },
   {
     question: "workowaty",
