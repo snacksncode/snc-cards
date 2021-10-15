@@ -107,15 +107,75 @@ const wordData: WordData[] = [
     question: "celowo",
     answer: "deliberately",
   },
+  {
+    question: "a digital form of money produced by a public company",
+    answer: "a cryptocurrency",
+  },
+  {
+    question: "moving and transferring illegal money to make it seem legal",
+    answer: "money laundering",
+  },
+  {
+    question: "taking something losing legal authority",
+    answer: "a seizure",
+  },
+  {
+    question: "to keep something secret",
+    answer: "conceal",
+  },
+  {
+    question: "attracting a lot of attention in the media",
+    answer: "high-profile",
+  },
+  {
+    question: "a record of money received and paid",
+    answer: "a ledger",
+  },
+  {
+    question: "to build or create something again",
+    answer: "reconstruct",
+  },
+  {
+    question: "a situation where there is more effort to punish people for a specific crime",
+    answer: "a crackdown",
+  },
+  {
+    question: "a big part of the value of something",
+    answer: "major contributor",
+  },
+  {
+    question: "connected to",
+    answer: "associated",
+  },
+  {
+    question: "carry out something",
+    answer: "to conduct",
+  },
+  {
+    question: "the first stage of process",
+    answer: "starting point for",
+  },
+  {
+    question: "hidden",
+    answer: "to be masked",
+  },
+  {
+    question: "appearance or arrival of something",
+    answer: "emergence of",
+  },
+  {
+    question: "results of an action",
+    answer: "implications",
+  },
 ];
 
 const exported: Data = {
   data: wordData,
   class: "EN",
-  id: "en-hygiene-networking",
-  title: "Office Hygiene & Networking",
+  id: "en-hygiene-networking-bitcoin",
+  title: "Hygiene, Bitcoin & Networking",
   description: "Vocabulary for a short test",
-  tags: ["office", "hygiene", "english"],
+  tags: ["office", "hygiene", "bitcoin", "english"],
 };
 
 export default exported;
