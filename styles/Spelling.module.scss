@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  form {
+    display: flex;
+    margin-bottom: 3rem;
+    input {
+      font-size: 1.75rem;
+      padding: 0.125rem 0;
+      width: 1.75ch;
+      transition: border-color 150ms ease;
+      box-sizing: content-box;
+      background-color: transparent;
+      border: none;
+      border-bottom: 3px solid var(--clr-background-500);
+      font-weight: 700;
+      color: var(--clr-text);
+      text-align: center;
+      caret-color: var(--clr-accent-blue);
+      & + input {
+        margin-left: 0.125em;
+      }
+      &:focus {
+        border-color: var(--clr-accent-blue);
+        outline: none;
+      }
+    }
+  }
+  .space {
+    width: 3ch;
+    height: 100%;
+  }
+}

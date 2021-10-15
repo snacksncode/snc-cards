@@ -36,7 +36,7 @@ const EntryCollapsed = ({ data, onSelect, selectedId, entryIndex }: Props) => {
   return (
     <motion.div
       layout
-      tabIndex={0}
+      tabIndex={selectedId ? -1 : 0}
       onKeyPress={handleKeypress}
       initial={{ opacity: 0, y: -20 }}
       whileHover={{ scale: 1.03 }}

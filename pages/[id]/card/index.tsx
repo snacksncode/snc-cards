@@ -8,6 +8,8 @@ interface Props {
   dataClass: Data["class"];
 }
 
+// TODO: Re-Shuffle upon restart
+
 export default function CardId({ data, dataClass }: Props) {
   const [shuffledData, setShuffledData] = useState(data);
   useEffect(() => {

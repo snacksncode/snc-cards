@@ -5,13 +5,12 @@
   display: flex;
   flex-direction: column;
   .top {
-    display: flex;
-    p {
-      flex-basis: 100%;
-    }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
   .list {
-    list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     &__item {
       color: lightskyblue;
     }

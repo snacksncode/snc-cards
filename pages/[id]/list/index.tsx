@@ -12,15 +12,16 @@ export default function CardId({ data }: Props) {
         <p>Question</p>
         <p>Answer</p>
       </header>
-      <ul className={styles.list}>
+      <div className={styles.list}>
         {data.map((d) => {
           return (
-            <li className={styles.list__item} key={`${d.question}-${d.answer}`}>
-              {d.question} -&gt; {d.answer}
-            </li>
+            <div className={styles.list__item} key={`${d.question}-${d.answer}`}>
+              <div className={styles.question}>{d.question}</div>
+              <div className={styles.answer}>{d.answer}</div>
+            </div>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 }
