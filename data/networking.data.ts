@@ -4,11 +4,11 @@ const wordData: WordData[] = [
     answer: "a microbe",
   },
   {
-    question: 'patogeniczny / "to contain disease"',
+    question: "to contain disease",
     answer: "pathogenic",
   },
   {
-    question: 'pielęgnacja / "me time"',
+    question: "pielęgnacja",
     answer: "grooming",
   },
   {
@@ -116,7 +116,7 @@ const wordData: WordData[] = [
     answer: "money laundering",
   },
   {
-    question: "taking something losing legal authority",
+    question: "taking something using legal authority",
     answer: "a seizure",
   },
   {

@@ -82,6 +82,7 @@ const FlipCard = ({ data, onAnswer, dataClass }: Props) => {
         ? Math.max(data.answer.replace(" | ", "").length, data.question.length)
         : data.question.length;
     let calculatedWidth = Math.max(contentSize * 8 * 2.85 + 128, 350);
+    if (calculatedWidth > 1000) calculatedWidth /= 1.75;
     const isMobile = width - 320 < calculatedWidth;
     if (isMobile) calculatedWidth = width - 64;
     return { isMobile: isMobile, cardWidth: calculatedWidth };

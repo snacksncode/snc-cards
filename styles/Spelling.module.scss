@@ -4,9 +4,28 @@
   justify-content: center;
   flex-direction: column;
   height: 100%;
+  .card {
+    background-color: var(--clr-background-400);
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: auto;
+    padding: 1rem;
+    border-radius: 4px;
+  }
+  .title {
+    margin-top: 0;
+  }
   form {
     display: flex;
-    margin-bottom: 3rem;
+    .word {
+      // outline: 1px dashed lightcoral;
+      & + .word {
+        margin-left: 3ch;
+      }
+    }
     .char {
       font-size: 1.5rem;
       padding: 0.125rem 0;
@@ -15,7 +34,7 @@
       box-sizing: content-box;
       background-color: transparent;
       border: none;
-      border-bottom: 3px solid var(--clr-background-500);
+      border-bottom: 3px solid var(--clr-background-600);
       font-weight: 700;
       color: var(--clr-text);
       text-align: center;

@@ -12,6 +12,7 @@ import { getData } from "@data/exporter";
 import styles from "@styles/Spelling.module.scss";
 import shuffle from "utils/shuffle";
 import classNames from "classnames";
+import { motion } from "framer-motion";
 interface Props {
   data: WordData[];
 }
@@ -19,7 +20,6 @@ interface Props {
 interface CharInputData {
   value: string;
   ref: RefObject<HTMLInputElement>;
-  isSpace: boolean;
   correct: null | boolean;
 }
 type CharInputObject = { [key: string]: CharInputData };
@@ -30,6 +30,11 @@ export default function CardId({ data }: Props) {
   const selectedWord = shuffledData?.[currentWordIndex];
   const [charInputData, setCharInputData] = useState<CharInputObject | null>(null);
   const [doneParsing, setDoneParsing] = useState(false);
+  let globalCharIndex = -1;
+
+  const getCharArray = (word: string): string[] => {
+    return word.split("").filter((c) => c !== " ");
+  };
 
   // shuffle data upon first render
   useEffect(() => {
@@ -41,10 +46,11 @@ export default function CardId({ data }: Props) {
     if (selectedWord == null) return;
     const generatedCharData: CharInputObject = {};
 
-    (shoetest.simplify(selectedWord.answer) as string).split("").map((char, charIdx) => {
-      const genObj: CharInputData = { ref: createRef(), value: "", isSpace: char === " ", correct: null };
+    getCharArray(shoetest.simplify(selectedWord.answer)).map((_char, charIdx) => {
+      const genObj: CharInputData = { ref: createRef(), value: "", correct: null };
       generatedCharData[charIdx] = genObj;
     });
+    console.log(`[Generation]: Created object with ${Object.values(generatedCharData).length} items`);
 
     setDoneParsing(true);
     setCharInputData(generatedCharData);
@@ -53,8 +59,7 @@ export default function CardId({ data }: Props) {
   const checkAnswer: FormEventHandler = (e) => {
     e.preventDefault();
     if (selectedWord == null || charInputData == null) return;
-    const correctAnswer = (shoetest.simplify(selectedWord.answer.toLowerCase()) as string).split("");
-    correctAnswer.map((correctChar, correctCharIdx) => {
+    getCharArray(shoetest.simplify(selectedWord.answer.toLowerCase())).map((correctChar, correctCharIdx) => {
       const verdict = charInputData[correctCharIdx].value.toLowerCase() === correctChar;
       const inputState = charInputData[correctCharIdx];
       inputState.correct = verdict;
@@ -117,10 +122,6 @@ export default function CardId({ data }: Props) {
     if (charInputData == null) return;
     const nextInputToFocus = charInputData[index + 1];
     if (!nextInputToFocus) return;
-    if (nextInputToFocus.isSpace) {
-      focusNextInput(index + 1);
-      return;
-    }
     nextInputToFocus.ref.current?.focus();
   };
 
@@ -128,10 +129,6 @@ export default function CardId({ data }: Props) {
     if (charInputData == null) return;
     const prevInputToFocus = charInputData[index - 1];
     if (!prevInputToFocus) return;
-    if (prevInputToFocus.isSpace) {
-      focusPrevInput(index - 1);
-      return;
-    }
     prevInputToFocus.ref.current?.focus();
     if (shouldClear) charInputData[index - 1].value = "";
   };
@@ -154,52 +151,45 @@ export default function CardId({ data }: Props) {
 
   // safety checks for TypeScript
   if (selectedWord == null || charInputData == null || doneParsing !== true) return null;
-
+  console.log(`[Data]: `, charInputData);
   return (
     <div className={styles.container}>
-      <h1>Question: {selectedWord.question}</h1>
-      <form onSubmit={checkAnswer}>
-        {(shoetest.simplify(selectedWord.answer) as string).split("").map((char, charIndex) => {
-          if (char === " ") {
+      <div className={styles.card}>
+        <h1 className={styles.title}>Question: {selectedWord.question}</h1>
+        <form onSubmit={checkAnswer}>
+          {(shoetest.simplify(selectedWord.answer) as string).split(" ").map((word, wordIndex) => {
             return (
-              <div
-                tabIndex={-1}
-                ref={charInputData?.[charIndex].ref}
-                key={`space_${charIndex}`}
-                className={styles.space}
-              ></div>
+              <div className={styles.word} key={`word_${wordIndex}`}>
+                {word.split("").map((_c, _cI) => {
+                  globalCharIndex++;
+                  const classes = classNames(styles.char, {
+                    [`${styles["char--correct"]}`]: charInputData[globalCharIndex].correct === true,
+                    [`${styles["char--wrong"]}`]: charInputData[globalCharIndex].correct === false,
+                  });
+                  return (
+                    <motion.input
+                      key={`char_input_${globalCharIndex}`}
+                      type="text"
+                      className={classes}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (globalCharIndex + 1) } }}
+                      autoCapitalize="none"
+                      value={charInputData?.[globalCharIndex].value}
+                      ref={charInputData?.[globalCharIndex].ref}
+                      onKeyDown={handleCharInputKeypress}
+                      onChange={handleCharInputChange}
+                      name={globalCharIndex.toString()}
+                    />
+                  );
+                })}
+              </div>
             );
-          }
-          const classes = classNames(styles.char, {
-            [`${styles["char--correct"]}`]: charInputData[charIndex].correct === true,
-            [`${styles["char--wrong"]}`]: charInputData[charIndex].correct === false,
-          });
-          return (
-            <input
-              key={`char_input_${charIndex}`}
-              type="text"
-              className={classes}
-              value={charInputData?.[charIndex].value}
-              ref={charInputData?.[charIndex].ref}
-              onKeyDown={handleCharInputKeypress}
-              onChange={handleCharInputChange}
-              name={charIndex.toString()}
-            />
-          );
-        })}
-        <button style={{ display: "none" }} onClick={checkAnswer}>
-          Check
-        </button>
-      </form>
-      {/* {showResult && (
-        <>
-          <p>
-            Answer: {selectedData.answer} | Your input: {input}
-          </p>
-          {verdict()}
-          <br />
-          </>
-        )} */}
+          })}
+          <button style={{ display: "none" }} type="submit">
+            Submit
+          </button>
+        </form>
+      </div>
       <button onClick={nextWord}>Go next</button>
     </div>
   );
