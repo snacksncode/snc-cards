@@ -11,7 +11,7 @@ interface Props {
 }
 
 const DataWrapper = ({ type, children }: PropsWithChildren<{ type: Data["class"] }>) => {
-  if (type === "?MATH") return <MathJaxContext>{children}</MathJaxContext>;
+  if (type === "MATH") return <MathJaxContext config={{ options: { enableMenu: false } }}>{children}</MathJaxContext>;
   return <>{children}</>;
 };
 

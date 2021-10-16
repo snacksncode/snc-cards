@@ -30,11 +30,10 @@ interface Props {
 // }
 
 function formatData(data: string, dataClass: Data["class"]) {
-  if (dataClass === "?MATH") {
+  if (dataClass === "MATH") {
     return (
       <div className={styles.answer__text}>
         <MathJax>{String.raw`${data}`}</MathJax>
-        {/* <MathJax>{"\\(\\frac{10}{4x} \\approx 2^{12}\\)"}</MathJax> */}
       </div>
     );
   }

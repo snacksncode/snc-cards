@@ -84,12 +84,14 @@ const EntryExpanded = ({ data, selectedId, selectEntry }: Props) => {
             List
           </a>
         </Link>
-        <Link href={`${data.id}/spelling`}>
-          <a key={data.id} data-new-tag>
-            <Edit />
-            Spelling
-          </a>
-        </Link>
+        {data.class !== "MATH" && (
+          <Link href={`${data.id}/spelling`}>
+            <a key={data.id} data-new-tag>
+              <Edit />
+              Spelling
+            </a>
+          </Link>
+        )}
       </div>
     </motion.div>
   );

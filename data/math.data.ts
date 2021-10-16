@@ -15,7 +15,7 @@ const wordsData: WordData[] = [
 
 const exportedObject: Data = {
   data: wordsData,
-  class: "?MATH",
+  class: "MATH",
   id: "math",
   description: "Math formulas used for testing",
   title: "MathJax",

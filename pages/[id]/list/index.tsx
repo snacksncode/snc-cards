@@ -1,12 +1,43 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { getData } from "@data/exporter";
 import styles from "@styles/List.module.scss";
 import classNames from "classnames";
 import getAccentForClass from "@utils/getAccentForClass";
 import ArrowRightCircle from "icons/ArrowRightCircle";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
 interface Props {
   dataObject: Data;
 }
+
+const FormatedData = ({ data, type }: { data: string; type: Data["class"] }) => {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <>
+      <div className={styles.answer}>
+        {type !== "MATH" ? (
+          <span>{data}</span>
+        ) : (
+          <>
+            {!loaded && <span>Loading...</span>}
+            <span style={{ display: loaded ? "block" : "none" }}>
+              <MathJax onInitTypeset={() => setLoaded(true)}>{String.raw`${data}`}</MathJax>
+            </span>
+          </>
+        )}
+      </div>
+    </>
+  );
+};
+
+const DataWrapper = ({ type, children }: PropsWithChildren<{ type: Data["class"] }>) => {
+  if (type === "MATH")
+    return (
+      <MathJaxContext config={{ options: { enableMenu: false } }} hideUntilTypeset={"first"}>
+        {children}
+      </MathJaxContext>
+    );
+  return <>{children}</>;
+};
 
 export default function CardId({ dataObject }: Props) {
   const headerRef = useRef<HTMLHeadingElement | null>(null);
@@ -32,7 +63,7 @@ export default function CardId({ dataObject }: Props) {
     };
   }, []);
   return (
-    <>
+    <DataWrapper type={dataObject.class}>
       <div
         className={styles.container}
         style={{ margin: "2rem auto 0", ["--clr-accent" as any]: getAccentForClass(dataObject.class) }}
@@ -57,13 +88,13 @@ export default function CardId({ dataObject }: Props) {
               <div className={styles.list__item} key={`${d.question}-${d.answer}`}>
                 <div className={styles.question}>{d.question}</div>
                 <ArrowRightCircle />
-                <div className={styles.answer}>{d.answer}</div>
+                <FormatedData type={dataObject.class} data={d.answer} />
               </div>
             );
           })}
         </div>
       </div>
-    </>
+    </DataWrapper>
   );
 }
 

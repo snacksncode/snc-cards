@@ -19,7 +19,8 @@ body {
 #__next {
   height: inherit;
   min-height: inherit;
-  display: grid;
+  display: flex;
+  flex-direction: column;
 }
 
 a {

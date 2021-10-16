@@ -3,9 +3,8 @@ interface Data {
   id: string;
   title: string;
   description: string | null;
-  // date: [number, number, number];
   tags: string[];
-  class: "EN" | "DE" | "?MATH" | "OTHER";
+  class: "EN" | "DE" | "MATH" | "OTHER";
 }
 interface WordData {
   question: string;
