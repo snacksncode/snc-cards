@@ -439,7 +439,7 @@ const exported: Data = {
   description: 'Vocabulaly for test "Human"',
   id: "en-human",
   tags: ["english"],
-  title: "Human - Vocabulary",
+  title: "Human",
 };
 
 export default exported;

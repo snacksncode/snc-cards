@@ -79,7 +79,7 @@ const EntryExpanded = ({ data, selectedId, selectEntry }: Props) => {
         </Link>
 
         <Link href={`${data.id}/list`}>
-          <a key={data.id} data-new-tag>
+          <a key={data.id}>
             <List />
             List
           </a>

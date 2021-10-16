@@ -19,7 +19,7 @@ const FormatedData = ({ data, type }: { data: string; type: Data["class"] }) => 
         ) : (
           <>
             {!loaded && <span>Loading...</span>}
-            <span style={{ display: loaded ? "block" : "none" }}>
+            <span style={{ display: loaded ? "block" : "none", fontSize: "1.5rem" }}>
               <MathJax onInitTypeset={() => setLoaded(true)}>{String.raw`${data}`}</MathJax>
             </span>
           </>
@@ -73,10 +73,15 @@ export default function CardId({ dataObject }: Props) {
           <span>{dataObject.title}</span>
         </h1>
       </div>
-      <div ref={headerRef} className={topContainerClasses}>
+      <div
+        ref={headerRef}
+        className={topContainerClasses}
+        style={{ ["--clr-accent" as any]: getAccentForClass(dataObject.class) }}
+      >
         <div className={styles.container}>
           <header className={styles.top}>
             <p>Question</p>
+            <ArrowRightCircle />
             <p>Answer</p>
           </header>
         </div>
@@ -87,6 +92,7 @@ export default function CardId({ dataObject }: Props) {
             return (
               <div className={styles.list__item} key={`${d.question}-${d.answer}`}>
                 <div className={styles.question}>{d.question}</div>
+                <div className={styles.spacer}></div>
                 <ArrowRightCircle />
                 <FormatedData type={dataObject.class} data={d.answer} />
               </div>
