@@ -1,8 +1,17 @@
-import React, { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject, useEffect, useState } from "react";
+import React, {
+  ChangeEventHandler,
+  createRef,
+  FormEventHandler,
+  KeyboardEventHandler,
+  RefObject,
+  useEffect,
+  useState,
+} from "react";
 import shoetest from "shoetest";
 import { getData } from "@data/exporter";
 import styles from "@styles/Spelling.module.scss";
 import shuffle from "utils/shuffle";
+import classNames from "classnames";
 interface Props {
   data: WordData[];
 }
@@ -16,14 +25,13 @@ interface CharInputData {
 type CharInputObject = { [key: string]: CharInputData };
 
 export default function CardId({ data }: Props) {
-  console.log("[ Re-render ]");
   const [shuffledData, setShuffledData] = useState<WordData[] | null>(null);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const selectedWord = shuffledData?.[currentWordIndex];
   const [charInputData, setCharInputData] = useState<CharInputObject | null>(null);
   const [doneParsing, setDoneParsing] = useState(false);
+
   // shuffle data upon first render
-  console.log("[ Selected Word ]", JSON.stringify(selectedWord));
   useEffect(() => {
     setShuffledData(shuffle(data));
   }, [data]);
@@ -42,11 +50,12 @@ export default function CardId({ data }: Props) {
     setCharInputData(generatedCharData);
   }, [selectedWord]);
 
-  const checkAnswer = () => {
+  const checkAnswer: FormEventHandler = (e) => {
+    e.preventDefault();
     if (selectedWord == null || charInputData == null) return;
-    const correctAnswer = (shoetest.simplify(selectedWord.answer) as string).split("");
+    const correctAnswer = (shoetest.simplify(selectedWord.answer.toLowerCase()) as string).split("");
     correctAnswer.map((correctChar, correctCharIdx) => {
-      const verdict = charInputData[correctCharIdx].value === correctChar;
+      const verdict = charInputData[correctCharIdx].value.toLowerCase() === correctChar;
       const inputState = charInputData[correctCharIdx];
       inputState.correct = verdict;
       setCharInputData((oldState) => {
@@ -65,14 +74,46 @@ export default function CardId({ data }: Props) {
 
   const handleCharInputKeypress: KeyboardEventHandler<HTMLInputElement> = (e) => {
     const key = e.key;
+    console.log(key);
     const target = e.target as HTMLInputElement;
+    const targetIndex = Number(target.name);
+    if (key === "Backspace" && e.ctrlKey) {
+      clearAllInputs();
+    }
+    if (key === "ArrowLeft") {
+      focusPrevInput(targetIndex, false);
+    }
+    if (key === "ArrowRight") {
+      focusNextInput(targetIndex);
+    }
     if (key === "Backspace" && target.value.length === 0) {
-      focusPrevInput(Number(target.name));
+      focusPrevInput(targetIndex);
     }
   };
 
+  const removeVerdictFromAllInputs = () => {
+    if (charInputData == null) return;
+    const charInputDataCopy = Object.assign({}, charInputData);
+    for (const charInput of Object.values(charInputDataCopy)) {
+      charInput.correct = null;
+    }
+    setCharInputData(charInputDataCopy);
+  };
+
+  const clearAllInputs = () => {
+    if (charInputData == null) return;
+    const charInputDataCopy = Object.assign({}, charInputData);
+    for (const charInput of Object.values(charInputDataCopy)) {
+      charInput.value = "";
+    }
+    setCharInputData(charInputDataCopy);
+    // push onto the next event loop
+    setTimeout(() => {
+      charInputData[0].ref.current?.focus();
+    });
+  };
+
   const focusNextInput = (index: number) => {
-    console.log("Focus next with index: ", index);
     if (charInputData == null) return;
     const nextInputToFocus = charInputData[index + 1];
     if (!nextInputToFocus) return;
@@ -83,8 +124,7 @@ export default function CardId({ data }: Props) {
     nextInputToFocus.ref.current?.focus();
   };
 
-  const focusPrevInput = (index: number) => {
-    console.log("Focus prev with index: ", index);
+  const focusPrevInput = (index: number, shouldClear = true) => {
     if (charInputData == null) return;
     const prevInputToFocus = charInputData[index - 1];
     if (!prevInputToFocus) return;
@@ -93,16 +133,16 @@ export default function CardId({ data }: Props) {
       return;
     }
     prevInputToFocus.ref.current?.focus();
-    charInputData[index - 1].value = "";
+    if (shouldClear) charInputData[index - 1].value = "";
   };
 
   const handleCharInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    console.log("Change fired on: ", e.target.name);
     e.target.focus();
-    if (charInputData == null || e.target.value.length > 1) return;
+    if (charInputData == null) return;
+    removeVerdictFromAllInputs();
     const inputIndex = Number(e.target.name);
     const inputState = charInputData[inputIndex];
-    inputState.value = e.target.value;
+    inputState.value = e.target.value.replace(charInputData[inputIndex].value, "").slice(-1); // accent only the last char
     setCharInputData((oldState) => {
       return {
         ...oldState,
@@ -112,59 +152,45 @@ export default function CardId({ data }: Props) {
     if (e.target.value.length !== 0) focusNextInput(inputIndex);
   };
 
-  // const handleCharacter: ChangeEventHandler<HTMLInputElement> = (e) => {
-  //   const index = Number(e.target.name);
-  //   const newCharObject = Object.assign({}, characterData[index]);
-  //   newCharObject.data = e.target.value;
-  //   setCharacterData((oldData) => {
-  //     return [...oldData, newCharObject];
-  //   });
-  // };
-
-  // const handleCharFocus: FocusEventHandler<HTMLInputElement> = (e) => {
-  //   const index = Number(e.target.name);
-  //   const newCharObject = Object.assign({}, characterData[index]);
-  //   newCharObject.focused = true;
-  //   setCharacterData((oldData) => {
-  //     return [...oldData, newCharObject];
-  //   });
-  // };
-
   // safety checks for TypeScript
   if (selectedWord == null || charInputData == null || doneParsing !== true) return null;
 
   return (
     <div className={styles.container}>
       <h1>Question: {selectedWord.question}</h1>
-      <form>
+      <form onSubmit={checkAnswer}>
         {(shoetest.simplify(selectedWord.answer) as string).split("").map((char, charIndex) => {
           if (char === " ") {
             return (
               <div
-                tabIndex={0}
+                tabIndex={-1}
                 ref={charInputData?.[charIndex].ref}
                 key={`space_${charIndex}`}
                 className={styles.space}
               ></div>
             );
           }
+          const classes = classNames(styles.char, {
+            [`${styles["char--correct"]}`]: charInputData[charIndex].correct === true,
+            [`${styles["char--wrong"]}`]: charInputData[charIndex].correct === false,
+          });
           return (
             <input
               key={`char_input_${charIndex}`}
               type="text"
-              onFocus={(e) => {
-                console.log("Focused input: ", e.target.name);
-              }}
+              className={classes}
               value={charInputData?.[charIndex].value}
               ref={charInputData?.[charIndex].ref}
-              onKeyDownCapture={handleCharInputKeypress}
+              onKeyDown={handleCharInputKeypress}
               onChange={handleCharInputChange}
               name={charIndex.toString()}
             />
           );
         })}
+        <button style={{ display: "none" }} onClick={checkAnswer}>
+          Check
+        </button>
       </form>
-      <button onClick={checkAnswer}>Check</button>
       {/* {showResult && (
         <>
           <p>

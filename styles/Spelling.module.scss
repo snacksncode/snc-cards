@@ -7,11 +7,11 @@
   form {
     display: flex;
     margin-bottom: 3rem;
-    input {
-      font-size: 1.75rem;
+    .char {
+      font-size: 1.5rem;
       padding: 0.125rem 0;
       width: 1.75ch;
-      transition: border-color 150ms ease;
+      transition: border-color 100ms ease;
       box-sizing: content-box;
       background-color: transparent;
       border: none;
@@ -26,6 +26,13 @@
       &:focus {
         border-color: var(--clr-accent-blue);
         outline: none;
+      }
+      &--correct {
+        color: var(--clr-accent-green);
+      }
+
+      &--wrong {
+        color: var(--clr-accent-red);
       }
     }
   }
