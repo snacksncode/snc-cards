@@ -284,7 +284,7 @@ const wordData: WordData[] = [
     answer: "unique",
   },
   {
-    question: "vintage, staromodny (jako zaleta)",
+    question: "staromodny (jako zaleta)",
     answer: "vintage",
   },
   {
@@ -425,7 +425,7 @@ const wordData: WordData[] = [
   },
   {
     question: "stać na szeroko rozstawionych nogach",
-    answer: "stand with your feet apar",
+    answer: "stand with your feet apart",
   },
   {
     question: "bębnić palcami (w stół)",
