@@ -3,6 +3,7 @@ import { getData } from "@data/exporter";
 import styles from "@styles/List.module.scss";
 import classNames from "classnames";
 import getAccentForClass from "@utils/getAccentForClass";
+import ArrowRightCircle from "icons/ArrowRightCircle";
 interface Props {
   dataObject: Data;
 }
@@ -32,9 +33,13 @@ export default function CardId({ dataObject }: Props) {
   }, []);
   return (
     <>
-      <div className={styles.container} style={{ margin: "2rem auto 0" }}>
-        <h1>
-          List view for <span style={{ color: getAccentForClass(dataObject.class) }}>{dataObject.title}</span>
+      <div
+        className={styles.container}
+        style={{ margin: "2rem auto 0", ["--clr-accent" as any]: getAccentForClass(dataObject.class) }}
+      >
+        <h1 className={styles.title}>
+          List view for <br />
+          <span>{dataObject.title}</span>
         </h1>
       </div>
       <div ref={headerRef} className={topContainerClasses}>
@@ -45,12 +50,13 @@ export default function CardId({ dataObject }: Props) {
           </header>
         </div>
       </div>
-      <div className={styles.container}>
+      <div className={styles.container} style={{ ["--clr-accent" as any]: getAccentForClass(dataObject.class) }}>
         <div className={styles.list}>
           {dataObject.data.map((d) => {
             return (
               <div className={styles.list__item} key={`${d.question}-${d.answer}`}>
                 <div className={styles.question}>{d.question}</div>
+                <ArrowRightCircle />
                 <div className={styles.answer}>{d.answer}</div>
               </div>
             );

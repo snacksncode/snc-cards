@@ -5,49 +5,98 @@
   max-width: 750px;
 }
 
-.top__container {
-  max-width: none;
-  position: sticky;
-  top: -1px;
-  padding-top: 1px;
-  z-index: 2;
-  isolation: isolate;
-  background-color: var(--clr-background-300);
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    opacity: 0;
-    transition: opacity 150ms ease;
-  }
-
-  &--sticky {
-    &::after {
-      opacity: 1;
-    }
-  }
-
-  .top {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    font-size: 1.5rem;
-    font-weight: 700;
+.title {
+  span {
+    color: var(--clr-accent);
   }
 }
+
+.top__container {
+  display: none;
+}
+
 .list {
   display: grid;
   gap: 1rem;
+  grid-template-columns: 1fr;
   &__item {
     padding: 1rem;
-    background-color: var(--clr-background-400);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
+    background-color: var(--clr-background-400);
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    // color: lightskyblue;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.5rem;
+    .question,
+    .answer {
+      text-align: center;
+      font-size: 1.125rem;
+    }
+    .question {
+      color: var(--clr-accent);
+      font-weight: 500;
+    }
+    svg {
+      display: none;
+    }
+  }
+}
+
+@media (min-width: 600px) {
+  .top__container {
+    max-width: none;
+    position: sticky;
+    top: -1px;
+    display: block;
+    padding-top: 1px;
+    z-index: 2;
+    background-color: var(--clr-background-300);
+    isolation: isolate;
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      transition: opacity 150ms ease;
+    }
+
+    &--sticky {
+      &::after {
+        opacity: 1;
+      }
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: 0.75fr 50px 1fr;
+      gap: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      & > p:last-child {
+        grid-column: 3 / 4;
+      }
+    }
+  }
+
+  .list {
+    grid-template-columns: 1fr;
+    &__item {
+      grid-template-columns: 0.75fr 50px 1fr;
+      gap: 1rem;
+      .question,
+      .answer {
+        text-align: left;
+        color: var(--clr-text);
+        font-weight: 500;
+      }
+      svg {
+        place-self: center;
+        color: var(--clr-accent);
+        display: block;
+      }
+    }
   }
 }
