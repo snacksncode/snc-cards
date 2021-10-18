@@ -1,5 +1,4 @@
 import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
-import { getData } from "@data/exporter";
 import styles from "@styles/List.module.scss";
 import classNames from "classnames";
 import getAccentForClass from "@utils/getAccentForClass";
