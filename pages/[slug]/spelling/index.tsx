@@ -33,175 +33,175 @@ export default function CardId({ data }: Props) {
       Currently broken, working on
     </h1>
   );
-  const [shuffledData, setShuffledData] = useState(data);
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const selectedQuestion = shuffledData?.[currentWordIndex];
-  const [charInputData, setCharInputData] = useState<CharInputObject | null>(null);
-  const [doneParsing, setDoneParsing] = useState(false);
-  let globalCharIndex = -1;
+  // const [shuffledData, setShuffledData] = useState(data);
+  // const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  // const selectedQuestion = shuffledData?.[currentWordIndex];
+  // const [charInputData, setCharInputData] = useState<CharInputObject | null>(null);
+  // const [doneParsing, setDoneParsing] = useState(false);
+  // let globalCharIndex = -1;
 
-  const getCharArray = (word: string): string[] => {
-    return word.split("").filter((c) => c !== " ");
-  };
+  // const getCharArray = (word: string): string[] => {
+  //   return word.split("").filter((c) => c !== " ");
+  // };
 
-  // shuffle data upon first render
-  useEffect(() => {
-    if (!data) return;
-    setShuffledData(shuffle(data));
-  }, [data]);
+  // // shuffle data upon first render
+  // useEffect(() => {
+  //   if (!data) return;
+  //   setShuffledData(shuffle(data));
+  // }, [data]);
 
-  // ignore the first render, then fill in charInputData
-  useEffect(() => {
-    if (selectedQuestion == null) return;
-    const generatedCharData: CharInputObject = {};
+  // // ignore the first render, then fill in charInputData
+  // useEffect(() => {
+  //   if (selectedQuestion == null) return;
+  //   const generatedCharData: CharInputObject = {};
 
-    getCharArray(shoetest.simplify(selectedQuestion.fields.answer)).map((_char, charIdx) => {
-      const genObj: CharInputData = { ref: createRef(), value: "", correct: null };
-      generatedCharData[charIdx] = genObj;
-    });
+  //   getCharArray(shoetest.simplify(selectedQuestion.fields.answer)).map((_char, charIdx) => {
+  //     const genObj: CharInputData = { ref: createRef(), value: "", correct: null };
+  //     generatedCharData[charIdx] = genObj;
+  //   });
 
-    setDoneParsing(true);
-    setCharInputData(generatedCharData);
-  }, [selectedQuestion]);
+  //   setDoneParsing(true);
+  //   setCharInputData(generatedCharData);
+  // }, [selectedQuestion]);
 
-  const checkAnswer: FormEventHandler = (e) => {
-    e.preventDefault();
-    if (selectedQuestion == null || charInputData == null) return;
-    getCharArray(shoetest.simplify(selectedQuestion.fields.answer.toLowerCase())).map((correctChar, correctCharIdx) => {
-      const verdict = charInputData[correctCharIdx].value.toLowerCase() === correctChar;
-      const inputState = charInputData[correctCharIdx];
-      inputState.correct = verdict;
-      setCharInputData((oldState) => {
-        return {
-          ...oldState,
-          [correctCharIdx]: inputState,
-        };
-      });
-    });
-  };
+  // const checkAnswer: FormEventHandler = (e) => {
+  //   e.preventDefault();
+  //   if (selectedQuestion == null || charInputData == null) return;
+  //   getCharArray(shoetest.simplify(selectedQuestion.fields.answer.toLowerCase())).map((correctChar, correctCharIdx) => {
+  //     const verdict = charInputData[correctCharIdx].value.toLowerCase() === correctChar;
+  //     const inputState = charInputData[correctCharIdx];
+  //     inputState.correct = verdict;
+  //     setCharInputData((oldState) => {
+  //       return {
+  //         ...oldState,
+  //         [correctCharIdx]: inputState,
+  //       };
+  //     });
+  //   });
+  // };
 
-  const nextWord = () => {
-    setDoneParsing(false);
-    setCurrentWordIndex((i) => i + 1);
-  };
+  // const nextWord = () => {
+  //   setDoneParsing(false);
+  //   setCurrentWordIndex((i) => i + 1);
+  // };
 
-  const handleCharInputKeypress: KeyboardEventHandler<HTMLInputElement> = (e) => {
-    const key = e.key;
-    console.log(key);
-    const target = e.target as HTMLInputElement;
-    const targetIndex = Number(target.name);
-    if (key === "Backspace" && e.ctrlKey) {
-      clearAllInputs();
-    }
-    if (key === "ArrowLeft") {
-      focusPrevInput(targetIndex, false);
-    }
-    if (key === "ArrowRight") {
-      focusNextInput(targetIndex);
-    }
-    if (key === "Backspace" && target.value.length === 0) {
-      focusPrevInput(targetIndex);
-    }
-  };
+  // const handleCharInputKeypress: KeyboardEventHandler<HTMLInputElement> = (e) => {
+  //   const key = e.key;
+  //   console.log(key);
+  //   const target = e.target as HTMLInputElement;
+  //   const targetIndex = Number(target.name);
+  //   if (key === "Backspace" && e.ctrlKey) {
+  //     clearAllInputs();
+  //   }
+  //   if (key === "ArrowLeft") {
+  //     focusPrevInput(targetIndex, false);
+  //   }
+  //   if (key === "ArrowRight") {
+  //     focusNextInput(targetIndex);
+  //   }
+  //   if (key === "Backspace" && target.value.length === 0) {
+  //     focusPrevInput(targetIndex);
+  //   }
+  // };
 
-  const removeVerdictFromAllInputs = () => {
-    if (charInputData == null) return;
-    const charInputDataCopy = Object.assign({}, charInputData);
-    for (const charInput of Object.values(charInputDataCopy)) {
-      charInput.correct = null;
-    }
-    setCharInputData(charInputDataCopy);
-  };
+  // const removeVerdictFromAllInputs = () => {
+  //   if (charInputData == null) return;
+  //   const charInputDataCopy = Object.assign({}, charInputData);
+  //   for (const charInput of Object.values(charInputDataCopy)) {
+  //     charInput.correct = null;
+  //   }
+  //   setCharInputData(charInputDataCopy);
+  // };
 
-  const clearAllInputs = () => {
-    if (charInputData == null) return;
-    const charInputDataCopy = Object.assign({}, charInputData);
-    for (const charInput of Object.values(charInputDataCopy)) {
-      charInput.value = "";
-    }
-    setCharInputData(charInputDataCopy);
-    // push onto the next event loop
-    setTimeout(() => {
-      charInputData[0].ref.current?.focus();
-    });
-  };
+  // const clearAllInputs = () => {
+  //   if (charInputData == null) return;
+  //   const charInputDataCopy = Object.assign({}, charInputData);
+  //   for (const charInput of Object.values(charInputDataCopy)) {
+  //     charInput.value = "";
+  //   }
+  //   setCharInputData(charInputDataCopy);
+  //   // push onto the next event loop
+  //   setTimeout(() => {
+  //     charInputData[0].ref.current?.focus();
+  //   });
+  // };
 
-  const focusNextInput = (index: number) => {
-    if (charInputData == null) return;
-    const nextInputToFocus = charInputData[index + 1];
-    if (!nextInputToFocus) return;
-    nextInputToFocus.ref.current?.focus();
-  };
+  // const focusNextInput = (index: number) => {
+  //   if (charInputData == null) return;
+  //   const nextInputToFocus = charInputData[index + 1];
+  //   if (!nextInputToFocus) return;
+  //   nextInputToFocus.ref.current?.focus();
+  // };
 
-  const focusPrevInput = (index: number, shouldClear = true) => {
-    if (charInputData == null) return;
-    const prevInputToFocus = charInputData[index - 1];
-    if (!prevInputToFocus) return;
-    prevInputToFocus.ref.current?.focus();
-    if (shouldClear) charInputData[index - 1].value = "";
-  };
+  // const focusPrevInput = (index: number, shouldClear = true) => {
+  //   if (charInputData == null) return;
+  //   const prevInputToFocus = charInputData[index - 1];
+  //   if (!prevInputToFocus) return;
+  //   prevInputToFocus.ref.current?.focus();
+  //   if (shouldClear) charInputData[index - 1].value = "";
+  // };
 
-  const handleCharInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    e.target.focus();
-    if (charInputData == null) return;
-    removeVerdictFromAllInputs();
-    const inputIndex = Number(e.target.name);
-    const inputState = charInputData[inputIndex];
-    inputState.value = e.target.value.replace(charInputData[inputIndex].value, "").slice(-1); // accent only the last char
-    setCharInputData((oldState) => {
-      return {
-        ...oldState,
-        [inputIndex]: inputState,
-      };
-    });
-    if (e.target.value.length !== 0) focusNextInput(inputIndex);
-  };
+  // const handleCharInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+  //   e.target.focus();
+  //   if (charInputData == null) return;
+  //   removeVerdictFromAllInputs();
+  //   const inputIndex = Number(e.target.name);
+  //   const inputState = charInputData[inputIndex];
+  //   inputState.value = e.target.value.replace(charInputData[inputIndex].value, "").slice(-1); // accent only the last char
+  //   setCharInputData((oldState) => {
+  //     return {
+  //       ...oldState,
+  //       [inputIndex]: inputState,
+  //     };
+  //   });
+  //   if (e.target.value.length !== 0) focusNextInput(inputIndex);
+  // };
 
-  if (!data) return <div>Building...</div>;
-  // safety checks for TypeScript
-  if (selectedQuestion == null || doneParsing !== true || charInputData == null) return null;
-  const { answer, question } = selectedQuestion.fields;
-  return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>{question}</h1>
-        <form onSubmit={checkAnswer}>
-          {(shoetest.simplify(answer) as string).split(" ").map((word, wordIndex) => {
-            return (
-              <div className={styles.word} key={`word_${wordIndex}`}>
-                {word.split("").map((_c, _cI) => {
-                  globalCharIndex++;
-                  const classes = classNames(styles.char, {
-                    [`${styles["char--correct"]}`]: charInputData[globalCharIndex].correct === true,
-                    [`${styles["char--wrong"]}`]: charInputData[globalCharIndex].correct === false,
-                  });
-                  return (
-                    <motion.input
-                      key={`char_input_${globalCharIndex}`}
-                      type="text"
-                      className={classes}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (globalCharIndex + 1) } }}
-                      autoCapitalize="none"
-                      value={charInputData?.[globalCharIndex].value}
-                      ref={charInputData?.[globalCharIndex].ref}
-                      onKeyDown={handleCharInputKeypress}
-                      onChange={handleCharInputChange}
-                      name={globalCharIndex.toString()}
-                    />
-                  );
-                })}
-              </div>
-            );
-          })}
-          <button style={{ display: "none" }} type="submit">
-            Submit
-          </button>
-        </form>
-      </div>
-      <button onClick={nextWord}>Go next</button>
-    </div>
-  );
+  // if (!data) return <div>Building...</div>;
+  // // safety checks for TypeScript
+  // if (selectedQuestion == null || doneParsing !== true || charInputData == null) return null;
+  // const { answer, question } = selectedQuestion.fields;
+  // return (
+  //   <div className={styles.container}>
+  //     <div className={styles.card}>
+  //       <h1 className={styles.title}>{question}</h1>
+  //       <form onSubmit={checkAnswer}>
+  //         {(shoetest.simplify(answer) as string).split(" ").map((word, wordIndex) => {
+  //           return (
+  //             <div className={styles.word} key={`word_${wordIndex}`}>
+  //               {word.split("").map((_c, _cI) => {
+  //                 globalCharIndex++;
+  //                 const classes = classNames(styles.char, {
+  //                   [`${styles["char--correct"]}`]: charInputData[globalCharIndex].correct === true,
+  //                   [`${styles["char--wrong"]}`]: charInputData[globalCharIndex].correct === false,
+  //                 });
+  //                 return (
+  //                   <motion.input
+  //                     key={`char_input_${globalCharIndex}`}
+  //                     type="text"
+  //                     className={classes}
+  //                     initial={{ opacity: 0, y: -10 }}
+  //                     animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (globalCharIndex + 1) } }}
+  //                     autoCapitalize="none"
+  //                     value={charInputData?.[globalCharIndex].value}
+  //                     ref={charInputData?.[globalCharIndex].ref}
+  //                     onKeyDown={handleCharInputKeypress}
+  //                     onChange={handleCharInputChange}
+  //                     name={globalCharIndex.toString()}
+  //                   />
+  //                 );
+  //               })}
+  //             </div>
+  //           );
+  //         })}
+  //         <button style={{ display: "none" }} type="submit">
+  //           Submit
+  //         </button>
+  //       </form>
+  //     </div>
+  //     <button onClick={nextWord}>Go next</button>
+  //   </div>
+  // );
 }
 
 const client = createClient({
