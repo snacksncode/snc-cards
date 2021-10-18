@@ -5,8 +5,12 @@ import getAccentForClass from "@utils/getAccentForClass";
 import ArrowRightCircle from "icons/ArrowRightCircle";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { createClient, EntryCollection } from "contentful";
-import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import { GetStaticPropsContext } from "next";
 import { IEntryFields } from "contentful-types";
+
+interface Props {
+  data: IEntryFields | null;
+}
 
 const FormatedData = ({ data, type }: { data: string; type: IEntryFields["class"] }) => {
   const [loaded, setLoaded] = useState(false);
@@ -38,7 +42,7 @@ const DataWrapper = ({ type, children }: PropsWithChildren<{ type: IEntryFields[
   return <>{children}</>;
 };
 
-export default function CardId({ data }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function CardId({ data }: Props) {
   const headerRef = useRef<HTMLHeadingElement | null>(null);
   const [isSticky, setIsSticky] = useState(false);
 
@@ -116,6 +120,14 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
     content_type: "entryData",
     "fields.slug": params?.slug,
   })) as EntryCollection<IEntryFields>;
+  if (!items.length) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
   const data = items[0].fields;
   return {
     props: {

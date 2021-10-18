@@ -8,7 +8,7 @@ import { IEntryFields, IQuestion } from "contentful-types";
 
 interface Props {
   data: IQuestion[];
-  classData: IEntryFields["class"];
+  dataClass: IEntryFields["class"];
 }
 
 const DataWrapper = ({ type, children }: PropsWithChildren<{ type: IEntryFields["class"] }>) => {
@@ -16,7 +16,7 @@ const DataWrapper = ({ type, children }: PropsWithChildren<{ type: IEntryFields[
   return <>{children}</>;
 };
 
-const Viewer = ({ data, classData }: Props) => {
+const Viewer = ({ data, dataClass }: Props) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const percentageRef = useRef<HTMLParagraphElement>(null);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
@@ -67,13 +67,13 @@ const Viewer = ({ data, classData }: Props) => {
                 0.00%
               </p>
             </div>
-            <DataWrapper type={classData}>
+            <DataWrapper type={dataClass}>
               <AnimatePresence>
                 {data.map((d, i: number) => {
                   {
                     return (
                       selectedIndex === i && (
-                        <FlipCard dataClass={classData} onAnswer={onAnswer} key={i} data={d.fields} />
+                        <FlipCard dataClass={dataClass} onAnswer={onAnswer} key={i} data={d.fields} />
                       )
                     );
                   }

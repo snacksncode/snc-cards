@@ -12,8 +12,8 @@ import styles from "@styles/Spelling.module.scss";
 import shuffle from "utils/shuffle";
 import classNames from "classnames";
 import { motion } from "framer-motion";
-import { IEntryFields } from "contentful-types";
-import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import { IEntryFields, IQuestion } from "contentful-types";
+import { GetStaticPropsContext } from "next";
 import { createClient, EntryCollection } from "contentful";
 
 interface CharInputData {
@@ -23,7 +23,11 @@ interface CharInputData {
 }
 type CharInputObject = { [key: string]: CharInputData };
 
-export default function CardId({ data }: InferGetStaticPropsType<typeof getStaticProps>) {
+interface Props {
+  data: IQuestion[] | null;
+}
+
+export default function CardId({ data }: Props) {
   const [shuffledData, setShuffledData] = useState(data);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const selectedQuestion = shuffledData?.[currentWordIndex];
@@ -37,6 +41,7 @@ export default function CardId({ data }: InferGetStaticPropsType<typeof getStati
 
   // shuffle data upon first render
   useEffect(() => {
+    if (!data) return;
     setShuffledData(shuffle(data));
   }, [data]);
 
@@ -147,9 +152,9 @@ export default function CardId({ data }: InferGetStaticPropsType<typeof getStati
     if (e.target.value.length !== 0) focusNextInput(inputIndex);
   };
 
-  // safety checks for TypeScript
   if (!data) return <div>Building...</div>;
-  if (doneParsing !== true || charInputData == null) return null;
+  // safety checks for TypeScript
+  if (selectedQuestion == null || doneParsing !== true || charInputData == null) return null;
   const { answer, question } = selectedQuestion.fields;
   return (
     <div className={styles.container}>
@@ -204,6 +209,16 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
     content_type: "entryData",
     "fields.slug": params?.slug,
   })) as EntryCollection<IEntryFields>;
+
+  if (!items.length) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   const data = items[0].fields.data;
   return {
     props: {

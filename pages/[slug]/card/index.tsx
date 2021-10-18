@@ -1,11 +1,16 @@
 import Viewer from "@components/Viewer";
 import React, { useEffect, useState } from "react";
 import shuffle from "utils/shuffle";
-import { IEntryFields, IQuestion } from "contentful-types";
+import { IEntryFields, IQuestion, Class } from "contentful-types";
 import { createClient, EntryCollection } from "contentful";
-import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import { GetStaticPropsContext } from "next";
 
 // TODO: Re-Shuffle upon restart
+
+interface Props {
+  data: IQuestion[] | null;
+  dataClass: Class | null;
+}
 
 const client = createClient({
   space: process.env.CF_SPACE_ID || "",
@@ -17,6 +22,16 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
     content_type: "entryData",
     "fields.slug": params?.slug,
   })) as EntryCollection<IEntryFields>;
+
+  if (!items.length) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   const rawData = items[0].fields;
   return {
     props: {
@@ -41,11 +56,11 @@ export async function getStaticPaths() {
   return { paths, fallback: true };
 }
 
-export default function CardId({ data, classData }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function CardId({ data, dataClass }: Props) {
   const [shuffledData, setShuffledData] = useState(data);
   useEffect(() => {
     setShuffledData((data) => shuffle(data as IQuestion[]));
   }, [data]);
-  if (!data) return <div>Building...</div>;
-  return <Viewer classData={classData} data={shuffledData} />;
+  if (!data || !dataClass || !shuffledData) return <div>Building...</div>;
+  return <Viewer dataClass={dataClass} data={shuffledData} />;
 }
