@@ -1,12 +1,13 @@
 import { MathJax } from "better-react-mathjax";
 import classNames from "classnames";
+import { IEntryFields } from "contentful-types";
 import React from "react";
 import styles from "./Back.module.scss";
 
 interface Props {
   data: string;
   isMobile: boolean | undefined;
-  dataClass: Data["class"];
+  dataClass: IEntryFields["class"];
 }
 
 // function formatData(data: string) {
@@ -29,8 +30,8 @@ interface Props {
 //   );
 // }
 
-function formatData(data: string, dataClass: Data["class"]) {
-  if (dataClass === "MATH") {
+function formatData(data: string, dataClass: IEntryFields["class"]) {
+  if (dataClass === "math") {
     return (
       <div className={styles.answer__text}>
         <MathJax>{String.raw`${data}`}</MathJax>

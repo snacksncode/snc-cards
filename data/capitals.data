@@ -1,4 +1,4 @@
-const wordData: WordData[] = [
+const wordData = [
   {
     question: "USA",
     answer: "Waszyngton",
@@ -149,7 +149,7 @@ const wordData: WordData[] = [
   },
 ];
 
-const exported: Data = {
+const exported = {
   data: wordData,
   class: "OTHER",
   id: "geo-capitals",

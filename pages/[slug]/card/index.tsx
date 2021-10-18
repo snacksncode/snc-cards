@@ -1,6 +1,5 @@
 import Viewer from "@components/Viewer";
 import React, { useEffect, useState } from "react";
-import { getData } from "@data/exporter";
 import shuffle from "utils/shuffle";
 import { IEntryFields, IQuestion } from "contentful-types";
 import { createClient, EntryCollection } from "contentful";

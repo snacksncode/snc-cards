@@ -8,7 +8,6 @@ import { createClient, EntryCollection } from "contentful";
 import { IEntry, IEntryFields } from "contentful-types";
 
 export const getStaticProps = async () => {
-  // const data: Data[] = await getData();
   const client = createClient({
     space: process.env.CF_SPACE_ID || "",
     accessToken: process.env.CF_ACCESS_TOKEN || "",
@@ -19,7 +18,6 @@ export const getStaticProps = async () => {
   const data = res.items as IEntry[];
   return {
     props: {
-      // dataArray: data,
       data,
     },
   };

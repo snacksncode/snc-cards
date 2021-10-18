@@ -1,5 +1,5 @@
 import getAccentForClass from "@utils/getAccentForClass";
-import { IEntryFields } from "additional";
+import { IEntryFields } from "contentful-types";
 import { motion } from "framer-motion";
 import Cards from "icons/Cards";
 import Close from "icons/Close";
@@ -10,12 +10,13 @@ import React, { useEffect, useRef } from "react";
 import styles from "./EntryExpanded.module.scss";
 
 interface Props {
-  entry: IEntryFields | undefined;
+  entry: IEntryFields;
   selectedId: string | null;
   selectEntry: (id: string | null) => void;
 }
 
 const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
+  const { class: dataClass, data, description, dueDate, slug, title } = entry;
   const ref = useRef<null | HTMLDivElement>(null);
 
   const handleClose = () => {
@@ -37,7 +38,7 @@ const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
     <motion.div
       style={
         {
-          "--clr-card-accent": getAccentForClass(entry?.class),
+          "--clr-card-accent": getAccentForClass(dataClass),
         } as any
       }
       ref={ref}
@@ -56,34 +57,34 @@ const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
         <Close />
       </motion.button>
       <motion.p layout className={styles.title} layoutId={`title_${selectedId}`}>
-        {entry?.title}
+        {title}
       </motion.p>
 
       <p className={styles.date}>
-        {new Date(entry?.dueDate || 0).toLocaleString("en-US", {
+        {new Date(dueDate || 0).toLocaleString("en-US", {
           dateStyle: "full",
         })}
       </p>
       <div className={styles.label}>Description</div>
-      <p className={styles.info}>{entry?.description || "No description provided"}</p>
+      <p className={styles.info}>{description || "No description provided"}</p>
 
       <div className={styles.buttons}>
-        <Link href={`${entry?.slug}/card`}>
-          <a key={entry?.slug}>
+        <Link href={`${slug}/card`}>
+          <a key={slug}>
             <Cards />
             Cards
           </a>
         </Link>
 
-        <Link href={`${entry?.slug}/list`}>
-          <a key={entry?.slug}>
+        <Link href={`${slug}/list`}>
+          <a key={slug}>
             <List />
             List
           </a>
         </Link>
-        {entry?.class !== "math" && (
-          <Link href={`${entry?.slug}/spelling`}>
-            <a key={entry?.slug} data-new-tag>
+        {dataClass !== "math" && (
+          <Link href={`${slug}/spelling`}>
+            <a key={slug} data-new-tag>
               <Edit />
               Spelling
             </a>

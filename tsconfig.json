@@ -17,7 +17,6 @@
     "paths": {
       "@styles/*": ["./styles/*"],
       "@components/*": ["./components/*"],
-      "@data/*": ["./data/*"],
       "@utils/*": ["./utils/*"]
     }
   },

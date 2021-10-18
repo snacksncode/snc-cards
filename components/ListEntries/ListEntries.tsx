@@ -5,7 +5,7 @@ import Fuse from "fuse.js";
 import EntryCollapsed from "@components/EntryCollapsed";
 import Overlay from "@components/Overlay";
 import EntryExpanded from "@components/EntryExpanded";
-import { IEntry } from "additional";
+import { IEntry, IEntryFields } from "contentful-types";
 
 interface Props {
   entries: IEntry[];
@@ -79,7 +79,7 @@ const ListEntries = ({ entries, filterString }: Props) => {
               }}
             />
             <EntryExpanded
-              entry={entries.find((d) => d.fields.slug === selectedEntryId)?.fields}
+              entry={entries.find((d) => d.fields.slug === selectedEntryId)?.fields as IEntryFields}
               selectEntry={selectEntry}
               selectedId={selectedEntryId}
               key={`expanded_${selectedEntryId}`}

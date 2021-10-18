@@ -1,5 +1,5 @@
 import getAccentForClass from "@utils/getAccentForClass";
-import { IEntryFields } from "additional";
+import { IEntryFields } from "contentful-types";
 import { motion } from "framer-motion";
 import { KeyboardEventHandler, MouseEvent } from "react";
 import styles from "./EntryCollapsed.module.scss";

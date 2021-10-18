@@ -12,7 +12,7 @@ import styles from "@styles/Spelling.module.scss";
 import shuffle from "utils/shuffle";
 import classNames from "classnames";
 import { motion } from "framer-motion";
-import { IEntryFields, IQuestion, IQuestionFields } from "contentful-types";
+import { IEntryFields, IQuestion } from "contentful-types";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import { createClient, EntryCollection } from "contentful";
 
