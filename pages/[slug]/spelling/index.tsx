@@ -12,7 +12,7 @@ import styles from "@styles/Spelling.module.scss";
 import shuffle from "utils/shuffle";
 import classNames from "classnames";
 import { motion } from "framer-motion";
-import { IEntryFields, IQuestion } from "contentful-types";
+import { IEntryFields } from "contentful-types";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import { createClient, EntryCollection } from "contentful";
 
@@ -24,7 +24,7 @@ interface CharInputData {
 type CharInputObject = { [key: string]: CharInputData };
 
 export default function CardId({ data }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const [shuffledData, setShuffledData] = useState<IQuestion[] | null>(null);
+  const [shuffledData, setShuffledData] = useState(data);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const selectedQuestion = shuffledData?.[currentWordIndex];
   const [charInputData, setCharInputData] = useState<CharInputObject | null>(null);
@@ -148,7 +148,8 @@ export default function CardId({ data }: InferGetStaticPropsType<typeof getStati
   };
 
   // safety checks for TypeScript
-  if (selectedQuestion == null || charInputData == null || doneParsing !== true) return null;
+  if (!data) return <div>Building...</div>;
+  if (doneParsing !== true || charInputData == null) return null;
   const { answer, question } = selectedQuestion.fields;
   return (
     <div className={styles.container}>
@@ -206,7 +207,7 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
   const data = items[0].fields.data;
   return {
     props: {
-      data: data as IQuestion[],
+      data: data,
     },
     revalidate: 60,
   };
@@ -223,5 +224,5 @@ export async function getStaticPaths() {
     };
   });
 
-  return { paths, fallback: false };
+  return { paths, fallback: true };
 }

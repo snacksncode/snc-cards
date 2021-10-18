@@ -5,7 +5,7 @@ import ListEntries from "@components/ListEntries";
 import { motion } from "framer-motion";
 import Filter from "@components/Filter";
 import { createClient, EntryCollection } from "contentful";
-import { IEntry, IEntryFields } from "contentful-types";
+import { IEntryFields } from "contentful-types";
 
 export const getStaticProps = async () => {
   const client = createClient({
@@ -15,7 +15,7 @@ export const getStaticProps = async () => {
   const res = (await client.getEntries({
     content_type: "entryData",
   })) as EntryCollection<IEntryFields>;
-  const data = res.items as IEntry[];
+  const data = res.items;
   return {
     props: {
       data,

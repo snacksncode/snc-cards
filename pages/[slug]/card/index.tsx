@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import shuffle from "utils/shuffle";
 import { IEntryFields, IQuestion } from "contentful-types";
 import { createClient, EntryCollection } from "contentful";
-import { GetStaticPropsContext, GetStaticPropsResult, InferGetStaticPropsType } from "next";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 
 // TODO: Re-Shuffle upon restart
 
@@ -38,7 +38,7 @@ export async function getStaticPaths() {
     };
   });
 
-  return { paths, fallback: false };
+  return { paths, fallback: true };
 }
 
 export default function CardId({ data, classData }: InferGetStaticPropsType<typeof getStaticProps>) {
@@ -46,6 +46,6 @@ export default function CardId({ data, classData }: InferGetStaticPropsType<type
   useEffect(() => {
     setShuffledData((data) => shuffle(data as IQuestion[]));
   }, [data]);
-  if (shuffledData == null || classData == null) return;
+  if (!data) return <div>Building...</div>;
   return <Viewer classData={classData} data={shuffledData} />;
 }

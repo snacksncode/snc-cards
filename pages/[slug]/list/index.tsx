@@ -61,6 +61,8 @@ export default function CardId({ data }: InferGetStaticPropsType<typeof getStati
       observer.unobserve(cachedRef);
     };
   }, []);
+
+  if (!data) return <div>Building...</div>;
   return (
     <DataWrapper type={data.class}>
       <div
@@ -134,5 +136,5 @@ export async function getStaticPaths() {
     };
   });
 
-  return { paths, fallback: false };
+  return { paths, fallback: true };
 }
