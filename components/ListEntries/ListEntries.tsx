@@ -5,25 +5,22 @@ import Fuse from "fuse.js";
 import EntryCollapsed from "@components/EntryCollapsed";
 import Overlay from "@components/Overlay";
 import EntryExpanded from "@components/EntryExpanded";
+import { IEntry } from "additional";
 
 interface Props {
-  dataArray: Data[];
+  entries: IEntry[];
   filterString: string | null;
 }
-type FilteredData = Fuse.FuseResult<Data>[] | Data[];
+type FilteredData = Fuse.FuseResult<IEntry>[] | IEntry[];
 
-const ListEntries = ({ dataArray, filterString }: Props) => {
+const ListEntries = ({ entries, filterString }: Props) => {
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
-  const [filteredData, setFilteredData] = useState<FilteredData>(dataArray);
+  const [filteredData, setFilteredData] = useState<FilteredData>(entries);
   const fuse = useRef(
-    new Fuse(dataArray, {
+    new Fuse(entries, {
       keys: [
         {
-          name: "title",
-          weight: 0.5,
-        },
-        {
-          name: "tags",
+          name: "fields.title",
           weight: 0.5,
         },
       ],
@@ -44,12 +41,12 @@ const ListEntries = ({ dataArray, filterString }: Props) => {
 
   useEffect(() => {
     if (!filterString) {
-      setFilteredData(dataArray);
+      setFilteredData(entries);
       return;
     }
     const data = fuse.current.search(filterString);
     setFilteredData(data);
-  }, [filterString, dataArray]);
+  }, [filterString, entries]);
 
   return (
     <AnimateSharedLayout type="crossfade">
@@ -57,12 +54,12 @@ const ListEntries = ({ dataArray, filterString }: Props) => {
       <motion.div className={styles.container}>
         <AnimatePresence>
           {filteredData.map((d, idx) => {
-            const isFuseResult = Boolean((d as Fuse.FuseResult<Data>).item);
-            const entryData = isFuseResult ? (d as Fuse.FuseResult<Data>).item : (d as Data);
+            const isFuseResult = Boolean((d as Fuse.FuseResult<IEntry>).item);
+            const entryData = isFuseResult ? (d as Fuse.FuseResult<IEntry>).item : (d as IEntry);
             return (
               <EntryCollapsed
-                key={entryData.id}
-                data={entryData}
+                key={entryData.fields.slug}
+                entry={entryData.fields}
                 onSelect={selectEntry}
                 entryIndex={idx}
                 selectedId={selectedEntryId}
@@ -82,7 +79,7 @@ const ListEntries = ({ dataArray, filterString }: Props) => {
               }}
             />
             <EntryExpanded
-              data={dataArray.find((d) => d.id === selectedEntryId) as Data}
+              entry={entries.find((d) => d.fields.slug === selectedEntryId)?.fields}
               selectEntry={selectEntry}
               selectedId={selectedEntryId}
               key={`expanded_${selectedEntryId}`}

@@ -8,14 +8,13 @@ import React, {
   useState,
 } from "react";
 import shoetest from "shoetest";
-import { getData } from "@data/exporter";
 import styles from "@styles/Spelling.module.scss";
 import shuffle from "utils/shuffle";
 import classNames from "classnames";
 import { motion } from "framer-motion";
-interface Props {
-  data: WordData[];
-}
+import { IEntryFields, IQuestion, IQuestionFields } from "contentful-types";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import { createClient, EntryCollection } from "contentful";
 
 interface CharInputData {
   value: string;
@@ -24,10 +23,10 @@ interface CharInputData {
 }
 type CharInputObject = { [key: string]: CharInputData };
 
-export default function CardId({ data }: Props) {
-  const [shuffledData, setShuffledData] = useState<WordData[] | null>(null);
+export default function CardId({ data }: InferGetStaticPropsType<typeof getStaticProps>) {
+  const [shuffledData, setShuffledData] = useState<IQuestion[] | null>(null);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const selectedWord = shuffledData?.[currentWordIndex];
+  const selectedQuestion = shuffledData?.[currentWordIndex];
   const [charInputData, setCharInputData] = useState<CharInputObject | null>(null);
   const [doneParsing, setDoneParsing] = useState(false);
   let globalCharIndex = -1;
@@ -43,23 +42,22 @@ export default function CardId({ data }: Props) {
 
   // ignore the first render, then fill in charInputData
   useEffect(() => {
-    if (selectedWord == null) return;
+    if (selectedQuestion == null) return;
     const generatedCharData: CharInputObject = {};
 
-    getCharArray(shoetest.simplify(selectedWord.answer)).map((_char, charIdx) => {
+    getCharArray(shoetest.simplify(selectedQuestion.fields.answer)).map((_char, charIdx) => {
       const genObj: CharInputData = { ref: createRef(), value: "", correct: null };
       generatedCharData[charIdx] = genObj;
     });
-    console.log(`[Generation]: Created object with ${Object.values(generatedCharData).length} items`);
 
     setDoneParsing(true);
     setCharInputData(generatedCharData);
-  }, [selectedWord]);
+  }, [selectedQuestion]);
 
   const checkAnswer: FormEventHandler = (e) => {
     e.preventDefault();
-    if (selectedWord == null || charInputData == null) return;
-    getCharArray(shoetest.simplify(selectedWord.answer.toLowerCase())).map((correctChar, correctCharIdx) => {
+    if (selectedQuestion == null || charInputData == null) return;
+    getCharArray(shoetest.simplify(selectedQuestion.fields.answer.toLowerCase())).map((correctChar, correctCharIdx) => {
       const verdict = charInputData[correctCharIdx].value.toLowerCase() === correctChar;
       const inputState = charInputData[correctCharIdx];
       inputState.correct = verdict;
@@ -150,14 +148,14 @@ export default function CardId({ data }: Props) {
   };
 
   // safety checks for TypeScript
-  if (selectedWord == null || charInputData == null || doneParsing !== true) return null;
-  console.log(`[Data]: `, charInputData);
+  if (selectedQuestion == null || charInputData == null || doneParsing !== true) return null;
+  const { answer, question } = selectedQuestion.fields;
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <h1 className={styles.title}>Question: {selectedWord.question}</h1>
+        <h1 className={styles.title}>{question}</h1>
         <form onSubmit={checkAnswer}>
-          {(shoetest.simplify(selectedWord.answer) as string).split(" ").map((word, wordIndex) => {
+          {(shoetest.simplify(answer) as string).split(" ").map((word, wordIndex) => {
             return (
               <div className={styles.word} key={`word_${wordIndex}`}>
                 {word.split("").map((_c, _cI) => {
@@ -195,17 +193,37 @@ export default function CardId({ data }: Props) {
   );
 }
 
+export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
+  const client = createClient({
+    space: process.env.CF_SPACE_ID || "",
+    accessToken: process.env.CF_ACCESS_TOKEN || "",
+  });
+  const res = (await client.getEntries({
+    content_type: "entryData",
+  })) as EntryCollection<IEntryFields>;
+  const rawData = res.items.find((i) => i.fields.slug === params?.slug)?.fields.data;
+  return {
+    props: {
+      data: rawData as IQuestion[],
+    },
+  };
+};
+
 export async function getStaticPaths() {
-  const paths = (await getData()).map((d) => ({
-    params: { id: d.id },
-  }));
+  const client = createClient({
+    space: process.env.CF_SPACE_ID || "",
+    accessToken: process.env.CF_ACCESS_TOKEN || "",
+  });
+
+  const res = (await client.getEntries({
+    content_type: "entryData",
+  })) as EntryCollection<IEntryFields>;
+
+  const paths = res.items.map((i) => {
+    return {
+      params: { slug: i.fields.slug },
+    };
+  });
 
   return { paths, fallback: false };
-}
-
-export async function getStaticProps({ params }: any) {
-  const data = (await getData()).find((d) => d.id === params.id)?.data;
-  return {
-    props: { data: data },
-  };
 }

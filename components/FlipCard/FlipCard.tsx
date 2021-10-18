@@ -7,6 +7,7 @@ import classNames from "classnames";
 import Close from "../../icons/Close";
 import Tick from "../../icons/Tick";
 import useWindowSize from "utils/useWindowSize";
+import { IEntryFields, IQuestionFields } from "contentful-types";
 
 const variants = {
   unflipped: { transform: "rotateX(0deg)" },
@@ -14,9 +15,9 @@ const variants = {
 };
 
 interface Props {
-  data: WordData;
+  dataClass: IEntryFields["class"];
+  data: IQuestionFields;
   onAnswer: Function;
-  dataClass: Data["class"];
 }
 
 const Correct = ({ onAnimationComplete }: { onAnimationComplete: Function }) => {
@@ -69,7 +70,7 @@ const Wrong = ({ onAnimationComplete }: { onAnimationComplete: Function }) => {
   );
 };
 
-const FlipCard = ({ data, onAnswer, dataClass }: Props) => {
+const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [answeredRight, setAnsweredRight] = useState<boolean | null>(null);
   const { width } = useWindowSize();
@@ -78,7 +79,7 @@ const FlipCard = ({ data, onAnswer, dataClass }: Props) => {
     if (!width) return { isMobile: undefined, cardWidth: undefined };
     // math breaks stuff
     const contentSize =
-      dataClass !== "MATH"
+      dataClass !== "math"
         ? Math.max(data.answer.replace(" | ", "").length, data.question.length)
         : data.question.length;
     let calculatedWidth = Math.max(contentSize * 8 * 2.85 + 128, 350);

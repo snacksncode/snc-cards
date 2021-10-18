@@ -5,16 +5,16 @@ import classNames from "classnames";
 import getAccentForClass from "@utils/getAccentForClass";
 import ArrowRightCircle from "icons/ArrowRightCircle";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
-interface Props {
-  dataObject: Data;
-}
+import { createClient, EntryCollection } from "contentful";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import { IEntryFields } from "contentful-types";
 
-const FormatedData = ({ data, type }: { data: string; type: Data["class"] }) => {
+const FormatedData = ({ data, type }: { data: string; type: IEntryFields["class"] }) => {
   const [loaded, setLoaded] = useState(false);
   return (
     <>
       <div className={styles.answer}>
-        {type !== "MATH" ? (
+        {type !== "math" ? (
           <span>{data}</span>
         ) : (
           <>
@@ -29,8 +29,8 @@ const FormatedData = ({ data, type }: { data: string; type: Data["class"] }) => 
   );
 };
 
-const DataWrapper = ({ type, children }: PropsWithChildren<{ type: Data["class"] }>) => {
-  if (type === "MATH")
+const DataWrapper = ({ type, children }: PropsWithChildren<{ type: IEntryFields["class"] }>) => {
+  if (type === "math")
     return (
       <MathJaxContext config={{ options: { enableMenu: false } }} hideUntilTypeset={"first"}>
         {children}
@@ -39,7 +39,7 @@ const DataWrapper = ({ type, children }: PropsWithChildren<{ type: Data["class"]
   return <>{children}</>;
 };
 
-export default function CardId({ dataObject }: Props) {
+export default function CardId({ data }: InferGetStaticPropsType<typeof getStaticProps>) {
   const headerRef = useRef<HTMLHeadingElement | null>(null);
   const [isSticky, setIsSticky] = useState(false);
 
@@ -63,20 +63,20 @@ export default function CardId({ dataObject }: Props) {
     };
   }, []);
   return (
-    <DataWrapper type={dataObject.class}>
+    <DataWrapper type={data.class}>
       <div
         className={styles.container}
-        style={{ margin: "2rem auto 0", ["--clr-accent" as any]: getAccentForClass(dataObject.class) }}
+        style={{ margin: "2rem auto 0", ["--clr-accent" as any]: getAccentForClass(data.class) }}
       >
         <h1 className={styles.title}>
           List view for <br />
-          <span>{dataObject.title}</span>
+          <span>{data.title}</span>
         </h1>
       </div>
       <div
         ref={headerRef}
         className={topContainerClasses}
-        style={{ ["--clr-accent" as any]: getAccentForClass(dataObject.class) }}
+        style={{ ["--clr-accent" as any]: getAccentForClass(data.class) }}
       >
         <div className={styles.container}>
           <header className={styles.top}>
@@ -86,15 +86,16 @@ export default function CardId({ dataObject }: Props) {
           </header>
         </div>
       </div>
-      <div className={styles.container} style={{ ["--clr-accent" as any]: getAccentForClass(dataObject.class) }}>
+      <div className={styles.container} style={{ ["--clr-accent" as any]: getAccentForClass(data.class) }}>
         <div className={styles.list}>
-          {dataObject.data.map((d) => {
+          {data.data.map((d) => {
+            let { answer, question } = d.fields;
             return (
-              <div className={styles.list__item} key={`${d.question}-${d.answer}`}>
-                <div className={styles.question}>{d.question}</div>
+              <div className={styles.list__item} key={`${question}-${answer}`}>
+                <div className={styles.question}>{question}</div>
                 <div className={styles.spacer}></div>
                 <ArrowRightCircle />
-                <FormatedData type={dataObject.class} data={d.answer} />
+                <FormatedData type={data.class} data={answer} />
               </div>
             );
           })}
@@ -104,17 +105,37 @@ export default function CardId({ dataObject }: Props) {
   );
 }
 
+export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
+  const client = createClient({
+    space: process.env.CF_SPACE_ID || "",
+    accessToken: process.env.CF_ACCESS_TOKEN || "",
+  });
+  const res = (await client.getEntries({
+    content_type: "entryData",
+  })) as EntryCollection<IEntryFields>;
+  const rawData = res.items.find((i) => i.fields.slug === params?.slug)?.fields;
+  return {
+    props: {
+      data: rawData as IEntryFields,
+    },
+  };
+};
+
 export async function getStaticPaths() {
-  const paths = (await getData()).map((d) => ({
-    params: { id: d.id },
-  }));
+  const client = createClient({
+    space: process.env.CF_SPACE_ID || "",
+    accessToken: process.env.CF_ACCESS_TOKEN || "",
+  });
+
+  const res = (await client.getEntries({
+    content_type: "entryData",
+  })) as EntryCollection<IEntryFields>;
+
+  const paths = res.items.map((i) => {
+    return {
+      params: { slug: i.fields.slug },
+    };
+  });
 
   return { paths, fallback: false };
-}
-
-export async function getStaticProps({ params }: any) {
-  const data = (await getData()).find((d) => d.id === params.id);
-  return {
-    props: { dataObject: data },
-  };
 }

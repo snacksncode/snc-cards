@@ -1,12 +1,14 @@
-export default function getAccentForClass(cls: Data["class"]) {
+import { IEntryFields } from "contentful-types";
+
+export default function getAccentForClass(cls: IEntryFields["class"]) {
   switch (cls) {
-    case "DE":
+    case "de":
       return "var(--clr-accent-peachy)";
-    case "EN":
+    case "en":
       return "var(--clr-accent-blue)";
-    case "OTHER":
+    case "geo":
       return "var(--clr-accent-green)";
-    default:
+    case "math":
       return "var(--clr-accent-red)";
   }
 }

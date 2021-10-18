@@ -1,18 +1,31 @@
-import { NextPage } from "next";
+import { InferGetStaticPropsType, NextPage } from "next";
 import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
-import { getData } from "@data/exporter";
 import styles from "@styles/Home.module.scss";
 import ListEntries from "@components/ListEntries";
 import { motion } from "framer-motion";
 import Filter from "@components/Filter";
+import { createClient, EntryCollection } from "contentful";
+import { IEntry, IEntryFields } from "contentful-types";
 
-// const ITEMS_PER_PAGE = 4;
+export const getStaticProps = async () => {
+  // const data: Data[] = await getData();
+  const client = createClient({
+    space: process.env.CF_SPACE_ID || "",
+    accessToken: process.env.CF_ACCESS_TOKEN || "",
+  });
+  const res = (await client.getEntries({
+    content_type: "entryData",
+  })) as EntryCollection<IEntryFields>;
+  const data = res.items as IEntry[];
+  return {
+    props: {
+      // dataArray: data,
+      data,
+    },
+  };
+};
 
-interface Props {
-  dataArray: Data[];
-}
-
-const Home: NextPage<Props> = ({ dataArray }) => {
+const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ data }) => {
   const [inputValue, setInputValue] = useState("");
   const [filterString, setFilterString] = useState<string | null>(null);
 
@@ -36,18 +49,9 @@ const Home: NextPage<Props> = ({ dataArray }) => {
         Hi! Select the topic that you want to revise
       </motion.h1>
       <Filter value={inputValue} onChangeHandler={handleInputChange} />
-      <ListEntries filterString={filterString} dataArray={dataArray} />
+      <ListEntries filterString={filterString} entries={data} />
     </main>
   );
 };
-
-export async function getStaticProps() {
-  const data = await getData();
-  return {
-    props: {
-      dataArray: data,
-    },
-  };
-}
 
 export default Home;

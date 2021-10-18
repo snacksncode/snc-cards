@@ -1,4 +1,4 @@
-html {
+body {
   --clr-background-300: hsl(0, 0%, 13%);
   --clr-background-400: hsl(0, 0%, 16%);
   --clr-background-500: hsl(0, 0%, 20%);
@@ -13,4 +13,21 @@ html {
   --clr-accent-peachy: hsl(23, 90%, 68%);
   --clr-accent-red: hsl(359, 100%, 70%);
   --clr-accent-red-darker: hsl(359, 63%, 54%);
+}
+
+body.light {
+  --clr-background-300: hsl(0, 0%, 96%);
+  --clr-background-400: hsl(0, 0%, 93%);
+  --clr-background-500: hsl(0, 0%, 86%);
+  --clr-background-600: hsl(0, 0%, 86%);
+  --clr-background-card: hsl(0, 0%, 80%);
+  --clr-text: hsl(0, 0%, 8%);
+  --clr-text-muted: hsl(0, 0%, 20%);
+
+  --clr-accent-blue: hsl(212, 90%, 60%);
+  --clr-accent-green: hsl(113, 51%, 55%);
+  --clr-accent-green-darker: hsl(113, 51%, 45%);
+  --clr-accent-peachy: hsl(23, 90%, 68%);
+  --clr-accent-red: hsl(359, 100%, 60%);
+  --clr-accent-red-darker: hsl(359, 63%, 50%);
 }

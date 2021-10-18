@@ -27,6 +27,11 @@
         margin-left: 3ch;
       }
     }
+    .input__container {
+      & + .input__container {
+        margin-left: 3px;
+      }
+    }
     .char {
       font-size: 1.5rem;
       padding: 0.125rem 0;
@@ -40,12 +45,16 @@
       color: var(--clr-text);
       text-align: center;
       caret-color: var(--clr-accent-blue);
-      & + input {
-        margin-left: 0.125em;
-      }
+      // & + input {
+      //   margin-left: 0.125em;
+      // }
       &:focus {
         border-color: var(--clr-accent-blue);
         outline: none;
+      }
+      &--special {
+        padding: 0;
+        border: none;
       }
       &--correct {
         color: var(--clr-accent-green);

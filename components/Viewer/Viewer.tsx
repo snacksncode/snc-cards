@@ -4,18 +4,19 @@ import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { animate, AnimatePresence, motion } from "framer-motion";
 import Play from "icons/Play";
 import { MathJaxContext } from "better-react-mathjax";
+import { IEntryFields, IQuestion } from "contentful-types";
 
 interface Props {
-  data: WordData[];
-  dataClass: Data["class"];
+  data: IQuestion[];
+  classData: IEntryFields["class"];
 }
 
-const DataWrapper = ({ type, children }: PropsWithChildren<{ type: Data["class"] }>) => {
-  if (type === "MATH") return <MathJaxContext config={{ options: { enableMenu: false } }}>{children}</MathJaxContext>;
+const DataWrapper = ({ type, children }: PropsWithChildren<{ type: IEntryFields["class"] }>) => {
+  if (type === "math") return <MathJaxContext config={{ options: { enableMenu: false } }}>{children}</MathJaxContext>;
   return <>{children}</>;
 };
 
-const Viewer = ({ data, dataClass }: Props) => {
+const Viewer = ({ data, classData }: Props) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const percentageRef = useRef<HTMLParagraphElement>(null);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
@@ -66,12 +67,14 @@ const Viewer = ({ data, dataClass }: Props) => {
                 0.00%
               </p>
             </div>
-            <DataWrapper type={dataClass}>
+            <DataWrapper type={classData}>
               <AnimatePresence>
-                {data.map((d: any, i: number) => {
+                {data.map((d, i: number) => {
                   {
                     return (
-                      selectedIndex === i && <FlipCard dataClass={dataClass} onAnswer={onAnswer} key={i} data={d} />
+                      selectedIndex === i && (
+                        <FlipCard dataClass={classData} onAnswer={onAnswer} key={i} data={d.fields} />
+                      )
                     );
                   }
                 })}
