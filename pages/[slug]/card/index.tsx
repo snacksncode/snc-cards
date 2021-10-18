@@ -13,14 +13,15 @@ const client = createClient({
 });
 
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const res = (await client.getEntries({
+  const { items } = (await client.getEntries({
     content_type: "entryData",
+    "fields.slug": params?.slug,
   })) as EntryCollection<IEntryFields>;
-  const rawData = res.items.find((i) => i.fields.slug === params?.slug)?.fields;
+  const rawData = items[0].fields;
   return {
     props: {
-      data: rawData?.data,
-      classData: rawData?.class,
+      data: rawData.data,
+      classData: rawData.class,
     },
   };
 };
