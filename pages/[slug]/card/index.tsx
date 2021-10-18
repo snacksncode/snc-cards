@@ -6,11 +6,13 @@ import { createClient, EntryCollection } from "contentful";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 
 // TODO: Re-Shuffle upon restart
+
+const client = createClient({
+  space: process.env.CF_SPACE_ID || "",
+  accessToken: process.env.CF_ACCESS_TOKEN || "",
+});
+
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const client = createClient({
-    space: process.env.CF_SPACE_ID || "",
-    accessToken: process.env.CF_ACCESS_TOKEN || "",
-  });
   const res = (await client.getEntries({
     content_type: "entryData",
   })) as EntryCollection<IEntryFields>;
@@ -24,11 +26,6 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
 };
 
 export async function getStaticPaths() {
-  const client = createClient({
-    space: process.env.CF_SPACE_ID || "",
-    accessToken: process.env.CF_ACCESS_TOKEN || "",
-  });
-
   const res = (await client.getEntries({
     content_type: "entryData",
   })) as EntryCollection<IEntryFields>;
