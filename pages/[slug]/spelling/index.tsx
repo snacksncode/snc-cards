@@ -208,6 +208,7 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
     props: {
       data: data as IQuestion[],
     },
+    revalidate: 60,
   };
 };
 

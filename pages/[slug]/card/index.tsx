@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import shuffle from "utils/shuffle";
 import { IEntryFields, IQuestion } from "contentful-types";
 import { createClient, EntryCollection } from "contentful";
-import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import { GetStaticPropsContext, GetStaticPropsResult, InferGetStaticPropsType } from "next";
 
 // TODO: Re-Shuffle upon restart
 
@@ -23,6 +23,7 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
       data: rawData.data,
       classData: rawData.class,
     },
+    revalidate: 60,
   };
 };
 
