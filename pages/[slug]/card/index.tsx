@@ -61,6 +61,6 @@ export default function CardId({ data, dataClass }: Props) {
   useEffect(() => {
     setShuffledData((data) => shuffle(data as IQuestion[]));
   }, [data]);
-  if (!data || !dataClass || !shuffledData) return <div>Building...</div>;
-  return <Viewer dataClass={dataClass} data={shuffledData} />;
+  if (!data) return <div>Building...</div>;
+  return <Viewer dataClass={dataClass as Class} data={shuffledData as IQuestion[]} />;
 }

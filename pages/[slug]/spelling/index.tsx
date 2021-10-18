@@ -28,6 +28,11 @@ interface Props {
 }
 
 export default function CardId({ data }: Props) {
+  return (
+    <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: "1" }}>
+      Currently broken, working on
+    </h1>
+  );
   const [shuffledData, setShuffledData] = useState(data);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const selectedQuestion = shuffledData?.[currentWordIndex];
