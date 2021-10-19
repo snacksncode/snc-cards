@@ -36,7 +36,7 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
   return {
     props: {
       data: rawData.data,
-      classData: rawData.class,
+      dataClass: rawData.class,
     },
     revalidate: 60,
   };
@@ -57,10 +57,16 @@ export async function getStaticPaths() {
 }
 
 export default function CardId({ data, dataClass }: Props) {
+  console.log(`[DEBUG TIME]`);
+  console.log(`Data`, data);
+  console.log(`Data Class`, dataClass);
   const [shuffledData, setShuffledData] = useState(data);
   useEffect(() => {
-    setShuffledData((data) => shuffle(data as IQuestion[]));
+    if (data == null) return;
+    const shuffled = shuffle(data);
+    setShuffledData(shuffled);
   }, [data]);
   if (!data) return <div>Building...</div>;
+  console.log(`Is past check`);
   return <Viewer dataClass={dataClass as Class} data={shuffledData as IQuestion[]} />;
 }
