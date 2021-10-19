@@ -6,6 +6,7 @@ import EntryCollapsed from "@components/EntryCollapsed";
 import Overlay from "@components/Overlay";
 import EntryExpanded from "@components/EntryExpanded";
 import { IEntry, IEntryFields } from "contentful-types";
+import Close from "icons/Close";
 
 interface Props {
   entries: IEntry[];
@@ -53,19 +54,32 @@ const ListEntries = ({ entries, filterString }: Props) => {
       {/* Each element */}
       <motion.div className={styles.container}>
         <AnimatePresence>
-          {filteredData.map((d, idx) => {
-            const isFuseResult = Boolean((d as Fuse.FuseResult<IEntry>).item);
-            const entryData = isFuseResult ? (d as Fuse.FuseResult<IEntry>).item : (d as IEntry);
-            return (
-              <EntryCollapsed
-                key={entryData.fields.slug}
-                entry={entryData.fields}
-                onSelect={selectEntry}
-                entryIndex={idx}
-                selectedId={selectedEntryId}
-              />
-            );
-          })}
+          {filteredData.length > 0 ? (
+            filteredData.map((d, idx) => {
+              const isFuseResult = Boolean((d as Fuse.FuseResult<IEntry>).item);
+              const entryData = isFuseResult ? (d as Fuse.FuseResult<IEntry>).item : (d as IEntry);
+              return (
+                <EntryCollapsed
+                  key={entryData.fields.slug}
+                  entry={entryData.fields}
+                  onSelect={selectEntry}
+                  entryIndex={idx}
+                  selectedId={selectedEntryId}
+                />
+              );
+            })
+          ) : (
+            <motion.h1
+              key="nothing-found"
+              className={styles.noResults}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0, transition: { delay: 0.25 } }}
+              exit={{ opacity: 0 }}
+            >
+              <Close />
+              No Entries
+            </motion.h1>
+          )}
         </AnimatePresence>
       </motion.div>
 

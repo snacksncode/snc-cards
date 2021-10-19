@@ -41,7 +41,7 @@ const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
       onKeyPress={handleKeypress}
       initial={{ opacity: 0, y: -20 }}
       whileHover={{ scale: 1.03 }}
-      animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (entryIndex + 1) } }}
+      animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (entryIndex + 1) + 0.125 } }}
       exit={{ opacity: 0 }}
       className={styles.container}
       style={{ "--clr-card-accent": getAccentForClass(entry.class) } as any}
