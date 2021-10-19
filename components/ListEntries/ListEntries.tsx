@@ -1,5 +1,5 @@
 import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
-import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./ListEntries.module.scss";
 import Fuse from "fuse.js";
 import EntryCollapsed from "@components/EntryCollapsed";

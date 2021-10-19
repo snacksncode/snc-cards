@@ -1,33 +1,27 @@
-import React, {
-  ChangeEventHandler,
-  createRef,
-  FormEventHandler,
-  KeyboardEventHandler,
-  RefObject,
-  useEffect,
-  useState,
-} from "react";
-import shoetest from "shoetest";
-import styles from "@styles/Spelling.module.scss";
-import shuffle from "utils/shuffle";
-import classNames from "classnames";
-import { motion } from "framer-motion";
+import React from // useEffect, // RefObject, // KeyboardEventHandler, // FormEventHandler, // createRef, // ChangeEventHandler,
+// useState,
+"react";
+// import shoetest from "shoetest";
+// import styles from "@styles/Spelling.module.scss";
+// import shuffle from "utils/shuffle";
+// import classNames from "classnames";
+// import { motion } from "framer-motion";
 import { IEntryFields, IQuestion } from "contentful-types";
 import { GetStaticPropsContext } from "next";
 import { createClient, EntryCollection } from "contentful";
 
-interface CharInputData {
-  value: string;
-  ref: RefObject<HTMLInputElement>;
-  correct: null | boolean;
-}
-type CharInputObject = { [key: string]: CharInputData };
+// interface CharInputData {
+//   value: string;
+//   ref: RefObject<HTMLInputElement>;
+//   correct: null | boolean;
+// }
+// type CharInputObject = { [key: string]: CharInputData };
 
 interface Props {
   data: IQuestion[] | null;
 }
 
-export default function CardId({ data }: Props) {
+export default function CardId({ data: _ }: Props) {
   return (
     <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: "1" }}>
       Currently broken, working on

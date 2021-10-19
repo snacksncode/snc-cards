@@ -16,7 +16,7 @@ interface Props {
 }
 
 const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
-  const { class: dataClass, data, description, dueDate, slug, title } = entry;
+  const { class: dataClass, description, dueDate, slug, title } = entry;
   const ref = useRef<null | HTMLDivElement>(null);
 
   const handleClose = () => {

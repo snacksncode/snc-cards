@@ -1,5 +1,5 @@
 import { InferGetStaticPropsType, NextPage } from "next";
-import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useState } from "react";
 import styles from "@styles/Home.module.scss";
 import ListEntries from "@components/ListEntries";
 import { motion } from "framer-motion";
