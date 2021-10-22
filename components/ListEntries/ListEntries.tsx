@@ -18,12 +18,7 @@ const ListEntries = ({ entries, filterString }: Props) => {
   const [filteredData, setFilteredData] = useState<FilteredData>(entries);
   const fuse = useRef(
     new Fuse(entries, {
-      keys: [
-        {
-          name: "fields.title",
-          weight: 0.5,
-        },
-      ],
+      keys: ["title", "slug", "class"],
     })
   );
 
