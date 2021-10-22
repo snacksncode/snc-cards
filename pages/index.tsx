@@ -40,6 +40,13 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ data }
       <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={styles.heading}>
         Hi! Select the topic that you want to revise
       </motion.h1>
+      <motion.a
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        href="https://snc-cards.herokuapp.com/admin"
+      >
+        Admin Panel
+      </motion.a>
       <Filter value={inputValue} onChangeHandler={handleInputChange} />
       <ListEntries filterString={filterString} entries={data} />
     </main>

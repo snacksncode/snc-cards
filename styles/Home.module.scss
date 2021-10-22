@@ -4,10 +4,19 @@
   max-width: 800px;
   display: flex;
   flex-direction: column;
+  a {
+    color: var(--clr-accent-blue);
+    margin-bottom: 1.5rem;
+    &:focus,
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .heading {
   margin-top: 0;
+  margin-bottom: 0.5rem;
   font-size: 2rem;
   font-weight: 700;
   line-height: 125%;
