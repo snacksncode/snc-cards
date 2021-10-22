@@ -17,6 +17,10 @@ interface Props {
 const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
   const { class: dataClass, description, dueDate, slug, title } = entry;
   const ref = useRef<null | HTMLDivElement>(null);
+  const entryDate = new Date(dueDate || 0);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
 
   const handleClose = () => {
     selectEntry(null);
@@ -60,9 +64,10 @@ const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
       </motion.p>
 
       <p className={styles.date}>
-        {new Date(dueDate || 0).toLocaleString("en-US", {
+        {entryDate.toLocaleString("en-US", {
           dateStyle: "full",
         })}
+        {entryDate < yesterday && <span className={styles.overdue}>Overdue</span>}
       </p>
       <div className={styles.label}>Description</div>
       <p className={styles.info}>{description || "No description provided"}</p>

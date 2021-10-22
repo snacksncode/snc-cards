@@ -40,6 +40,20 @@
     margin-top: 0.5em;
     margin-bottom: 2rem;
     color: var(--clr-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    .overdue {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      user-select: none;
+      border-radius: 2px;
+      padding: 0.25em 0.65em;
+      background-color: var(--clr-accent-red);
+      color: var(--clr-text);
+    }
   }
   .close {
     background-color: transparent;
