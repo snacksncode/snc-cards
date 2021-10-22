@@ -7,7 +7,7 @@ import Filter from "@components/Filter";
 
 export const getStaticProps = async () => {
   const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
-  const rawData = await fetch(`${apiUrl}/entries`);
+  const rawData = await fetch(`${apiUrl}/entries?_sort=created_at:DESC`);
   let data: APIData[] = await rawData.json();
   return {
     props: {
