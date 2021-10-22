@@ -4,7 +4,7 @@
   max-width: 800px;
   display: flex;
   flex-direction: column;
-  a {
+  .adminLink {
     color: var(--clr-accent-blue);
     margin-bottom: 1.5rem;
     &:focus,

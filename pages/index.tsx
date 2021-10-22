@@ -42,6 +42,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ data }
       </motion.h1>
       <motion.a
         initial={{ opacity: 0, y: -10 }}
+        className={styles.adminLink}
         animate={{ opacity: 1, y: 0 }}
         href="https://snc-cards.herokuapp.com/admin"
       >
