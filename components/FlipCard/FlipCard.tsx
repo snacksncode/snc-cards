@@ -7,7 +7,6 @@ import classNames from "classnames";
 import Close from "../../icons/Close";
 import Tick from "../../icons/Tick";
 import useWindowSize from "utils/useWindowSize";
-import { IEntryFields, IQuestionFields } from "contentful-types";
 
 const variants = {
   unflipped: { transform: "rotateX(0deg)" },
@@ -15,8 +14,8 @@ const variants = {
 };
 
 interface Props {
-  dataClass: IEntryFields["class"];
-  data: IQuestionFields;
+  dataClass: ClassString;
+  data: QuestionData;
   onAnswer: Function;
 }
 

@@ -1,14 +1,10 @@
-import React from // useEffect, // RefObject, // KeyboardEventHandler, // FormEventHandler, // createRef, // ChangeEventHandler,
-// useState,
-"react";
+import React from "react"; // useState, // useEffect, // RefObject, // KeyboardEventHandler, // FormEventHandler, // createRef, // ChangeEventHandler,
 // import shoetest from "shoetest";
 // import styles from "@styles/Spelling.module.scss";
 // import shuffle from "utils/shuffle";
 // import classNames from "classnames";
 // import { motion } from "framer-motion";
-import { IEntryFields, IQuestion } from "contentful-types";
 import { GetStaticPropsContext } from "next";
-import { createClient, EntryCollection } from "contentful";
 
 // interface CharInputData {
 //   value: string;
@@ -18,7 +14,7 @@ import { createClient, EntryCollection } from "contentful";
 // type CharInputObject = { [key: string]: CharInputData };
 
 interface Props {
-  data: IQuestion[] | null;
+  data: QuestionData[] | null;
 }
 
 export default function CardId({ data: _ }: Props) {
@@ -198,18 +194,12 @@ export default function CardId({ data: _ }: Props) {
   // );
 }
 
-const client = createClient({
-  space: process.env.CF_SPACE_ID || "",
-  accessToken: process.env.CF_ACCESS_TOKEN || "",
-});
-
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const { items } = (await client.getEntries({
-    content_type: "entryData",
-    "fields.slug": params?.slug,
-  })) as EntryCollection<IEntryFields>;
+  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+  const apiData = await fetch(`${apiUrl}/entries?slug=${params?.slug}`);
+  let dataArray: APIData[] = await apiData.json();
 
-  if (!items.length) {
+  if (!dataArray.length) {
     return {
       redirect: {
         destination: "/",
@@ -218,23 +208,23 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
     };
   }
 
-  const data = items[0].fields.data;
+  const rawData = dataArray[0];
   return {
     props: {
-      data: data,
+      data: rawData.questionData,
     },
     revalidate: 60,
   };
 };
 
 export async function getStaticPaths() {
-  const res = (await client.getEntries({
-    content_type: "entryData",
-  })) as EntryCollection<IEntryFields>;
+  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+  const rawData = await fetch(`${apiUrl}/entries`);
+  let data: APIData[] = await rawData.json();
 
-  const paths = res.items.map((i) => {
+  const paths = data.map((d) => {
     return {
-      params: { slug: i.fields.slug },
+      params: { slug: d.slug },
     };
   });
 

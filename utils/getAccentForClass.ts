@@ -1,6 +1,4 @@
-import { IEntryFields } from "contentful-types";
-
-export default function getAccentForClass(cls: IEntryFields["class"]) {
+export default function getAccentForClass(cls: ClassString) {
   switch (cls) {
     case "de":
       return "var(--clr-accent-peachy)";

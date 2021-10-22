@@ -1,29 +1,21 @@
 import Viewer from "@components/Viewer";
 import React, { useEffect, useState } from "react";
 import shuffle from "utils/shuffle";
-import { IEntryFields, IQuestion, Class } from "contentful-types";
-import { createClient, EntryCollection } from "contentful";
 import { GetStaticPropsContext } from "next";
 
 // TODO: Re-Shuffle upon restart
 
 interface Props {
-  data: IQuestion[] | null;
-  dataClass: Class | null;
+  data: QuestionData[] | null;
+  dataClass: ClassString | null;
 }
 
-const client = createClient({
-  space: process.env.CF_SPACE_ID || "",
-  accessToken: process.env.CF_ACCESS_TOKEN || "",
-});
-
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const { items } = (await client.getEntries({
-    content_type: "entryData",
-    "fields.slug": params?.slug,
-  })) as EntryCollection<IEntryFields>;
+  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+  const apiData = await fetch(`${apiUrl}/entries?slug=${params?.slug}`);
+  let dataArray: APIData[] = await apiData.json();
 
-  if (!items.length) {
+  if (!dataArray.length) {
     return {
       redirect: {
         destination: "/",
@@ -32,10 +24,10 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
     };
   }
 
-  const rawData = items[0].fields;
+  const rawData = dataArray[0];
   return {
     props: {
-      data: rawData.data,
+      data: rawData.questionData,
       dataClass: rawData.class,
     },
     revalidate: 60,
@@ -43,13 +35,13 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
 };
 
 export async function getStaticPaths() {
-  const res = (await client.getEntries({
-    content_type: "entryData",
-  })) as EntryCollection<IEntryFields>;
+  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+  const rawData = await fetch(`${apiUrl}/entries`);
+  let data: APIData[] = await rawData.json();
 
-  const paths = res.items.map((i) => {
+  const paths = data.map((d) => {
     return {
-      params: { slug: i.fields.slug },
+      params: { slug: d.slug },
     };
   });
 
@@ -68,5 +60,5 @@ export default function CardId({ data, dataClass }: Props) {
   }, [data]);
   if (!data) return <div>Building...</div>;
   console.log(`Is past check`);
-  return <Viewer dataClass={dataClass as Class} data={shuffledData as IQuestion[]} />;
+  return <Viewer dataClass={dataClass as ClassString} data={shuffledData as QuestionData[]} />;
 }

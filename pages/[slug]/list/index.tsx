@@ -4,15 +4,13 @@ import classNames from "classnames";
 import getAccentForClass from "@utils/getAccentForClass";
 import ArrowRightCircle from "icons/ArrowRightCircle";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
-import { createClient, EntryCollection } from "contentful";
 import { GetStaticPropsContext } from "next";
-import { IEntryFields } from "contentful-types";
 
 interface Props {
-  data: IEntryFields | null;
+  data: APIData | null;
 }
 
-const FormatedData = ({ data, type }: { data: string; type: IEntryFields["class"] }) => {
+const FormatedData = ({ data, type }: { data: string; type: ClassString }) => {
   const [loaded, setLoaded] = useState(false);
   return (
     <>
@@ -32,7 +30,7 @@ const FormatedData = ({ data, type }: { data: string; type: IEntryFields["class"
   );
 };
 
-const DataWrapper = ({ type, children }: PropsWithChildren<{ type: IEntryFields["class"] }>) => {
+const DataWrapper = ({ type, children }: PropsWithChildren<{ type: ClassString }>) => {
   if (type === "math")
     return (
       <MathJaxContext config={{ options: { enableMenu: false } }} hideUntilTypeset={"first"}>
@@ -93,8 +91,8 @@ export default function CardId({ data }: Props) {
       </div>
       <div className={styles.container} style={{ ["--clr-accent" as any]: getAccentForClass(data.class) }}>
         <div className={styles.list}>
-          {data.data.map((d) => {
-            let { answer, question } = d.fields;
+          {data.questionData.map((d) => {
+            let { answer, question } = d;
             return (
               <div className={styles.list__item} key={`${question}-${answer}`}>
                 <div className={styles.question}>{question}</div>
@@ -110,17 +108,12 @@ export default function CardId({ data }: Props) {
   );
 }
 
-const client = createClient({
-  space: process.env.CF_SPACE_ID || "",
-  accessToken: process.env.CF_ACCESS_TOKEN || "",
-});
-
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const { items } = (await client.getEntries({
-    content_type: "entryData",
-    "fields.slug": params?.slug,
-  })) as EntryCollection<IEntryFields>;
-  if (!items.length) {
+  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+  const apiData = await fetch(`${apiUrl}/entries?slug=${params?.slug}`);
+  let dataArray: APIData[] = await apiData.json();
+
+  if (!dataArray.length) {
     return {
       redirect: {
         destination: "/",
@@ -128,23 +121,24 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
       },
     };
   }
-  const data = items[0].fields;
+
+  const rawData = dataArray[0];
   return {
     props: {
-      data: data,
+      data: rawData,
     },
     revalidate: 60,
   };
 };
 
 export async function getStaticPaths() {
-  const res = (await client.getEntries({
-    content_type: "entryData",
-  })) as EntryCollection<IEntryFields>;
+  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+  const rawData = await fetch(`${apiUrl}/entries`);
+  let data: APIData[] = await rawData.json();
 
-  const paths = res.items.map((i) => {
+  const paths = data.map((d) => {
     return {
-      params: { slug: i.fields.slug },
+      params: { slug: d.slug },
     };
   });
 

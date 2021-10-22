@@ -1,5 +1,4 @@
 import getAccentForClass from "@utils/getAccentForClass";
-import { IEntryFields } from "contentful-types";
 import { motion } from "framer-motion";
 import Cards from "icons/Cards";
 import Close from "icons/Close";
@@ -10,7 +9,7 @@ import React, { useEffect, useRef } from "react";
 import styles from "./EntryExpanded.module.scss";
 
 interface Props {
-  entry: IEntryFields;
+  entry: APIData;
   selectedId: string | null;
   selectEntry: (id: string | null) => void;
 }

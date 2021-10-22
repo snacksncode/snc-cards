@@ -1,11 +1,10 @@
 import getAccentForClass from "@utils/getAccentForClass";
-import { IEntryFields } from "contentful-types";
 import { motion } from "framer-motion";
 import { KeyboardEventHandler, MouseEvent } from "react";
 import styles from "./EntryCollapsed.module.scss";
 
 interface Props {
-  entry: IEntryFields;
+  entry: APIData;
   selectedId: string | null;
   onSelect: (id: string | null) => void;
   entryIndex: number;
@@ -58,7 +57,7 @@ const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
       >
         {entry.title}
       </motion.p>
-      <WordsCount amount={entry.data.length} />
+      <WordsCount amount={entry.questionData.length} />
     </motion.div>
   );
 };

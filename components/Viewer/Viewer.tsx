@@ -4,14 +4,13 @@ import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { animate, AnimatePresence, motion } from "framer-motion";
 import Play from "icons/Play";
 import { MathJaxContext } from "better-react-mathjax";
-import { IEntryFields, IQuestion } from "contentful-types";
 
 interface Props {
-  data: IQuestion[];
-  dataClass: IEntryFields["class"];
+  data: QuestionData[];
+  dataClass: ClassString;
 }
 
-const DataWrapper = ({ type, children }: PropsWithChildren<{ type: IEntryFields["class"] }>) => {
+const DataWrapper = ({ type, children }: PropsWithChildren<{ type: ClassString }>) => {
   if (type === "math") return <MathJaxContext config={{ options: { enableMenu: false } }}>{children}</MathJaxContext>;
   return <>{children}</>;
 };
@@ -72,9 +71,7 @@ const Viewer = ({ data, dataClass }: Props) => {
                 {data.map((d, i: number) => {
                   {
                     return (
-                      selectedIndex === i && (
-                        <FlipCard dataClass={dataClass} onAnswer={onAnswer} key={i} data={d.fields} />
-                      )
+                      selectedIndex === i && <FlipCard dataClass={dataClass} onAnswer={onAnswer} key={i} data={d} />
                     );
                   }
                 })}

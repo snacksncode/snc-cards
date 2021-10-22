@@ -4,18 +4,11 @@ import styles from "@styles/Home.module.scss";
 import ListEntries from "@components/ListEntries";
 import { motion } from "framer-motion";
 import Filter from "@components/Filter";
-import { createClient, EntryCollection } from "contentful";
-import { IEntryFields } from "contentful-types";
 
 export const getStaticProps = async () => {
-  const client = createClient({
-    space: process.env.CF_SPACE_ID || "",
-    accessToken: process.env.CF_ACCESS_TOKEN || "",
-  });
-  const res = (await client.getEntries({
-    content_type: "entryData",
-  })) as EntryCollection<IEntryFields>;
-  const data = res.items;
+  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+  const rawData = await fetch(`${apiUrl}/entries`);
+  let data: APIData[] = await rawData.json();
   return {
     props: {
       data,
