@@ -1,6 +1,8 @@
 import getAccentForClass from "@utils/getAccentForClass";
+import groupBy from "@utils/groupBy";
 import { motion } from "framer-motion";
-import { KeyboardEventHandler, MouseEvent } from "react";
+import Danger from "icons/Danger";
+import { KeyboardEventHandler, MouseEvent, useEffect, useState } from "react";
 import styles from "./EntryCollapsed.module.scss";
 
 interface Props {
@@ -23,6 +25,7 @@ const WordsCount = ({ amount }: { amount: number }) => {
 };
 
 const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
+  const [dupsData, setDupsData] = useState<QuestionData[][]>();
   const handleSelect = (_e: MouseEvent<HTMLDivElement>) => {
     onSelect(entry.slug);
   };
@@ -33,6 +36,13 @@ const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
       target.blur();
     }
   };
+  useEffect(() => {
+    if (!entry) return;
+    const grouped = groupBy(entry.questionData, (q) => q.question);
+    const values = Object.values(grouped);
+    const dups = values.filter((v) => v.length > 1);
+    if (dups.length > 0) setDupsData(dups);
+  }, [entry]);
   return (
     <motion.div
       layout
@@ -57,6 +67,11 @@ const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
       >
         {entry.title}
       </motion.p>
+      {dupsData && (
+        <span className={styles.dupWarningIcon}>
+          <Danger />
+        </span>
+      )}
       <WordsCount amount={entry.questionData.length} />
     </motion.div>
   );

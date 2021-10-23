@@ -1,11 +1,13 @@
 import getAccentForClass from "@utils/getAccentForClass";
+import groupBy from "@utils/groupBy";
+import classNames from "classnames";
 import { motion } from "framer-motion";
 import Cards from "icons/Cards";
 import Close from "icons/Close";
 import Edit from "icons/Edit";
 import List from "icons/List";
 import Link from "next/link";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./EntryExpanded.module.scss";
 
 interface Props {
@@ -17,6 +19,7 @@ interface Props {
 const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
   const { class: dataClass, description, dueDate, slug, title } = entry;
   const ref = useRef<null | HTMLDivElement>(null);
+  const [dupsData, setDupsData] = useState<QuestionData[][]>();
   const entryDate = new Date(dueDate || 0);
   const today = new Date();
   const yesterday = new Date(today);
@@ -25,6 +28,14 @@ const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
   const handleClose = () => {
     selectEntry(null);
   };
+
+  useEffect(() => {
+    if (!entry) return;
+    const grouped = groupBy(entry.questionData, (q) => q.question);
+    const values = Object.values(grouped);
+    const dups = values.filter((v) => v.length > 1);
+    if (dups.length > 0) setDupsData(dups);
+  }, [entry]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -71,6 +82,15 @@ const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
       </p>
       <div className={styles.label}>Description</div>
       <p className={styles.info}>{description || "No description provided"}</p>
+
+      {dupsData && (
+        <>
+          <div className={classNames(styles.label, styles.label__warning)}>Duplicates warning</div>
+          <p className={styles.info}>
+            Please open <b>list view</b> for more informations
+          </p>
+        </>
+      )}
 
       <div className={styles.buttons}>
         <Link href={`${slug}/card`}>

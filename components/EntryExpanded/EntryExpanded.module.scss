@@ -30,6 +30,9 @@
     color: var(--clr-card-accent);
     text-transform: uppercase;
     letter-spacing: 2px;
+    &__warning {
+      color: var(--clr-accent-yellow);
+    }
   }
   .info {
     margin-top: 0;

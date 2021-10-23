@@ -5,6 +5,8 @@ import getAccentForClass from "@utils/getAccentForClass";
 import ArrowRightCircle from "icons/ArrowRightCircle";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { GetStaticPropsContext } from "next";
+import groupBy from "@utils/groupBy";
+import Danger from "icons/Danger";
 
 interface Props {
   data: APIData | null;
@@ -43,10 +45,19 @@ const DataWrapper = ({ type, children }: PropsWithChildren<{ type: ClassString }
 export default function CardId({ data }: Props) {
   const headerRef = useRef<HTMLHeadingElement | null>(null);
   const [isSticky, setIsSticky] = useState(false);
+  const [dupsData, setDupsData] = useState<QuestionData[][]>();
 
   const topContainerClasses = classNames(styles["top__container"], {
     [`${styles["top__container--sticky"]}`]: isSticky,
   });
+
+  useEffect(() => {
+    if (!data) return;
+    const grouped = groupBy(data.questionData, (q) => q.question);
+    const values = Object.values(grouped);
+    const dups = values.filter((v) => v.length > 1);
+    if (dups.length > 0) setDupsData(dups);
+  }, [data]);
 
   useEffect(() => {
     const cachedRef = headerRef.current;
@@ -76,6 +87,21 @@ export default function CardId({ data }: Props) {
           <span>{data.title}</span>
         </h1>
       </div>
+      {dupsData && (
+        <div className={classNames(styles.container, styles.dupWarning)}>
+          <h1>
+            <Danger />
+            Duplicates found in this dataset
+          </h1>
+          <p>Please combine them into one for a better learning experience by using e.x. a comma</p>
+          <h3>List of duplicates</h3>
+          <ol>
+            {dupsData.map((dup) => {
+              return <li key={dup[0].question}>{dup[0].question}</li>;
+            })}
+          </ol>
+        </div>
+      )}
       <div
         ref={headerRef}
         className={topContainerClasses}

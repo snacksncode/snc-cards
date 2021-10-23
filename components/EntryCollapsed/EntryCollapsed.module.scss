@@ -12,6 +12,14 @@
   outline: none;
   position: relative;
 
+  .dupWarningIcon {
+    margin-right: 0.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--clr-accent-yellow);
+  }
+
   .fade {
     top: 0;
     left: 0;
