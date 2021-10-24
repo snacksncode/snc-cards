@@ -49,16 +49,16 @@ export async function getStaticPaths() {
 }
 
 export default function CardId({ data, dataClass }: Props) {
-  console.log(`[DEBUG TIME]`);
-  console.log(`Data`, data);
-  console.log(`Data Class`, dataClass);
   const [shuffledData, setShuffledData] = useState(data);
+  const [magicNumber, setMagicNumber] = useState(Math.random()); //uhmmm fancier far of re-triggering useEffect lmao
+  const onRestart = () => {
+    setMagicNumber(Math.random());
+  };
   useEffect(() => {
     if (data == null) return;
     const shuffled = shuffle(data);
     setShuffledData(shuffled);
-  }, [data]);
+  }, [data, magicNumber]);
   if (!data) return <div>Building...</div>;
-  console.log(`Is past check`);
-  return <Viewer dataClass={dataClass as ClassString} data={shuffledData as QuestionData[]} />;
+  return <Viewer dataClass={dataClass as ClassString} onRestart={onRestart} data={shuffledData as QuestionData[]} />;
 }

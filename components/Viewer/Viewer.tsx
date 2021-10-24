@@ -8,6 +8,7 @@ import { MathJaxContext } from "better-react-mathjax";
 interface Props {
   data: QuestionData[];
   dataClass: ClassString;
+  onRestart: Function;
 }
 
 const DataWrapper = ({ type, children }: PropsWithChildren<{ type: ClassString }>) => {
@@ -15,7 +16,7 @@ const DataWrapper = ({ type, children }: PropsWithChildren<{ type: ClassString }
   return <>{children}</>;
 };
 
-const Viewer = ({ data, dataClass }: Props) => {
+const Viewer = ({ data, dataClass, onRestart }: Props) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const percentageRef = useRef<HTMLParagraphElement>(null);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
@@ -44,9 +45,9 @@ const Viewer = ({ data, dataClass }: Props) => {
     nextCard();
   };
 
-  const onRestart = () => {
+  const handleRestart = () => {
     setSelectedIndex(0);
-    setIncorrectAnswers(0);
+    onRestart();
   };
 
   return (
