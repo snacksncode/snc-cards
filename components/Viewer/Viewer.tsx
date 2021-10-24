@@ -1,7 +1,7 @@
 import styles from "./Viewer.module.scss";
 import FlipCard from "@components/FlipCard";
 import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
-import { animate, AnimatePresence, motion } from "framer-motion";
+import { animate, AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
 import Play from "icons/Play";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import ArrowRightCircle from "icons/ArrowRightCircle";
@@ -114,7 +114,7 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
             </DataWrapper>
           </motion.div>
         ) : (
-          <>
+          <AnimateSharedLayout>
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
@@ -139,56 +139,57 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
                   Restart
                 </button>
               </section>
-              {isReviewOpened && (
-                <DataWrapper type={dataClass}>
-                  <motion.section
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className={styles.showdown}
-                  >
-                    {incorrectAnswers && (
-                      <div>
-                        <h2 className={styles.title__incorrect}>Incorrect Answers ({incorrectAnswers.length})</h2>
-                        <div className={classNames(styles.list, styles.incorrect)}>
-                          {incorrectAnswers.map((a) => {
-                            const { answer, question } = a;
-                            return (
-                              <div className={styles.list__item} key={`${question}-${answer}`}>
-                                <div className={styles.question}>{question}</div>
-                                <div className={styles.spacer}></div>
-                                <ArrowRightCircle />
-                                <FormatedData type={dataClass} data={answer} />
-                              </div>
-                            );
-                          })}
+              <AnimatePresence>
+                {isReviewOpened && (
+                  <DataWrapper type={dataClass}>
+                    <motion.section
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className={styles.showdown}
+                    >
+                      {incorrectAnswers && (
+                        <div>
+                          <h2 className={styles.title__incorrect}>Incorrect Answers ({incorrectAnswers.length})</h2>
+                          <div className={classNames(styles.list, styles.incorrect)}>
+                            {incorrectAnswers.map((a) => {
+                              const { answer, question } = a;
+                              return (
+                                <div className={styles.list__item} key={`${question}-${answer}`}>
+                                  <div className={styles.question}>{question}</div>
+                                  <div className={styles.spacer}></div>
+                                  <ArrowRightCircle />
+                                  <FormatedData type={dataClass} data={answer} />
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    {correctAnswers && (
-                      <div>
-                        <h2 className={styles.title__correct}>Correct Answers ({correctAnswers.length})</h2>
-                        <div className={classNames(styles.list, styles.correct)}>
-                          {correctAnswers.map((a) => {
-                            const { answer, question } = a;
-                            return (
-                              <div className={styles.list__item} key={`${question}-${answer}`}>
-                                <div className={styles.question}>{question}</div>
-                                <div className={styles.spacer}></div>
-                                <ArrowRightCircle />
-                                <FormatedData type={dataClass} data={answer} />
-                              </div>
-                            );
-                          })}
+                      )}
+                      {correctAnswers && (
+                        <div>
+                          <h2 className={styles.title__correct}>Correct Answers ({correctAnswers.length})</h2>
+                          <div className={classNames(styles.list, styles.correct)}>
+                            {correctAnswers.map((a) => {
+                              const { answer, question } = a;
+                              return (
+                                <div className={styles.list__item} key={`${question}-${answer}`}>
+                                  <div className={styles.question}>{question}</div>
+                                  <div className={styles.spacer}></div>
+                                  <ArrowRightCircle />
+                                  <FormatedData type={dataClass} data={answer} />
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </motion.section>
-                </DataWrapper>
-              )}
+                      )}
+                    </motion.section>
+                  </DataWrapper>
+                )}
+              </AnimatePresence>
             </motion.div>
-          </>
+          </AnimateSharedLayout>
         )}
       </AnimatePresence>
     </div>
