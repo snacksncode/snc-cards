@@ -3,7 +3,10 @@ import FlipCard from "@components/FlipCard";
 import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { animate, AnimatePresence, motion } from "framer-motion";
 import Play from "icons/Play";
-import { MathJaxContext } from "better-react-mathjax";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
+import ArrowRightCircle from "icons/ArrowRightCircle";
+import classNames from "classnames";
+import List from "icons/List";
 
 interface Props {
   data: QuestionData[];
@@ -16,11 +19,33 @@ const DataWrapper = ({ type, children }: PropsWithChildren<{ type: ClassString }
   return <>{children}</>;
 };
 
+const FormatedData = ({ data, type }: { data: string; type: ClassString }) => {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <>
+      <div className={styles.answer}>
+        {type !== "math" ? (
+          <span>{data}</span>
+        ) : (
+          <>
+            {!loaded && <span>Loading...</span>}
+            <span style={{ display: loaded ? "block" : "none", fontSize: "1.5rem" }}>
+              <MathJax onInitTypeset={() => setLoaded(true)}>{String.raw`${data}`}</MathJax>
+            </span>
+          </>
+        )}
+      </div>
+    </>
+  );
+};
+
 const Viewer = ({ data, dataClass, onRestart }: Props) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const percentageRef = useRef<HTMLParagraphElement>(null);
-  const [incorrectAnswers, setIncorrectAnswers] = useState(0);
-  const score = (((data.length - incorrectAnswers) / data.length) * 100).toFixed(1);
+  const [isReviewOpened, setIsReviewOpened] = useState(false);
+  const [incorrectAnswers, setIncorrectAnswers] = useState<QuestionData[]>([]);
+  const [correctAnswers, setCorrectAnswers] = useState<QuestionData[]>([]);
+  const score = (((data.length - incorrectAnswers.length) / data.length) * 100).toFixed(1);
   const isFinished = selectedIndex === data.length;
 
   useEffect(() => {
@@ -28,6 +53,7 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
     if (!node) return;
     const percentageBefore = (Math.max(selectedIndex - 1, 0) / data.length) * 100;
     const percentageCurrent = (selectedIndex / data.length) * 100;
+
     const controls = animate(percentageBefore, percentageCurrent, {
       onUpdate: (value) => {
         node.textContent = `${value.toFixed(2)}%`;
@@ -40,13 +66,20 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
     setSelectedIndex((i) => i + 1);
   };
 
-  const onAnswer = (rightAnswer: boolean) => {
-    if (!rightAnswer) setIncorrectAnswers((a) => a + 1);
+  const onAnswer = (rightAnswer: boolean, data: QuestionData) => {
+    const stateUpdater = rightAnswer ? setCorrectAnswers : setIncorrectAnswers;
+    stateUpdater((prevState) => {
+      if (prevState == null) return [data];
+      return [...prevState, data];
+    });
     nextCard();
   };
 
   const handleRestart = () => {
     setSelectedIndex(0);
+    setIncorrectAnswers([]);
+    setCorrectAnswers([]);
+    setIsReviewOpened(false);
     onRestart();
   };
 
@@ -83,9 +116,9 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
         ) : (
           <>
             <motion.div
-              initial={{ scale: 0, translateX: "-50%", translateY: "-50%" }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
               key="endcard"
               className={styles.endCard}
             >
@@ -93,12 +126,57 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
               <h1 className={styles.endCard__title}>
                 Your end score was <span>{score}%</span>
               </h1>
-              <div className={styles.ratio}>
-                Correct to wrong answers ratio:{" "}
-                <span style={{ color: "var(--clr-accent-green)" }}>{data.length - incorrectAnswers}</span> /{" "}
-                <span style={{ color: "var(--clr-accent-red)" }}>{incorrectAnswers}</span>
-              </div>
-              <motion.span
+              <button onClick={() => setIsReviewOpened(true)}>
+                <List />
+                Review Answers
+              </button>
+              <button onClick={() => handleRestart()}>
+                <Play />
+                Restart
+              </button>
+              {isReviewOpened && (
+                <DataWrapper type={dataClass}>
+                  <section className={styles.showdown}>
+                    {incorrectAnswers && (
+                      <div>
+                        <h2 className={styles.title__incorrect}>Incorrect Answers ({incorrectAnswers.length})</h2>
+                        <div className={classNames(styles.list, styles.incorrect)}>
+                          {incorrectAnswers.map((a) => {
+                            const { answer, question } = a;
+                            return (
+                              <div className={styles.list__item} key={`${question}-${answer}`}>
+                                <div className={styles.question}>{question}</div>
+                                <div className={styles.spacer}></div>
+                                <ArrowRightCircle />
+                                <FormatedData type={dataClass} data={answer} />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                    {correctAnswers && (
+                      <div>
+                        <h2 className={styles.title__correct}>Correct Answers ({correctAnswers.length})</h2>
+                        <div className={classNames(styles.list, styles.correct)}>
+                          {correctAnswers.map((a) => {
+                            const { answer, question } = a;
+                            return (
+                              <div className={styles.list__item} key={`${question}-${answer}`}>
+                                <div className={styles.question}>{question}</div>
+                                <div className={styles.spacer}></div>
+                                <ArrowRightCircle />
+                                <FormatedData type={dataClass} data={answer} />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </section>
+                </DataWrapper>
+              )}
+              {/* <motion.span
                 initial={{ scale: 1, translateX: "-50%", translateY: "-50%", y: 0, opacity: 0 }}
                 animate={{ y: 125, opacity: 1 }}
                 exit={{ scale: 0 }}
@@ -107,7 +185,7 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
               >
                 <Play />
                 Restart
-              </motion.span>
+              </motion.span> */}
             </motion.div>
           </>
         )}

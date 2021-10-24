@@ -16,7 +16,7 @@ const variants = {
 interface Props {
   dataClass: ClassString;
   data: QuestionData;
-  onAnswer: Function;
+  onAnswer: (rightAnswer: boolean, questionData: QuestionData) => void;
 }
 
 const Correct = ({ onAnimationComplete }: { onAnimationComplete: Function }) => {
@@ -124,7 +124,10 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
     };
   }, [isFlipped, answeredRight]);
 
-  const forwardAnswer = () => onAnswer(answeredRight);
+  const forwardAnswer = () => {
+    if (answeredRight == null) throw new Error("answeredRight is null in FlipCard@forwardAnswer");
+    onAnswer(answeredRight, data);
+  };
 
   return (
     <motion.div
