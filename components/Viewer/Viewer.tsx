@@ -60,11 +60,12 @@ const Viewer = ({ data, dataClass }: Props) => {
                   className={styles.bar__fill}
                   animate={{ width: `${(selectedIndex / data.length) * 100}%` }}
                   transition={{ ease: "easeInOut" }}
-                ></motion.div>
+                >
+                  <p className={styles.percentage}>
+                    <span ref={percentageRef}>0.00%</span>
+                  </p>
+                </motion.div>
               </div>
-              <p className={styles.percentage} ref={percentageRef}>
-                0.00%
-              </p>
             </div>
             <DataWrapper type={dataClass}>
               <AnimatePresence>
