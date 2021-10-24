@@ -2,9 +2,9 @@
   min-height: 100vh;
   padding: 1rem;
   position: relative;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .progress {
@@ -44,16 +44,48 @@
 }
 
 .endCard {
-  // width: calc(100% - 1rem);
   width: 100%;
   max-width: 850px;
   margin: auto;
   border-radius: 4px;
+  overflow: hidden;
   z-index: 2;
   padding-top: 1.5rem;
-  // box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  // background-color: var(--clr-background-400);
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    .button {
+      --accent: var(--clr-accent-blue);
+      background-color: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      border: 2px solid var(--accent);
+      display: inline-flex;
+      padding: 0.35rem 0.75rem;
+      font-weight: 700;
+      align-items: center;
+      border-radius: 4px;
+      justify-content: center;
+      transition: background-color 100ms ease, color 100ms ease;
+      svg {
+        margin-right: 0.5rem;
+      }
+      &.orange {
+        --accent: var(--clr-accent-peachy);
+      }
+      &:hover,
+      &:focus {
+        background-color: var(--accent);
+        color: white;
+      }
+    }
+  }
   .showdown {
+    margin-top: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -119,40 +151,16 @@
       color: var(--clr-accent-green);
     }
   }
-  &__subtitle {
-    margin: 0;
-    display: none;
-    letter-spacing: 4px;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    opacity: 0.8;
-    text-transform: uppercase;
-    color: var(--clr-accent-blue);
-  }
 }
-
-// .reload {
-//   position: absolute;
-//   bottom: 0;
-//   left: 50%;
-//   cursor: pointer;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   z-index: 1;
-//   svg {
-//     width: 50px;
-//     height: 50px;
-//     color: var(--clr-accent-peachy);
-//   }
-// }
 
 @media (min-width: 600px) {
   .endCard {
+    width: calc(100% - 1rem);
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    background-color: var(--clr-background-400);
     &__title {
       font-size: 3rem;
-      margin-top: 0.5em;
     }
     .showdown {
       .title__correct,
@@ -166,12 +174,13 @@
         grid-template-columns: 1fr 20px 1fr;
         grid-template-rows: auto;
         column-gap: 1rem;
+        background-color: var(--clr-background-500);
         .spacer {
           display: block;
           height: 100%;
           width: 3px;
           border-radius: 3px;
-          background-color: var(--clr-background-500);
+          background-color: var(--clr-background-400);
           place-self: center;
         }
         svg {

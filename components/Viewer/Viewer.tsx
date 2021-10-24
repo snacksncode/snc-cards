@@ -120,23 +120,34 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               key="endcard"
+              layout="position"
               className={styles.endCard}
             >
-              <p className={styles.endCard__subtitle}>Finish!</p>
               <h1 className={styles.endCard__title}>
                 Your end score was <span>{score}%</span>
               </h1>
-              <button onClick={() => setIsReviewOpened(true)}>
-                <List />
-                Review Answers
-              </button>
-              <button onClick={() => handleRestart()}>
-                <Play />
-                Restart
-              </button>
+              <section className={styles.buttons}>
+                <button
+                  className={classNames(styles.button, styles.orange)}
+                  onClick={() => setIsReviewOpened((s) => !s)}
+                >
+                  <List />
+                  Review Answers
+                </button>
+                <button className={styles.button} onClick={() => handleRestart()}>
+                  <Play />
+                  Restart
+                </button>
+              </section>
               {isReviewOpened && (
                 <DataWrapper type={dataClass}>
-                  <section className={styles.showdown}>
+                  <motion.section
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className={styles.showdown}
+                  >
                     {incorrectAnswers && (
                       <div>
                         <h2 className={styles.title__incorrect}>Incorrect Answers ({incorrectAnswers.length})</h2>
@@ -173,19 +184,9 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
                         </div>
                       </div>
                     )}
-                  </section>
+                  </motion.section>
                 </DataWrapper>
               )}
-              {/* <motion.span
-                initial={{ scale: 1, translateX: "-50%", translateY: "-50%", y: 0, opacity: 0 }}
-                animate={{ y: 125, opacity: 1 }}
-                exit={{ scale: 0 }}
-                onClick={onRestart}
-                className={styles.reload}
-              >
-                <Play />
-                Restart
-              </motion.span> */}
             </motion.div>
           </>
         )}
