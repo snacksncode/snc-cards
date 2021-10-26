@@ -1,12 +1,10 @@
 import styles from "./Viewer.module.scss";
 import React, { PropsWithChildren, useState } from "react";
 import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
-import Play from "icons/Play";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
-import ArrowRightCircle from "icons/ArrowRightCircle";
 import classNames from "classnames";
-import List from "icons/List";
 import ProgressBar from "@components/ProgressBar";
+import { ArrowCircleDown2, NoteText, Play } from "iconsax-react";
 
 interface Props {
   rawData: QuestionData[];
@@ -112,7 +110,7 @@ const Viewer = ({ rawData, dataClass, Component }: Props) => {
                   className={classNames(styles.button, styles.orange)}
                   onClick={() => setIsReviewOpened((s) => !s)}
                 >
-                  <List />
+                  <NoteText size="32" color="currentColor" variant="Bold" />
                   Review Answers
                 </button>
                 <button className={styles.button} onClick={() => handleRestart()}>
@@ -139,7 +137,7 @@ const Viewer = ({ rawData, dataClass, Component }: Props) => {
                                 <div className={styles.list__item} key={`${question}-${answer}`}>
                                   <div className={styles.question}>{question}</div>
                                   <div className={styles.spacer}></div>
-                                  <ArrowRightCircle />
+                                  <ArrowCircleDown2 size="32" variant="Bold" />
                                   <FormatedData type={dataClass} data={answer} />
                                 </div>
                               );
@@ -157,7 +155,7 @@ const Viewer = ({ rawData, dataClass, Component }: Props) => {
                                 <div className={styles.list__item} key={`${question}-${answer}`}>
                                   <div className={styles.question}>{question}</div>
                                   <div className={styles.spacer}></div>
-                                  <ArrowRightCircle />
+                                  <ArrowCircleDown2 size="32" variant="Bold" />
                                   <FormatedData type={dataClass} data={answer} />
                                 </div>
                               );

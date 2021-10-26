@@ -2,10 +2,7 @@ import getAccentForClass from "@utils/getAccentForClass";
 import groupBy from "@utils/groupBy";
 import classNames from "classnames";
 import { motion } from "framer-motion";
-import Cards from "icons/Cards";
-import Close from "icons/Close";
-import Edit from "icons/Edit";
-import List from "icons/List";
+import { NoteText, Edit, Category, CloseSquare } from "iconsax-react";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./EntryExpanded.module.scss";
@@ -68,7 +65,7 @@ const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
         onClick={handleClose}
         className={styles.close}
       >
-        <Close />
+        <CloseSquare size="32" color="currentColor" variant="Bold" />
       </motion.button>
       <motion.p layout className={styles.title} layoutId={`title_${selectedId}`}>
         {title}
@@ -95,21 +92,21 @@ const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
       <div className={styles.buttons}>
         <Link href={`${slug}/card`}>
           <a key={slug}>
-            <Cards />
+            <Category size="32" color="currentColor" variant="Bold" />
             Cards
           </a>
         </Link>
 
         <Link href={`${slug}/list`}>
           <a key={slug}>
-            <List />
+            <NoteText size="32" color="currentColor" variant="Bold" />
             List
           </a>
         </Link>
         {dataClass !== "math" && (
           <Link href={`${slug}/spelling`}>
             <a key={slug} data-new-tag>
-              <Edit />
+              <Edit size="32" color="currentColor" variant="Bold" />
               Spelling
             </a>
           </Link>

@@ -50,5 +50,5 @@ export async function getStaticPaths() {
 
 export default function CardId({ data, dataClass }: Props) {
   if (!data) return <div>Building...</div>;
-  return <Viewer shouldShuffle={true} Component={FlipCard} dataClass={dataClass as ClassString} rawData={data} />;
+  return <Viewer Component={FlipCard} dataClass={dataClass as ClassString} rawData={data} />;
 }

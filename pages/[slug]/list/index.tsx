@@ -2,11 +2,10 @@ import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import styles from "@styles/List.module.scss";
 import classNames from "classnames";
 import getAccentForClass from "@utils/getAccentForClass";
-import ArrowRightCircle from "icons/ArrowRightCircle";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { GetStaticPropsContext } from "next";
 import groupBy from "@utils/groupBy";
-import Danger from "icons/Danger";
+import { ArrowCircleDown2, ArrowCircleRight2, Danger } from "iconsax-react";
 
 interface Props {
   data: APIData | null;
@@ -90,7 +89,7 @@ export default function CardId({ data }: Props) {
       {dupsData && (
         <div className={classNames(styles.container, styles.dupWarning)}>
           <h1>
-            <Danger />
+            <Danger size="32" color="currentColor" variant="Bold" />
             Duplicates found in this dataset
           </h1>
           <p>Please combine them into one for a better learning experience by using e.x. a comma</p>
@@ -110,7 +109,7 @@ export default function CardId({ data }: Props) {
         <div className={styles.container}>
           <header className={styles.top}>
             <p>Question</p>
-            <ArrowRightCircle />
+            <ArrowCircleRight2 size="32" color="currentColor" variant="Bold" />
             <p>Answer</p>
           </header>
         </div>
@@ -123,7 +122,7 @@ export default function CardId({ data }: Props) {
               <div className={styles.list__item} key={`${question}-${answer}`}>
                 <div className={styles.question}>{question}</div>
                 <div className={styles.spacer}></div>
-                <ArrowRightCircle />
+                <ArrowCircleDown2 size="32" color="var(--clr-accent)" variant="Bold" />
                 <FormatedData type={data.class} data={answer} />
               </div>
             );

@@ -5,7 +5,7 @@ import Fuse from "fuse.js";
 import EntryCollapsed from "@components/EntryCollapsed";
 import Overlay from "@components/Overlay";
 import EntryExpanded from "@components/EntryExpanded";
-import Close from "icons/Close";
+import { CloseSquare } from "iconsax-react";
 
 interface Props {
   entries: APIData[];
@@ -70,7 +70,7 @@ const ListEntries = ({ entries, filterString }: Props) => {
               animate={{ opacity: 1, y: 0, transition: { delay: 0.25 } }}
               exit={{ opacity: 0 }}
             >
-              <Close />
+              <CloseSquare size="32" color="currentColor" variant="Bold" />
               No Entries
             </motion.h1>
           )}

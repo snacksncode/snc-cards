@@ -2,8 +2,7 @@ import ExpandingBlob from "@components/ExpandingBlob";
 import FlipCardWatermark from "@components/FlipCardWatermark";
 import { MathJax } from "better-react-mathjax";
 import classNames from "classnames";
-import Close from "icons/Close";
-import Tick from "icons/Tick";
+import { CloseSquare, TickSquare } from "iconsax-react";
 import { AnimationDefinition } from "node_modules/framer-motion/types/render/utils/animation";
 import styles from "./Back.module.scss";
 
@@ -36,7 +35,13 @@ const Back = ({ data, isMobile, dataClass, answeredRight, forwardAnswer }: Props
     <div className={wrapperClasses}>
       {answeredRight != null && (
         <ExpandingBlob
-          icon={answeredRight === true ? <Tick /> : <Close />}
+          icon={
+            answeredRight === true ? (
+              <TickSquare color="currentColor" variant="Bold" />
+            ) : (
+              <CloseSquare color="currentColor" variant="Bold" />
+            )
+          }
           color={answeredRight === true ? "green" : "red"}
           onAnimationComplete={forwardAnswer}
         />

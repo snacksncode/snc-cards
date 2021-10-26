@@ -1,7 +1,7 @@
 import getAccentForClass from "@utils/getAccentForClass";
 import groupBy from "@utils/groupBy";
 import { motion } from "framer-motion";
-import Danger from "icons/Danger";
+import { Danger } from "iconsax-react";
 import { KeyboardEventHandler, MouseEvent, useEffect, useState } from "react";
 import styles from "./EntryCollapsed.module.scss";
 
@@ -69,7 +69,7 @@ const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
       </motion.p>
       {dupsData && (
         <span className={styles.dupWarningIcon}>
-          <Danger />
+          <Danger size="32" color="currentColor" variant="Bold" />
         </span>
       )}
       <WordsCount amount={entry.questionData.length} />

@@ -3,11 +3,10 @@ import React, { useState } from "react";
 import Back from "../Back";
 import Front from "../Front";
 import styles from "./FlipCard.module.scss";
-import Close from "../../icons/Close";
-import Tick from "../../icons/Tick";
 import useWindowSize from "@hooks/useWindowSize";
 import FlipCardButton from "@components/FlipCardButton";
 import useEventListener from "@hooks/useEventListener";
+import { CloseSquare, TickSquare } from "iconsax-react";
 
 const flip = {
   unflipped: { transform: "rotateX(0deg)" },
@@ -93,12 +92,12 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
             <FlipCardButton
               isMobile={isMobile}
               onClick={() => setAnsweredRight(false)}
-              icon={<Close />}
+              icon={<CloseSquare color="currentColor" variant="Bold" />}
               color="red"
               position="left"
             />
             <FlipCardButton
-              icon={<Tick />}
+              icon={<TickSquare color="currentColor" variant="Bold" />}
               isMobile={isMobile}
               onClick={() => setAnsweredRight(true)}
               color="green"
