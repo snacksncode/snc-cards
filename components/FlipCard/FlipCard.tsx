@@ -54,8 +54,11 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
       if (e.key === "Enter" || e.key === " ") {
         setAnsweredRight(true);
       }
-      if (e.key === "Backspace" || e.key === "Escape") {
+      if (e.key === "Backspace") {
         setAnsweredRight(false);
+      }
+      if (e.key === "Escape") {
+        setIsFlipped(false);
       }
     },
   });
@@ -90,6 +93,7 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
         {isFlipped && answeredRight == null && (
           <>
             <motion.div
+              tabIndex={0}
               className={styles.questionPreview}
               initial={{ top: 0, left: "50%", x: "-50%", y: 0, opacity: 0 }}
               animate={{ y: "calc(-100% - 20px)", opacity: 1 }}

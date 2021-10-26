@@ -35,6 +35,10 @@
   svg {
     margin-right: 0.5em;
   }
+  &:focus-visible {
+    outline: 2px dashed currentColor;
+    outline-offset: 0.75rem;
+  }
 }
 
 .content {
