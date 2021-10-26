@@ -13,6 +13,7 @@
     "classnames": "^2.3.1",
     "framer-motion": "^4.1.17",
     "fuse.js": "^6.4.6",
+    "iconsax-react": "^0.0.4",
     "next": "11.1.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",

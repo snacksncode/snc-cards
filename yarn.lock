@@ -1644,6 +1644,13 @@ https-browserify@1.0.0, https-browserify@^1.0.0:
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-1.0.0.tgz#ec06c10e0a34c0f2faf199f7fd7fc78fffd03c73"
   integrity sha1-7AbBDgo0wPL68Zn3/X/Hj//QPHM=
 
+iconsax-react@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/iconsax-react/-/iconsax-react-0.0.4.tgz#1d7699e277bd7748f7ad478e74a10e1241555f95"
+  integrity sha512-v0vGL/CnZwgqq3RpA+Ptxm7EbLSavzMiwCaPS0jwoJtHw067tk5a6l1aZDvwguY/G8imSsQD85jf1/1Ddq/A9w==
+  dependencies:
+    prop-types "^15.7.2"
+
 iconv-lite@0.4.24:
   version "0.4.24"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.24.tgz#2022b4b25fbddc21d2f524974a474aafe733908b"
