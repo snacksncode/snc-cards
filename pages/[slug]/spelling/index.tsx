@@ -1,7 +1,7 @@
-import React, { ChangeEventHandler, KeyboardEventHandler, RefObject, useRef } from "react"; // useState, // useEffect, // RefObject, // KeyboardEventHandler, // FormEventHandler, // createRef, // ChangeEventHandler,
+import React, { useRef } from "react"; // useState, // useEffect, // RefObject, // KeyboardEventHandler, // FormEventHandler, // createRef, // ChangeEventHandler,
 import shoetest from "shoetest";
 import styles from "@styles/Spelling.module.scss";
-import classNames from "classnames";
+// import classNames from "classnames";
 import { GetStaticPropsContext } from "next";
 import Viewer from "@components/Viewer";
 import { motion } from "framer-motion";
@@ -17,35 +17,35 @@ interface Props {
   data: QuestionData[] | null;
 }
 
-const SpellInput: React.FC<{
-  index: number;
-  value: string;
-  isCorrect: boolean;
-  onKeyDown: KeyboardEventHandler<HTMLInputElement>;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  ref: RefObject<HTMLInputElement>;
-}> = ({ value, index, isCorrect, onChange, onKeyDown, ref }) => {
-  const classes = classNames(styles.char, {
-    //charInputData[globalCharIndex].correct
-    [`${styles["char--correct"]}`]: isCorrect === true,
-    [`${styles["char--wrong"]}`]: isCorrect === false,
-  });
-  return (
-    <motion.input
-      key={`char_input_${index}`}
-      type="text"
-      className={classes}
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (index + 1) } }}
-      autoCapitalize="none"
-      value={value}
-      ref={ref}
-      onKeyDown={onKeyDown}
-      onChange={onChange}
-      name={index.toString()}
-    />
-  );
-};
+// const SpellInput: React.FC<{
+//   index: number;
+//   value: string;
+//   isCorrect: boolean;
+//   onKeyDown: KeyboardEventHandler<HTMLInputElement>;
+//   onChange: ChangeEventHandler<HTMLInputElement>;
+//   ref: RefObject<HTMLInputElement>;
+// }> = ({ value, index, isCorrect, onChange, onKeyDown, ref }) => {
+//   const classes = classNames(styles.char, {
+//     //charInputData[globalCharIndex].correct
+//     [`${styles["char--correct"]}`]: isCorrect === true,
+//     [`${styles["char--wrong"]}`]: isCorrect === false,
+//   });
+//   return (
+//     <motion.input
+//       key={`char_input_${index}`}
+//       type="text"
+//       className={classes}
+//       initial={{ opacity: 0, y: -10 }}
+//       animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (index + 1) } }}
+//       autoCapitalize="none"
+//       value={value}
+//       ref={ref}
+//       onKeyDown={onKeyDown}
+//       onChange={onChange}
+//       name={index.toString()}
+//     />
+//   );
+// };
 
 const Spelling: React.FC<{
   data: QuestionData;
@@ -58,7 +58,7 @@ const Spelling: React.FC<{
         return (
           <div className={styles.word} key={`word_${wordIndex}`}>
             {word.split("").map((_c, _cI) => {
-              return <SpellInput />;
+              return <div key={_cI}>Spelling doesnt work yet</div>;
             })}
           </div>
         );

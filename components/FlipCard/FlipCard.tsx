@@ -6,7 +6,7 @@ import styles from "./FlipCard.module.scss";
 import useWindowSize from "@hooks/useWindowSize";
 import FlipCardButton from "@components/FlipCardButton";
 import useEventListener from "@hooks/useEventListener";
-import { CloseSquare, TickSquare, Back as BackIcon, MessageQuestion } from "iconsax-react";
+import { CloseSquare, TickSquare, MessageQuestion } from "iconsax-react";
 
 const flip = {
   unflipped: { rotateX: 0, transition: { type: "spring", stiffness: 100 } },
