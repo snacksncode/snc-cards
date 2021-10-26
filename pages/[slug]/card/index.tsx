@@ -1,7 +1,7 @@
 import Viewer from "@components/Viewer";
-import React, { useEffect, useState } from "react";
-import shuffle from "utils/shuffle";
+import React from "react";
 import { GetStaticPropsContext } from "next";
+import FlipCard from "@components/FlipCard";
 
 // TODO: Re-Shuffle upon restart
 
@@ -49,16 +49,6 @@ export async function getStaticPaths() {
 }
 
 export default function CardId({ data, dataClass }: Props) {
-  const [shuffledData, setShuffledData] = useState(data);
-  const [magicNumber, setMagicNumber] = useState(Math.random()); //uhmmm fancier far of re-triggering useEffect lmao
-  const onRestart = () => {
-    setMagicNumber(Math.random());
-  };
-  useEffect(() => {
-    if (data == null) return;
-    const shuffled = shuffle(data);
-    setShuffledData(shuffled);
-  }, [data, magicNumber]);
   if (!data) return <div>Building...</div>;
-  return <Viewer dataClass={dataClass as ClassString} onRestart={onRestart} data={shuffledData as QuestionData[]} />;
+  return <Viewer shouldShuffle={true} Component={FlipCard} dataClass={dataClass as ClassString} rawData={data} />;
 }
