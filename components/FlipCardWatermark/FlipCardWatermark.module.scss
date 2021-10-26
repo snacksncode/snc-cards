@@ -1,0 +1,25 @@
+.wrapper {
+  font-size: 8rem;
+  color: var(--clr-text-muted);
+  opacity: 0.03;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  font-weight: 700;
+  margin: 0;
+  line-height: 100%;
+  &::before,
+  &::after {
+    content: attr(data-text);
+    font-size: inherit;
+    position: absolute;
+    left: 0;
+  }
+  &::before {
+    top: -100%;
+  }
+  &::after {
+    top: 100%;
+  }
+}

@@ -1,0 +1,36 @@
+.outerBlob,
+.innerBlob {
+  z-index: 2;
+  position: absolute;
+  // background-color: var(--clr-accent-green);
+  inset: 0;
+}
+.outerBlob {
+  &--red {
+    background-color: var(--clr-accent-red-darker);
+    .innerBlob {
+      background-color: var(--clr-accent-red);
+    }
+  }
+  &--green {
+    background-color: var(--clr-accent-green-darker);
+    .innerBlob {
+      background-color: var(--clr-accent-green);
+    }
+  }
+}
+.innerBlob {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .iconWrapper {
+    color: var(--clr-background-400);
+    font-weight: 700;
+    font-size: 2rem;
+    svg {
+      color: white;
+      width: 60px;
+      height: 60px;
+    }
+  }
+}

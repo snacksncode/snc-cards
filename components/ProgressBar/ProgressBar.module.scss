@@ -1,0 +1,35 @@
+.progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .bar {
+    width: 100%;
+    max-width: 450px;
+    height: 30px;
+    border-radius: 4px;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid hsl(0, 0%, 20%);
+    &__fill {
+      background-image: linear-gradient(to right, var(--clr-accent-red), var(--clr-accent-peachy));
+    }
+    .percentage {
+      margin: 0;
+      user-select: none;
+      width: 7ch;
+      text-align: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      position: absolute;
+      padding: 0.125rem 0.25rem;
+      border-radius: 2px;
+      top: 50%;
+      left: 50%;
+      mix-blend-mode: difference;
+      transform: translate(-50%, -50%);
+      color: var(--clr-text-muted);
+    }
+  }
+}

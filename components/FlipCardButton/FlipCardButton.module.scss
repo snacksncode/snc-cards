@@ -1,0 +1,24 @@
+.container {
+  --accent: var(--clr-accent-blue);
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 1.5rem;
+  color: var(--clr-accent);
+  svg {
+    width: 75px;
+    height: 75px;
+  }
+  &--mobile {
+    width: 50%;
+    svg {
+      width: 60px;
+      height: 60px;
+    }
+  }
+  &:focus-visible {
+    outline: 2px dashed var(--clr-accent);
+    outline-offset: 0.5rem;
+  }
+}
