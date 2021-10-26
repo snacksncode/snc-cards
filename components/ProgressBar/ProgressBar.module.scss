@@ -6,12 +6,13 @@
   .bar {
     width: 100%;
     max-width: 450px;
-    height: 30px;
+    height: 25px;
     border-radius: 4px;
     display: flex;
     position: relative;
     overflow: hidden;
-    border: 2px solid hsl(0, 0%, 20%);
+    border: 1px solid var(--clr-background-400);
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.15);
     &__fill {
       background-image: linear-gradient(to right, var(--clr-accent-red), var(--clr-accent-peachy));
     }
@@ -20,7 +21,7 @@
       user-select: none;
       width: 7ch;
       text-align: center;
-      font-size: 0.6rem;
+      font-size: 0.65rem;
       font-weight: 700;
       position: absolute;
       padding: 0.125rem 0.25rem;

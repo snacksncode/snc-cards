@@ -1,10 +1,11 @@
 import styles from "./Viewer.module.scss";
-import React, { PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren, useEffect, useState } from "react";
 import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import classNames from "classnames";
 import ProgressBar from "@components/ProgressBar";
-import { ArrowCircleDown2, NoteText, Play } from "iconsax-react";
+import { ArrowCircleDown2, ArrowRotateRight, MessageQuestion } from "iconsax-react";
+import useShuffledData from "@hooks/useShuffledData";
 
 interface Props {
   rawData: QuestionData[];
@@ -48,7 +49,12 @@ const Viewer = ({ rawData, dataClass, Component }: Props) => {
   const [correctAnswers, setCorrectAnswers] = useState<QuestionData[]>([]);
   const score = (((rawData.length - incorrectAnswers.length) / rawData.length) * 100).toFixed(1);
   const isFinished = selectedIndex === rawData.length;
-  const [magicNumber, setMagicNumber] = useState(Math.random()); //uhmmm fancier far of re-triggering useEffect lmao
+  const [magicNumber, setMagicNumber] = useState(0); //uhmmm fancier far of re-triggering useEffect lmao
+  const { data } = useShuffledData(rawData, magicNumber);
+
+  useEffect(() => {
+    setMagicNumber(Math.random());
+  }, []);
 
   const nextCard = () => {
     setSelectedIndex((i) => i + 1);
@@ -79,7 +85,7 @@ const Viewer = ({ rawData, dataClass, Component }: Props) => {
             <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} />
             <DataWrapper type={dataClass}>
               <AnimatePresence>
-                {rawData.map((d, i: number) => {
+                {data.map((d, i: number) => {
                   {
                     return (
                       selectedIndex === i && <Component dataClass={dataClass} onAnswer={onAnswer} key={i} data={d} />
@@ -110,11 +116,11 @@ const Viewer = ({ rawData, dataClass, Component }: Props) => {
                   className={classNames(styles.button, styles.orange)}
                   onClick={() => setIsReviewOpened((s) => !s)}
                 >
-                  <NoteText size="32" color="currentColor" variant="Bold" />
+                  <MessageQuestion color="currentColor" variant="Bold" />
                   Review Answers
                 </button>
                 <button className={styles.button} onClick={() => handleRestart()}>
-                  <Play />
+                  <ArrowRotateRight color="currentColor" variant="Bold" />
                   Restart
                 </button>
               </section>

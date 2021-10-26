@@ -6,11 +6,11 @@ import styles from "./FlipCard.module.scss";
 import useWindowSize from "@hooks/useWindowSize";
 import FlipCardButton from "@components/FlipCardButton";
 import useEventListener from "@hooks/useEventListener";
-import { CloseSquare, TickSquare } from "iconsax-react";
+import { CloseSquare, TickSquare, Back as BackIcon, MessageQuestion } from "iconsax-react";
 
 const flip = {
-  unflipped: { transform: "rotateX(0deg)" },
-  flipped: { transform: "rotateX(180deg)", transition: { type: "spring", stiffness: 100 } },
+  unflipped: { rotateX: 0, transition: { type: "spring", stiffness: 100 } },
+  flipped: { rotateX: 180, transition: { type: "spring", stiffness: 100 } },
 };
 
 const card = {
@@ -79,7 +79,7 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
       initial="out"
       animate="in"
       exit="outExit"
-      onClick={() => setIsFlipped(true)}
+      onClickCapture={() => setIsFlipped(true)}
       className={styles.wrapper}
       tabIndex={0}
       style={{
@@ -89,6 +89,17 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
       <AnimatePresence>
         {isFlipped && answeredRight == null && (
           <>
+            <motion.div
+              className={styles.questionPreview}
+              initial={{ top: 0, left: "50%", x: "-50%", y: 0, opacity: 0 }}
+              animate={{ y: "calc(-100% - 20px)", opacity: 1 }}
+              transition={{ type: "spring", stiffness: 100 }}
+              exit={{ y: 0, opacity: 0 }}
+              onClickCapture={() => setIsFlipped(false)}
+            >
+              <MessageQuestion color="currentColor" variant="Linear" />
+              {data.question}
+            </motion.div>
             <FlipCardButton
               isMobile={isMobile}
               onClick={() => setAnsweredRight(false)}

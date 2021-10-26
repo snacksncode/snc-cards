@@ -22,7 +22,7 @@ const FlipCardButton: FC<Props> = ({ isMobile, icon, onClick, position, color })
       exit={{ x: 0, y: 0, opacity: 0 }}
       style={{ "--clr-accent": accentColor } as MotionStyle}
       transition={{ type: "spring" }}
-      whileHover={{ scale: 1.25 }}
+      whileHover={{ scale: 1.125, transition: { duration: 0.2 } }}
       className={classes}
       onClick={onClick}
     >

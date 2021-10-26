@@ -16,6 +16,27 @@
   }
 }
 
+.questionPreview {
+  position: absolute;
+  border-radius: 5px;
+  color: var(--clr-accent-blue);
+  font-weight: 700;
+  font-size: 1rem;
+  border: 2px solid var(--clr-accent-blue);
+  max-width: 100%;
+  width: max-content;
+  background-color: var(--clr-background-400);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0.5em 1em;
+  svg {
+    margin-right: 0.5em;
+  }
+}
+
 .content {
   position: relative;
   text-align: center;
