@@ -1,33 +1,19 @@
+import ExpandingBlob from "@components/ExpandingBlob";
+import FlipCardWatermark from "@components/FlipCardWatermark";
 import { MathJax } from "better-react-mathjax";
 import classNames from "classnames";
-import React from "react";
+import Close from "icons/Close";
+import Tick from "icons/Tick";
+import { AnimationDefinition } from "node_modules/framer-motion/types/render/utils/animation";
 import styles from "./Back.module.scss";
 
 interface Props {
   data: string;
   isMobile: boolean | undefined;
   dataClass: ClassString;
+  answeredRight: boolean | null;
+  forwardAnswer: (a: AnimationDefinition) => void;
 }
-
-// function formatData(data: string) {
-//   const [present, past, perfect] = data.split(" | ");
-//   return (
-//     <div className={styles.answer}>
-//       <div className={styles.answer__entry}>
-//         <p className={styles.answer__label}>Present</p>
-//         <p className={styles.answer__text}>{present}</p>
-//       </div>
-//       <div className={styles.answer__entry}>
-//         <p className={styles.answer__label}>Past</p>
-//         <p className={styles.answer__text}>{past}</p>
-//       </div>
-//       <div className={styles.answer__entry}>
-//         <p className={styles.answer__label}>Perfect</p>
-//         <p className={styles.answer__text}>{perfect}</p>
-//       </div>
-//     </div>
-//   );
-// }
 
 function formatData(data: string, dataClass: ClassString) {
   if (dataClass === "math") {
@@ -40,11 +26,25 @@ function formatData(data: string, dataClass: ClassString) {
   return <div className={styles.answer__text}>{data}</div>;
 }
 
-const Back = ({ data, isMobile, dataClass }: Props) => {
+const Back = ({ data, isMobile, dataClass, answeredRight, forwardAnswer }: Props) => {
   const wrapperClasses = classNames(styles.wrapper, {
     [`${styles["wrapper--mobile"]}`]: isMobile,
+    [`${styles["wrapper--correct"]}`]: answeredRight === true,
+    [`${styles["wrapper--wrong"]}`]: answeredRight === false,
   });
-  return <div className={wrapperClasses}>{formatData(data, dataClass)}</div>;
+  return (
+    <div className={wrapperClasses}>
+      {answeredRight != null && (
+        <ExpandingBlob
+          icon={answeredRight === true ? <Tick /> : <Close />}
+          color={answeredRight === true ? "green" : "red"}
+          onAnimationComplete={forwardAnswer}
+        />
+      )}
+      <FlipCardWatermark text="answer" />
+      <div className={styles.textWrapper}>{formatData(data, dataClass)}</div>
+    </div>
+  );
 };
 
 export default Back;

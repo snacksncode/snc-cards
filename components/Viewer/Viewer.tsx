@@ -1,25 +1,29 @@
 import styles from "./Viewer.module.scss";
-import FlipCard from "@components/FlipCard";
-import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
-import { animate, AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
+import React, { PropsWithChildren, useState } from "react";
+import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
 import Play from "icons/Play";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import ArrowRightCircle from "icons/ArrowRightCircle";
 import classNames from "classnames";
 import List from "icons/List";
+import ProgressBar from "@components/ProgressBar";
 
 interface Props {
-  data: QuestionData[];
-  dataClass: ClassString;
-  onRestart: Function;
+  rawData: QuestionData[];
+  dataClass?: ClassString;
+  Component: React.FC<{
+    dataClass?: ClassString;
+    data: QuestionData;
+    onAnswer: (rightAnswer: boolean, data: QuestionData) => void;
+  }>;
 }
 
-const DataWrapper = ({ type, children }: PropsWithChildren<{ type: ClassString }>) => {
+const DataWrapper = ({ type, children }: PropsWithChildren<{ type?: ClassString }>) => {
   if (type === "math") return <MathJaxContext config={{ options: { enableMenu: false } }}>{children}</MathJaxContext>;
   return <>{children}</>;
 };
 
-const FormatedData = ({ data, type }: { data: string; type: ClassString }) => {
+const FormatedData = ({ data, type }: { data: string; type?: ClassString }) => {
   const [loaded, setLoaded] = useState(false);
   return (
     <>
@@ -39,28 +43,14 @@ const FormatedData = ({ data, type }: { data: string; type: ClassString }) => {
   );
 };
 
-const Viewer = ({ data, dataClass, onRestart }: Props) => {
+const Viewer = ({ rawData, dataClass, Component }: Props) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const percentageRef = useRef<HTMLParagraphElement>(null);
   const [isReviewOpened, setIsReviewOpened] = useState(false);
   const [incorrectAnswers, setIncorrectAnswers] = useState<QuestionData[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<QuestionData[]>([]);
-  const score = (((data.length - incorrectAnswers.length) / data.length) * 100).toFixed(1);
-  const isFinished = selectedIndex === data.length;
-
-  useEffect(() => {
-    const node = percentageRef.current;
-    if (!node) return;
-    const percentageBefore = (Math.max(selectedIndex - 1, 0) / data.length) * 100;
-    const percentageCurrent = (selectedIndex / data.length) * 100;
-
-    const controls = animate(percentageBefore, percentageCurrent, {
-      onUpdate: (value) => {
-        node.textContent = `${value.toFixed(2)}%`;
-      },
-    });
-    return () => controls.stop();
-  });
+  const score = (((rawData.length - incorrectAnswers.length) / rawData.length) * 100).toFixed(1);
+  const isFinished = selectedIndex === rawData.length;
+  const [magicNumber, setMagicNumber] = useState(Math.random()); //uhmmm fancier far of re-triggering useEffect lmao
 
   const nextCard = () => {
     setSelectedIndex((i) => i + 1);
@@ -80,7 +70,7 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
     setIncorrectAnswers([]);
     setCorrectAnswers([]);
     setIsReviewOpened(false);
-    onRestart();
+    setMagicNumber(Math.random());
   };
 
   return (
@@ -88,25 +78,13 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
       <AnimatePresence exitBeforeEnter>
         {!isFinished ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className={styles.progress}>
-              <div className={styles.bar}>
-                <motion.div
-                  className={styles.bar__fill}
-                  animate={{ width: `${(selectedIndex / data.length) * 100}%` }}
-                  transition={{ ease: "easeInOut" }}
-                >
-                  <p className={styles.percentage}>
-                    <span ref={percentageRef}>0.00%</span>
-                  </p>
-                </motion.div>
-              </div>
-            </div>
+            <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} />
             <DataWrapper type={dataClass}>
               <AnimatePresence>
-                {data.map((d, i: number) => {
+                {rawData.map((d, i: number) => {
                   {
                     return (
-                      selectedIndex === i && <FlipCard dataClass={dataClass} onAnswer={onAnswer} key={i} data={d} />
+                      selectedIndex === i && <Component dataClass={dataClass} onAnswer={onAnswer} key={i} data={d} />
                     );
                   }
                 })}
@@ -127,6 +105,9 @@ const Viewer = ({ data, dataClass, onRestart }: Props) => {
                 Your end score was <span>{score}%</span>
               </h1>
               <section className={styles.buttons}>
+                <h5>
+                  <span>What&apos;s next?</span>
+                </h5>
                 <button
                   className={classNames(styles.button, styles.orange)}
                   onClick={() => setIsReviewOpened((s) => !s)}

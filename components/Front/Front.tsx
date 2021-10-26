@@ -1,3 +1,4 @@
+import FlipCardWatermark from "@components/FlipCardWatermark";
 import classNames from "classnames";
 import React from "react";
 import styles from "./Front.module.scss";
@@ -8,12 +9,15 @@ interface Props {
 }
 
 const Front = ({ data, isMobile }: Props) => {
-  const wrapperClasses = classNames(styles.wrapper, {
-    [`${styles["wrapper--mobile"]}`]: isMobile,
+  const textWrapperClasses = classNames(styles.textWrapper, {
+    [`${styles["textWrapper--mobile"]}`]: isMobile,
   });
   return (
-    <div className={wrapperClasses}>
-      <p className={styles.text}>{data}</p>
+    <div className={styles.wrapper}>
+      <FlipCardWatermark text="question" />
+      <div className={textWrapperClasses}>
+        <p className={styles.text}>{data}</p>
+      </div>
     </div>
   );
 };

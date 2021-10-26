@@ -7,45 +7,9 @@
   overflow: hidden;
 }
 
-.progress {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  .bar {
-    width: 100%;
-    max-width: 450px;
-    height: 30px;
-    border-radius: 4px;
-    display: flex;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid hsl(0, 0%, 20%);
-    &__fill {
-      background-image: linear-gradient(to right, var(--clr-accent-red), var(--clr-accent-peachy));
-    }
-    .percentage {
-      margin: 0;
-      user-select: none;
-      width: 7ch;
-      text-align: center;
-      font-size: 0.6rem;
-      font-weight: 700;
-      position: absolute;
-      padding: 0.125rem 0.25rem;
-      border-radius: 2px;
-      top: 50%;
-      left: 50%;
-      mix-blend-mode: difference;
-      transform: translate(-50%, -50%);
-      color: var(--clr-text-muted);
-    }
-  }
-}
-
 .endCard {
   width: 100%;
-  max-width: 850px;
+  max-width: 750px;
   margin: auto;
   border-radius: 4px;
   overflow: hidden;
@@ -58,6 +22,30 @@
     align-items: center;
     justify-content: flex-start;
     gap: 1rem;
+    h5 {
+      font-size: 1.25rem;
+      flex-basis: 100%;
+      color: var(--clr-accent-blue);
+      margin: 0;
+      position: relative;
+      isolation: isolate;
+      span {
+        z-index: 1;
+        padding-right: 0.5em;
+        background-color: var(--clr-background-300);
+        position: relative;
+      }
+      &::after {
+        content: "";
+        width: 100%;
+        z-index: -1;
+        height: 2px;
+        top: 50%;
+        left: 0;
+        position: absolute;
+        background-color: currentColor;
+      }
+    }
     .button {
       --accent: var(--clr-accent-blue);
       background-color: transparent;
@@ -77,8 +65,13 @@
       &.orange {
         --accent: var(--clr-accent-peachy);
       }
-      &:hover,
-      &:focus {
+      &:focus-visible {
+        outline: 2px dashed var(--accent);
+        outline-offset: 0.5rem;
+        background-color: var(--accent);
+        color: white;
+      }
+      &:hover {
         background-color: var(--accent);
         color: white;
       }
@@ -146,6 +139,7 @@
   &__title {
     margin: 0 0 1rem 0;
     font-size: 2.25rem;
+    font-weight: 700;
     line-height: 120%;
     span {
       color: var(--clr-accent-green);
@@ -156,11 +150,12 @@
 @media (min-width: 600px) {
   .endCard {
     width: calc(100% - 1rem);
-    padding: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    background-color: var(--clr-background-400);
+    padding: 2rem;
     &__title {
-      font-size: 3rem;
+      font-size: 2.75rem;
+    }
+    .buttons h5 span {
+      background-color: var(--clr-background-300);
     }
     .showdown {
       .title__correct,
@@ -174,13 +169,13 @@
         grid-template-columns: 1fr 20px 1fr;
         grid-template-rows: auto;
         column-gap: 1rem;
-        background-color: var(--clr-background-500);
+        background-color: var(--clr-background-400);
         .spacer {
           display: block;
           height: 100%;
           width: 3px;
           border-radius: 3px;
-          background-color: var(--clr-background-400);
+          background-color: var(--clr-background-500);
           place-self: center;
         }
         svg {
