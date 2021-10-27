@@ -32,8 +32,13 @@
   justify-content: center;
   cursor: pointer;
   padding: 0.5em 1em;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 0.5rem;
   svg {
-    margin-right: 0.5em;
+    height: 100%;
+    width: 1.75em;
+    height: 1.75em;
   }
   &:focus-visible {
     outline: 2px dashed currentColor;
