@@ -14,9 +14,9 @@
     "framer-motion": "^4.1.17",
     "fuse.js": "^6.4.6",
     "iconsax-react": "^0.0.4",
-    "next": "11.1.2",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
+    "next": "^12.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "shoetest": "^1.1.0"
   },
   "devDependencies": {
