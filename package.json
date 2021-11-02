@@ -14,7 +14,7 @@
     "framer-motion": "^4.1.17",
     "fuse.js": "^6.4.6",
     "iconsax-react": "^0.0.4",
-    "next": "^12.0.1",
+    "next": "^12.0.2-canary.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "shoetest": "^1.1.0"
@@ -24,7 +24,6 @@
     "@types/react": "17.0.22",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
-    "raw-loader": "^4.0.2",
     "sass": "^1.42.0",
     "typescript": "4.4.3"
   }
