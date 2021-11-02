@@ -143,7 +143,7 @@ const Viewer = ({ rawData, dataClass, Component }: Props) => {
                                 <div className={styles.list__item} key={`${question}-${answer}`}>
                                   <div className={styles.question}>{question}</div>
                                   <div className={styles.spacer}></div>
-                                  <ArrowCircleDown2 size="32" color="currentColor" variant="Bold" />
+                                  <ArrowCircleDown2 size="32" variant="Bold" />
                                   <FormatedData type={dataClass} data={answer} />
                                 </div>
                               );
@@ -161,7 +161,7 @@ const Viewer = ({ rawData, dataClass, Component }: Props) => {
                                 <div className={styles.list__item} key={`${question}-${answer}`}>
                                   <div className={styles.question}>{question}</div>
                                   <div className={styles.spacer}></div>
-                                  <ArrowCircleDown2 size="32" color="currentColor" variant="Bold" />
+                                  <ArrowCircleDown2 size="32" variant="Bold" />
                                   <FormatedData type={dataClass} data={answer} />
                                 </div>
                               );
