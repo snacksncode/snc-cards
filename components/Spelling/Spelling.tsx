@@ -8,6 +8,8 @@ import {
   KeyboardEventHandler,
   ChangeEventHandler,
   RefObject,
+  useEffect,
+  useRef,
 } from "react";
 import { motion } from "framer-motion";
 import shoetest from "shoetest";
@@ -39,7 +41,8 @@ interface Props {
 }
 
 const Spelling: FC<Props> = ({ data, onAnswer }) => {
-  const [orderedInputIds, setOrderedInputIds] = useState<string[]>();
+  const orderedInputIds = useRef<string[]>();
+  const firstRender = useRef(true);
   const { answer, question } = data;
 
   const getInputId = (word: string, char: string, charIdx: number) => `${word}_${char}_${charIdx}`;
@@ -73,7 +76,7 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
         prevInputId = id;
       });
     });
-    setOrderedInputIds(orderedIds);
+    orderedInputIds.current = orderedIds;
     return genRecord;
   }, []);
 
@@ -165,8 +168,8 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
   };
 
   const removeVerdictFromAllInputs = () => {
-    if (orderedInputIds == null) return;
-    orderedInputIds.forEach((id) => {
+    if (orderedInputIds.current == null) return;
+    orderedInputIds.current.forEach((id) => {
       const data = getInput(id);
       if (data.validity.isPreviewed === true) data.value = "";
       data.validity = {
@@ -196,11 +199,14 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
     if (firstInput != null) firstInput.selfRef.current?.focus();
   };
 
-  const getFirstInput = () => {
+  const getInput = useCallback((id: string) => dataRecord[id], [dataRecord]);
+
+  const getFirstInput = useCallback(() => {
     if (orderedInputIds == null) return;
-    const firstInputId = orderedInputIds[0];
+    const firstInputId = orderedInputIds.current?.[0];
+    if (firstInputId == null) return;
     return getInput(firstInputId);
-  };
+  }, [getInput]);
 
   const clearInput = (inputId: string) => {
     const inputData = getInput(inputId);
@@ -208,7 +214,14 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
     updateInput(inputId, inputData);
   };
 
-  const getInput = (id: string) => dataRecord[id];
+  useEffect(() => {
+    if (firstRender.current === false) return;
+    firstRender.current = false;
+    if (orderedInputIds == null) return;
+    const firstInput = getFirstInput();
+    if (firstInput == null) return;
+    firstInput.selfRef.current?.focus();
+  }, [getFirstInput]);
 
   return (
     <motion.div
