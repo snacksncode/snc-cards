@@ -1,0 +1,17 @@
+.word + .word {
+  margin-left: 3ch;
+}
+
+.inputContainer {
+  user-select: none;
+  position: absolute;
+  top: 50%;
+  isolation: isolate;
+  border-radius: 8px;
+  left: 50%;
+  will-change: transform;
+  &:focus-visible {
+    outline: 2px dashed var(--clr-accent-blue);
+    outline-offset: 2rem;
+  }
+}
