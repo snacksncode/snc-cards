@@ -1,0 +1,190 @@
+.wrapper {
+  width: 100%;
+  max-width: 750px;
+  margin: auto;
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 2;
+  padding: 0 1rem;
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    h5 {
+      font-size: 1.25rem;
+      flex-basis: 100%;
+      color: var(--clr-accent-blue);
+      margin: 0;
+      position: relative;
+      isolation: isolate;
+      span {
+        z-index: 1;
+        padding-right: 0.5em;
+        background-color: var(--clr-background-300);
+        position: relative;
+      }
+      &::after {
+        content: "";
+        width: 100%;
+        z-index: -1;
+        height: 2px;
+        top: 50%;
+        left: 0;
+        position: absolute;
+        background-color: currentColor;
+      }
+    }
+    .button {
+      --accent: var(--clr-accent-blue);
+      background-color: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      border: 2px solid var(--accent);
+      display: inline-flex;
+      padding: 0.35rem 0.75rem;
+      font-weight: 700;
+      align-items: center;
+      border-radius: 4px;
+      justify-content: center;
+      transition: background-color 200ms ease, color 200ms ease;
+      svg {
+        margin-right: 0.5rem;
+      }
+      &.orange {
+        --accent: var(--clr-accent-peachy);
+      }
+      &:focus-visible {
+        outline: 2px dashed var(--accent);
+        outline-offset: 0.5rem;
+        background-color: var(--accent);
+        color: white;
+      }
+      &:hover {
+        background-color: var(--accent);
+        color: white;
+      }
+    }
+  }
+  .showdown {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    .title__correct,
+    .title__incorrect {
+      font-size: 1.25rem;
+    }
+    .title__incorrect {
+      color: var(--clr-accent-red);
+    }
+    .title__correct {
+      color: var(--clr-accent-green);
+    }
+  }
+  .list {
+    display: grid;
+    row-gap: 1rem;
+    grid-template-columns: 1fr;
+    &.correct {
+      --clr-accent: var(--clr-accent-green);
+    }
+    &.incorrect {
+      --clr-accent: var(--clr-accent-red);
+    }
+    &__item {
+      padding: 1rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      background-color: var(--clr-background-400);
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 40px auto;
+      column-gap: 0.5rem;
+      .question,
+      .answer {
+        text-align: center;
+        font-size: 1.125rem;
+      }
+      .answer {
+        font-weight: 700;
+        color: var(--clr-accent);
+      }
+      .question {
+        font-weight: 500;
+      }
+      .spacer {
+        display: none;
+      }
+      svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        place-self: center;
+        margin: 0.25rem;
+      }
+    }
+  }
+  &__title {
+    margin: 0 0 1rem 0;
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 120%;
+    span {
+      color: var(--clr-accent-green);
+    }
+  }
+}
+
+@media (min-width: 600px) {
+  .wrapper {
+    width: calc(100% - 1rem);
+    padding: 2rem;
+    &__title {
+      font-size: 2.75rem;
+    }
+    .buttons h5 span {
+      background-color: var(--clr-background-300);
+    }
+    .showdown {
+      .title__correct,
+      .title__incorrect {
+        font-size: 1.5rem;
+      }
+    }
+    .list {
+      grid-template-columns: 1fr;
+      &__item {
+        grid-template-columns: 1fr 20px 1fr;
+        grid-template-rows: auto;
+        column-gap: 1rem;
+        background-color: var(--clr-background-400);
+        .spacer {
+          display: block;
+          height: 100%;
+          width: 3px;
+          border-radius: 3px;
+          background-color: var(--clr-background-500);
+          place-self: center;
+        }
+        svg {
+          display: none;
+        }
+        .question,
+        .answer {
+          text-align: left;
+          color: var(--clr-text);
+        }
+        .question {
+          font-weight: 500;
+        }
+        .answer {
+          color: var(--clr-accent);
+          font-weight: 700;
+          text-align: right;
+        }
+      }
+    }
+  }
+}
