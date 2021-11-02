@@ -1,14 +1,23 @@
-import Viewer from "@components/Viewer";
-import React from "react";
+import React, { PropsWithChildren, useState } from "react";
 import { GetStaticPropsContext } from "next";
 import FlipCard from "@components/FlipCard";
-
-// TODO: Re-Shuffle upon restart
+import EndCard from "@components/EndCard";
+import ProgressBar from "@components/ProgressBar";
+import useIndexSelectedData from "@hooks/useIndexSelectedData";
+import useShuffledData from "@hooks/useShuffledData";
+import { AnimatePresence, motion } from "framer-motion";
+import { MathJaxContext } from "better-react-mathjax";
+import styles from "@styles/Card.module.scss";
 
 interface Props {
-  data: QuestionData[] | null;
-  dataClass: ClassString | null;
+  rawData?: QuestionData[];
+  dataClass?: ClassString;
 }
+
+const DataWrapper = ({ type, children }: PropsWithChildren<{ type?: ClassString }>) => {
+  if (type === "math") return <MathJaxContext config={{ options: { enableMenu: false } }}>{children} </MathJaxContext>;
+  return <>{children}</>;
+};
 
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
   const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
@@ -27,7 +36,7 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
   const rawData = dataArray[0];
   return {
     props: {
-      data: rawData.questionData,
+      rawData: rawData.questionData,
       dataClass: rawData.class,
     },
     revalidate: 60,
@@ -48,7 +57,68 @@ export async function getStaticPaths() {
   return { paths, fallback: true };
 }
 
-export default function CardId({ data, dataClass }: Props) {
-  if (!data) return <div>Building...</div>;
-  return <Viewer Component={FlipCard} dataClass={dataClass as ClassString} rawData={data} />;
+export default function CardId({ rawData, dataClass }: Props) {
+  const [incorrectAnswers, setIncorrectAnswers] = useState<QuestionData[]>([]);
+  const [correctAnswers, setCorrectAnswers] = useState<QuestionData[]>([]);
+  const { data, reshuffle } = useShuffledData(rawData);
+  const {
+    selectedItem,
+    selectedIndex,
+    nextItem,
+    resetIndex,
+    progress: { isDone },
+  } = useIndexSelectedData(data);
+
+  const onAnswer = (rightAnswer: boolean, data: QuestionData) => {
+    const stateUpdater = rightAnswer ? setCorrectAnswers : setIncorrectAnswers;
+    stateUpdater((prevState) => {
+      if (prevState == null) return [data];
+      return [...prevState, data];
+    });
+    nextItem();
+  };
+
+  const handleRestart = () => {
+    resetIndex();
+    setIncorrectAnswers([]);
+    setCorrectAnswers([]);
+    reshuffle();
+  };
+
+  const getKeyFromData = (d: QuestionData) => {
+    return `${d.id}_${d.question}_${d.answer}`;
+  };
+
+  if (!rawData) return <div>Building...</div>;
+  if (selectedItem == null) return;
+  return (
+    <DataWrapper type={dataClass}>
+      <div className={styles.container}>
+        <AnimatePresence exitBeforeEnter>
+          {!isDone ? (
+            <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} />
+              <AnimatePresence>
+                <FlipCard
+                  key={getKeyFromData(selectedItem)}
+                  dataClass={dataClass}
+                  onAnswer={onAnswer}
+                  data={selectedItem}
+                />
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <EndCard
+              key="endcard"
+              incorrect={incorrectAnswers}
+              dataClass={dataClass}
+              correct={correctAnswers}
+              amount={rawData.length}
+              onRestart={handleRestart}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+    </DataWrapper>
+  );
 }
