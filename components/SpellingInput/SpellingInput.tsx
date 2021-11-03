@@ -27,6 +27,7 @@ const SpellingInput: React.FC<{
     <motion.input
       key={id}
       type="text"
+      autoComplete="off"
       className={classes}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}

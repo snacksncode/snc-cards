@@ -284,10 +284,8 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
             </span>
           );
         })}
-        <br />
-        <button style={{ marginTop: 20 }} type="submit">
-          Submit
-        </button>
+        <div className={styles.break}></div>
+        <button type="submit">Submit</button>
       </form>
     </motion.div>
   );
