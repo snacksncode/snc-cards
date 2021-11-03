@@ -9,6 +9,8 @@ const SpellingInput: React.FC<{
     isCorrect: boolean | null;
     isDetermined: boolean;
     isPreviewed: boolean;
+    isSpecial: boolean;
+    expected: string;
   };
   id: string;
   onKeyDown: KeyboardEventHandler<HTMLInputElement>;
@@ -19,6 +21,7 @@ const SpellingInput: React.FC<{
     [`${styles["char--correct"]}`]: validity.isCorrect === true,
     [`${styles["char--wrong"]}`]: validity.isCorrect === false && validity.isPreviewed !== true,
     [`${styles["char--preview"]}`]: validity.isPreviewed === true,
+    [`${styles["char--special"]}`]: validity.isSpecial === true,
   });
   return (
     <motion.input
@@ -28,7 +31,9 @@ const SpellingInput: React.FC<{
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       autoCapitalize="none"
-      value={value}
+      value={validity.isSpecial ? validity.expected : value}
+      tabIndex={validity.isSpecial ? -1 : 0}
+      readOnly={validity.isSpecial ? true : false}
       ref={refObject}
       data-id={id}
       onKeyDown={onKeyDown}

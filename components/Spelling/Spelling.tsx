@@ -22,6 +22,8 @@ interface InputData {
   prevRef: RefObject<HTMLInputElement> | null;
   nextRef: RefObject<HTMLInputElement> | null;
   validity: {
+    expected: string;
+    isSpecial: boolean;
     isCorrect: boolean | null;
     isDetermined: boolean;
     isPreviewed: boolean;
@@ -46,34 +48,38 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
   const { answer, question } = data;
 
   const getInputId = (word: string, char: string, charIdx: number) => `${word}_${char}_${charIdx}`;
+  const isSpecial = (char: string) => !/^\w$/.test(char);
 
   const generateInputData = useCallback((parsed: ParsedAnswer) => {
     const genRecord: Record<string, InputData> = {};
     // used to build node-like struct to allow for easier focus management
-    let prevInputId: string | null = null;
+    let prevNonSpecialInputId: string | null = null;
     let orderedIds: string[] = [];
     parsed.words.forEach((wordData) => {
       wordData.chars.forEach((char, charIdx) => {
         const id = getInputId(wordData.word, char, charIdx);
-        orderedIds.push(id);
+        const isSpecialChar = isSpecial(char);
+        if (!isSpecialChar) orderedIds.push(id);
         const inputData: InputData = {
           value: "",
           selfRef: createRef(),
           nextRef: null,
           prevRef: null,
           validity: {
+            expected: char,
+            isSpecial: isSpecialChar,
             isCorrect: null,
             isDetermined: false,
             isPreviewed: false,
           },
         };
         genRecord[id] = inputData;
-        if (prevInputId != null) {
-          const prevInput = genRecord[prevInputId];
+        if (prevNonSpecialInputId != null) {
+          const prevInput = genRecord[prevNonSpecialInputId];
           prevInput.nextRef = inputData.selfRef;
           inputData.prevRef = prevInput.selfRef;
         }
-        prevInputId = id;
+        if (!isSpecialChar) prevNonSpecialInputId = id;
       });
     });
     orderedInputIds.current = orderedIds;
@@ -101,23 +107,39 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
 
   const checkAnswer: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    const incorrectChars: { char: string; index: number }[] = [];
     const localDataRecord = Object.assign({}, dataRecord);
+    let charIndex = 0;
     parsed.words.forEach((w) => {
       const { word, chars } = w;
       chars.forEach((char, charIdx) => {
+        if (isSpecial(char)) return;
         const correspondingInputId = getInputId(word, char, charIdx);
         const inputData = Object.assign({}, getInput(correspondingInputId));
         const value = inputData.value;
-        inputData.validity.isCorrect = value === char && inputData.validity.isPreviewed !== true;
+        const isCorrect = value === char && inputData.validity.isPreviewed !== true;
+        inputData.validity.isCorrect = isCorrect;
         inputData.validity.isDetermined = true;
         if (value.length === 0) {
           inputData.validity.isPreviewed = true;
           inputData.value = char;
         }
+        if (!isCorrect) incorrectChars.push({ char, index: charIndex });
         localDataRecord[correspondingInputId] = inputData;
+        charIndex++;
       });
     });
     setDataRecord(localDataRecord);
+
+    // auto-answering
+    // TODO: Convert to useEffect and useState (maybe)
+    let answeredRight = incorrectChars.length <= 0;
+    setTimeout(
+      () => {
+        onAnswer(answeredRight, data);
+      },
+      answeredRight ? 150 : 500
+    );
   };
 
   const focusNextInput = (inputId: string) => {
@@ -139,6 +161,7 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
     const target = e.target as HTMLInputElement;
     const id = target.dataset.id;
     if (id == null) return;
+    if (getInput(id).validity.isDetermined === true) removeVerdictFromAllInputs();
     if (key === "ArrowLeft") {
       focusPrevInput(id);
     }
@@ -157,12 +180,10 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
     if (inputId == null) throw new Error("[onChange] Input doesn't contain id");
     const inputState = getInput(inputId);
     if (inputState == null) throw new Error(`[onChange] Data with supplied id (${inputId}) not found in Record`);
-    if (inputState.validity.isDetermined === true) return removeVerdictFromAllInputs();
     const newState = Object.assign({}, inputState);
     let value = e.target.value;
-    if (value === "" || /^\w$/.test(value)) {
-      newState.value = value;
-    }
+    if (value === "" || !/^[a-zA-Z]$/.test(value)) return;
+    newState.value = value;
     updateInput(inputId, newState);
     if (value.length !== 0) focusNextInput(inputId);
   };
@@ -173,7 +194,9 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
       const data = getInput(id);
       if (data.validity.isPreviewed === true) data.value = "";
       data.validity = {
+        expected: data.validity.expected,
         isCorrect: null,
+        isSpecial: isSpecial(data.validity.expected),
         isDetermined: false,
         isPreviewed: false,
       };
@@ -256,10 +279,11 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
             </span>
           );
         })}
-        <button type="submit">Submit</button>
+        <br />
+        <button style={{ marginTop: 20 }} type="submit">
+          Submit
+        </button>
       </form>
-      <button onClick={() => onAnswer(true, data)}>Correct</button>
-      <button onClick={() => onAnswer(false, data)}>Incorrect</button>
     </motion.div>
   );
 };
