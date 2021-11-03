@@ -138,7 +138,7 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
       () => {
         onAnswer(answeredRight, data);
       },
-      answeredRight ? 150 : 500
+      answeredRight ? 250 : 1000
     );
   };
 
@@ -149,11 +149,16 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
     nextInput.current?.focus();
   };
 
-  const focusPrevInput = (inputId: string) => {
+  const focusPrevInput = (inputId: string, shouldClear = false) => {
     const currentlyFocusedInput = getInput(inputId);
     const prevInput = currentlyFocusedInput.prevRef;
     if (!prevInput) return;
     prevInput.current?.focus();
+    if (shouldClear) {
+      const prevInputId = prevInput.current?.dataset.id;
+      if (prevInputId == null) return;
+      clearInput(prevInputId);
+    }
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
@@ -169,7 +174,7 @@ const Spelling: FC<Props> = ({ data, onAnswer }) => {
       focusNextInput(id);
     }
     if (key === "Backspace") {
-      if (target.value.length === 0) focusPrevInput(id);
+      if (target.value.length === 0) focusPrevInput(id, true);
       if (target.value.length > 0) clearInput(id);
       if (e.ctrlKey) clearAll();
     }
