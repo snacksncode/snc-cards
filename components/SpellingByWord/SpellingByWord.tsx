@@ -6,6 +6,7 @@ import Watermark from "@components/Watermark";
 import ExpandingBlob from "@components/ExpandingBlob";
 import classNames from "classnames";
 import MaskedInput from "react-text-mask";
+import { ArrowRight } from "iconsax-react";
 
 interface Props {
   data: QuestionData;
@@ -244,37 +245,53 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
       onAnimationComplete={() => {
         if (!hasFinishedEntering) setHasFinishedEntering(true);
       }}
-      className={classNames(styles.container, borderStyles)}
+      className={styles.wrapper}
     >
-      <p className={styles.question}>{data.question}</p>
-      <Watermark size="md" text="spelling" />
-      <form onSubmit={checkAnswer}>
-        {inputArray.map((word, wordIdx) => {
-          const mask = generateMask(word);
-          const id = `${word}_${wordIdx}`;
-          const inputProps = inputData[id];
-          const props = {
-            id: id,
-            mask: mask,
-            isCorrect: inputProps.isCorrect,
-            maskPlaceholder: "_",
-            autoFocus: wordIdx === 0,
-            onFocusCallback: onFocusHander,
-            onChangeCallback: onChangeHandler,
-          };
-          return <WordInput key={id} {...props} />;
-        })}
-        <input className="hidden" type="submit" />
-      </form>
+      <motion.div className={classNames(styles.container, borderStyles)}>
+        <p className={styles.question}>{data.question}</p>
+        <Watermark size="md" text="spelling" />
+        <form onSubmit={checkAnswer}>
+          {inputArray.map((word, wordIdx) => {
+            const mask = generateMask(word);
+            const id = `${word}_${wordIdx}`;
+            const inputProps = inputData[id];
+            const props = {
+              id: id,
+              mask: mask,
+              isCorrect: inputProps.isCorrect,
+              maskPlaceholder: "_",
+              autoFocus: wordIdx === 0,
+              onFocusCallback: onFocusHander,
+              onChangeCallback: onChangeHandler,
+            };
+            return <WordInput key={id} {...props} />;
+          })}
+          <input className="hidden" type="submit" />
+        </form>
 
-      {answered != null && shouldAnimateBlob && (
-        <ExpandingBlob
-          type={answered[0] === true ? "correct" : "wrong"}
-          onAnimationComplete={() => {
-            onAnswer(answered[0], answered[1], inputArray.join(" "), { ...data, answer });
-          }}
-        />
-      )}
+        {answered != null && shouldAnimateBlob && (
+          <ExpandingBlob
+            type={answered[0] === true ? "correct" : "wrong"}
+            onAnimationComplete={() => {
+              onAnswer(answered[0], answered[1], inputArray.join(" "), { ...data, answer });
+            }}
+          />
+        )}
+      </motion.div>
+      <motion.button
+        initial={{ x: "-50%", y: -100, scale: 0 }}
+        animate={{
+          y: shouldAnimateBlob ? -100 : 0,
+          scale: shouldAnimateBlob ? 0 : 1,
+          transition: { delay: shouldAnimateBlob ? 0 : 0.5 },
+        }}
+        whileTap={{ scale: 0.95, transition: { delay: 0 } }}
+        onClick={checkAnswer as any}
+        className={styles.submit}
+      >
+        Submit
+        <ArrowRight size="24" color="currentColor" variant="Outline" />
+      </motion.button>
     </motion.div>
   );
 };

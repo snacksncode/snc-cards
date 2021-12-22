@@ -47,7 +47,7 @@ const EndCardList: FC<{
         </div>
       </div>
       <div className={styles.spacer}></div>
-      <ArrowCircleDown2 size="32" variant="Bold" />
+      <ArrowCircleDown2 color="currentColor" size="32" variant="Bold" />
       <div>
         <small className={styles.typed}>You typed</small>
         <FormattedData className={styles.answer} type={dataClass} data={input} />

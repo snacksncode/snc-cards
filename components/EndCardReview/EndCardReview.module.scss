@@ -34,7 +34,6 @@
     grid-template-rows: auto 40px auto;
     column-gap: 0.5rem;
     .typed {
-      text-align: right;
       color: var(--clr-text-muted);
       display: block;
     }
@@ -43,6 +42,7 @@
       margin-bottom: 0.5em;
       color: var(--clr-text-muted);
       display: block;
+      text-align: center;
     }
     .question,
     .answer {
@@ -59,6 +59,7 @@
         small {
           font-size: 0.75em;
           color: var(--clr-accent);
+          font-weight: 700;
         }
       }
     }
@@ -70,6 +71,7 @@
       height: 1.25rem;
       place-self: center;
       margin: 0.25rem;
+      color: white;
     }
   }
 }
@@ -97,6 +99,12 @@
       }
       svg {
         display: none;
+      }
+      .small_question {
+        text-align: left;
+      }
+      .typed {
+        text-align: right;
       }
       .question,
       .answer {
