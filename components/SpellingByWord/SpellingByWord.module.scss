@@ -11,14 +11,14 @@
   font-size: 1.25rem;
   border: 2px solid var(--clr-accent-blue);
   width: calc(100% - 2rem);
-  min-height: 240px;
+  min-height: 175px;
   background-color: var(--clr-background-400);
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.5em;
+  padding: 1em;
   top: 50%;
   left: 50%;
   transition: border-color 350ms ease;
