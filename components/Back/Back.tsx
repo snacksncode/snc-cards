@@ -1,8 +1,7 @@
 import ExpandingBlob from "@components/ExpandingBlob";
-import FlipCardWatermark from "@components/FlipCardWatermark";
+import Watermark from "@components/Watermark";
 import { MathJax } from "better-react-mathjax";
 import classNames from "classnames";
-import { CloseSquare, TickSquare } from "iconsax-react";
 import { AnimationDefinition } from "node_modules/framer-motion/types/render/utils/animation";
 import styles from "./Back.module.scss";
 
@@ -34,19 +33,9 @@ const Back = ({ data, isMobile, dataClass, answeredRight, forwardAnswer }: Props
   return (
     <div className={wrapperClasses}>
       {answeredRight != null && (
-        <ExpandingBlob
-          icon={
-            answeredRight === true ? (
-              <TickSquare color="currentColor" variant="Bold" />
-            ) : (
-              <CloseSquare color="currentColor" variant="Bold" />
-            )
-          }
-          color={answeredRight === true ? "green" : "red"}
-          onAnimationComplete={forwardAnswer}
-        />
+        <ExpandingBlob type={answeredRight === true ? "correct" : "wrong"} onAnimationComplete={forwardAnswer} />
       )}
-      <FlipCardWatermark text="answer" />
+      <Watermark size="lg" text="answer" />
       <div className={styles.textWrapper}>{formatData(data, dataClass)}</div>
     </div>
   );

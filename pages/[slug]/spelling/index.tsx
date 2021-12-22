@@ -6,21 +6,22 @@ import useShuffledData from "@hooks/useShuffledData";
 import useIndexSelectedData from "@hooks/useIndexSelectedData";
 import EndCard from "@components/EndCard";
 import ProgressBar from "@components/ProgressBar";
-import Spelling from "@components/Spelling";
+import SpellingByWord from "@components/SpellingByWord";
 
 interface Props {
   rawData: QuestionData[] | undefined;
+  dataClass: ClassString;
 }
 
 const getKeyFromData = (d: QuestionData) => {
   return `${d.id}_${d.question}_${d.answer}`;
 };
 
-const CardId: FC<Props> = ({ rawData }) => {
+const CardId: FC<Props> = ({ rawData, dataClass }) => {
   const { data, isShuffled, reshuffle } = useShuffledData(rawData);
   const { selectedItem, selectedIndex, nextItem, resetIndex, progress } = useIndexSelectedData(data);
-  const [incorrectAnswers, setIncorrectAnswers] = useState<QuestionData[]>([]);
-  const [correctAnswers, setCorrectAnswers] = useState<QuestionData[]>([]);
+  const [incorrectAnswers, setIncorrectAnswers] = useState<SpellingData[]>([]);
+  const [correctAnswers, setCorrectAnswers] = useState<SpellingData[]>([]);
 
   const onRestart = () => {
     resetIndex();
@@ -29,11 +30,15 @@ const CardId: FC<Props> = ({ rawData }) => {
     reshuffle();
   };
 
-  const onAnswer = (rightAnswer: boolean, data: QuestionData) => {
-    const stateUpdater = rightAnswer ? setCorrectAnswers : setIncorrectAnswers;
+  const onAnswer = (answeredRight: boolean, input: string, expected: string, data: QuestionData) => {
+    const stateUpdater = answeredRight ? setCorrectAnswers : setIncorrectAnswers;
+    const answerData: SpellingData = {
+      input,
+      expected,
+      data,
+    };
     stateUpdater((prevState) => {
-      if (prevState == null) return [data];
-      return [...prevState, data];
+      return [...prevState, answerData];
     });
     nextItem();
   };
@@ -46,7 +51,7 @@ const CardId: FC<Props> = ({ rawData }) => {
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} />
             <AnimatePresence>
-              <Spelling
+              <SpellingByWord
                 data={selectedItem as QuestionData}
                 onAnswer={onAnswer}
                 key={getKeyFromData(selectedItem as QuestionData)}
@@ -56,8 +61,9 @@ const CardId: FC<Props> = ({ rawData }) => {
         ) : (
           <EndCard
             key="endcard"
-            incorrect={incorrectAnswers}
-            correct={correctAnswers}
+            mode="spelling"
+            dataClass={dataClass}
+            data={{ incorrect: incorrectAnswers, correct: correctAnswers }}
             amount={rawData.length}
             onRestart={onRestart}
           />
@@ -85,6 +91,7 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
   return {
     props: {
       rawData: rawData.questionData,
+      dataClass: rawData.class,
     },
     revalidate: 60,
   };

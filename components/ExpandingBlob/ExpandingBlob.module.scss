@@ -2,8 +2,10 @@
 .innerBlob {
   z-index: 2;
   position: absolute;
-  // background-color: var(--clr-accent-green);
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 .outerBlob {
   &--red {
@@ -24,13 +26,13 @@
   align-items: center;
   justify-content: center;
   .iconWrapper {
-    color: var(--clr-background-400);
-    font-weight: 700;
-    font-size: 2rem;
+    width: 60px;
+    height: 60px;
     svg {
-      color: white;
       width: 60px;
       height: 60px;
+      display: block;
+      color: white;
     }
   }
 }

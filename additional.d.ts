@@ -20,3 +20,19 @@ interface QuestionData {
   question: string;
   answer: string;
 }
+
+interface SpellingData {
+  input: string;
+  expected: string;
+  data: QuestionData;
+}
+
+interface SpellingReviewData {
+  incorrect: SpellingData[];
+  correct: SpellingData[];
+}
+
+interface CardsReviewData {
+  incorrect: QuestionData[];
+  correct: QuestionData[];
+}

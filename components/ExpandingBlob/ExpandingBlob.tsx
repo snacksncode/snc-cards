@@ -1,19 +1,19 @@
 import classNames from "classnames";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { AnimationDefinition } from "node_modules/framer-motion/types/render/utils/animation";
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 import styles from "./ExpandingBlob.module.scss";
 
 interface Props {
   onAnimationComplete: (a: AnimationDefinition) => void;
-  color: "green" | "red";
-  icon: ReactNode;
+  type: "correct" | "wrong";
 }
 
-const ExpandingBlob: FC<Props> = ({ icon, color, onAnimationComplete }) => {
+const ExpandingBlob: FC<Props> = ({ type, onAnimationComplete }) => {
   const outerBlobClasses = classNames(styles.outerBlob, {
-    [`${styles["outerBlob--red"]}`]: color === "red",
-    [`${styles["outerBlob--green"]}`]: color === "green",
+    [`${styles["outerBlob--red"]}`]: type === "wrong",
+    [`${styles["outerBlob--green"]}`]: type === "correct",
   });
 
   return (
@@ -29,16 +29,16 @@ const ExpandingBlob: FC<Props> = ({ icon, color, onAnimationComplete }) => {
         initial={{ clipPath: "circle(0% at center)" }}
         animate={{ clipPath: "circle(100% at center)" }}
         transition={{ delay: 0.25, duration: 0.5 }}
-        onAnimationComplete={onAnimationComplete}
       >
-        <motion.span
-          className={styles.iconWrapper}
+        <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.5 }}
+          onAnimationComplete={onAnimationComplete}
+          className={styles.iconWrapper}
         >
-          {icon}
-        </motion.span>
+          <Image src={type === "correct" ? "/TickSquare.png" : "/CloseSquare.png"} width={60} height={60} alt={type} />
+        </motion.div>
       </motion.div>
     </motion.div>
   );

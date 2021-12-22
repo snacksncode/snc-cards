@@ -1,21 +1,21 @@
 import classNames from "classnames";
-import { MessageQuestion, ArrowRotateRight, ArrowCircleDown2 } from "iconsax-react";
+import { MessageQuestion, ArrowRotateRight } from "iconsax-react";
 import { AnimateSharedLayout, motion, AnimatePresence } from "framer-motion";
-import FormattedData from "@components/FormattedData";
 import styles from "./EndCard.module.scss";
 import { FC, useState } from "react";
+import EndCardReview from "@components/EndCardReview";
 
 interface Props {
   onRestart: () => void;
-  correct: QuestionData[];
-  incorrect: QuestionData[];
+  mode: "spelling" | "cards";
+  data: CardsReviewData | SpellingReviewData;
   amount: number;
-  dataClass?: ClassString;
+  dataClass: ClassString;
 }
 
-const EndCard: FC<Props> = ({ amount, correct, incorrect, onRestart, dataClass }) => {
+const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass }) => {
   const [isReviewOpened, setIsReviewOpened] = useState(false);
-  const score = (((amount - incorrect.length) / amount) * 100).toFixed(1);
+  const score = (((amount - data.incorrect.length) / amount) * 100).toFixed(1);
   const handleRestart = () => {
     setIsReviewOpened(false);
     onRestart();
@@ -47,51 +47,7 @@ const EndCard: FC<Props> = ({ amount, correct, incorrect, onRestart, dataClass }
           </button>
         </section>
         <AnimatePresence>
-          {isReviewOpened && (
-            <motion.section
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className={styles.showdown}
-            >
-              {incorrect.length > 0 && (
-                <div>
-                  <h2 className={styles.title__incorrect}>Incorrect Answers ({incorrect.length})</h2>
-                  <div className={classNames(styles.list, styles.incorrect)}>
-                    {incorrect.map((a) => {
-                      const { answer, question } = a;
-                      return (
-                        <div className={styles.list__item} key={`${question}-${answer}`}>
-                          <div className={styles.question}>{question}</div>
-                          <div className={styles.spacer}></div>
-                          <ArrowCircleDown2 size="32" variant="Bold" />
-                          <FormattedData className={styles.answer} type={dataClass} data={answer} />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-              {correct.length > 0 && (
-                <div>
-                  <h2 className={styles.title__correct}>Correct Answers ({correct.length})</h2>
-                  <div className={classNames(styles.list, styles.correct)}>
-                    {correct.map((a) => {
-                      const { answer, question } = a;
-                      return (
-                        <div className={styles.list__item} key={`${question}-${answer}`}>
-                          <div className={styles.question}>{question}</div>
-                          <div className={styles.spacer}></div>
-                          <ArrowCircleDown2 size="32" variant="Bold" />
-                          <FormattedData className={styles.answer} type={dataClass} data={answer} />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </motion.section>
-          )}
+          {isReviewOpened && <EndCardReview data={data} mode={mode} dataClass={dataClass} />}
         </AnimatePresence>
       </motion.div>
     </AnimateSharedLayout>

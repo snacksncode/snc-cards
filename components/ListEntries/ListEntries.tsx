@@ -1,4 +1,4 @@
-import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./ListEntries.module.scss";
 import Fuse from "fuse.js";
@@ -44,7 +44,7 @@ const ListEntries = ({ entries, filterString }: Props) => {
   }, [filterString, entries]);
 
   return (
-    <AnimateSharedLayout type="crossfade">
+    <>
       {/* Each element */}
       <motion.div className={styles.container}>
         <AnimatePresence>
@@ -95,7 +95,7 @@ const ListEntries = ({ entries, filterString }: Props) => {
           </>
         )}
       </AnimatePresence>
-    </AnimateSharedLayout>
+    </>
   );
 };
 

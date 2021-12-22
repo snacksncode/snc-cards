@@ -10,8 +10,8 @@ import { MathJaxContext } from "better-react-mathjax";
 import styles from "@styles/Card.module.scss";
 
 interface Props {
-  rawData?: QuestionData[];
-  dataClass?: ClassString;
+  rawData: QuestionData[];
+  dataClass: ClassString;
 }
 
 const DataWrapper = ({ type, children }: PropsWithChildren<{ type?: ClassString }>) => {
@@ -110,9 +110,9 @@ export default function CardId({ rawData, dataClass }: Props) {
           ) : (
             <EndCard
               key="endcard"
-              incorrect={incorrectAnswers}
+              mode="cards"
+              data={{ correct: correctAnswers, incorrect: incorrectAnswers }}
               dataClass={dataClass}
-              correct={correctAnswers}
               amount={rawData.length}
               onRestart={handleRestart}
             />
