@@ -45,7 +45,7 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
 
   if (!rawData || !isShuffled) return <div>Building...</div>;
   return (
-    <div key="container" className={styles.container}>
+    <div className={styles.container}>
       <AnimatePresence exitBeforeEnter>
         {!progress.isDone ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>

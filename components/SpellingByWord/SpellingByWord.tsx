@@ -158,9 +158,6 @@ const generateInputData = (answer: string): [InputData, string[]] => {
   return [generatedData, idsInOrder];
 };
 
-// TODO: show spelling of user vs expected at the end
-// TODO: sort git-status so far
-
 const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
   const answer = applyFixesTable(data.answer);
   const inputArray = splitInput(answer);
@@ -212,7 +209,7 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
     const input = inputData[id];
     const cleanValue = getCleanedValue(value);
     // detect when input is fully filled, then try to focus next one (if found)
-    if (cleanValue.length === input.expectedValue.length) {
+    if (cleanValue.length === getCleanedValue(input.expectedValue).length) {
       const currentInput = currentlyFocusedInput.current;
       const nextInput = currentInput?.nextElementSibling;
       if (nextInput instanceof HTMLInputElement) nextInput.focus();
