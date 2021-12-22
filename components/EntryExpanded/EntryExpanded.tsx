@@ -105,7 +105,7 @@ const EntryExpanded = ({ entry, selectedId, selectEntry }: Props) => {
         </Link>
         {dataClass !== "math" && (
           <Link href={`${slug}/spelling`}>
-            <a key={slug} data-new-tag>
+            <a key={slug}>
               <Edit size="32" color="currentColor" variant="Bold" />
               Spelling
             </a>
