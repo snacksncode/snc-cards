@@ -21,11 +21,11 @@ interface InputProps {
 
 type InputData = Record<string, InputProps>;
 
-const FIXES_TABLE = [{ from: /\s\/\s/, to: "/" }];
+const FIXES_TABLE = [{ from: /\s\/\s/g, to: "/" }];
 
 const applyFixesTable = (word: string): string => {
   for (const fix of FIXES_TABLE) {
-    word = word.replace(fix.from, fix.to);
+    word = word.replaceAll(fix.from, fix.to);
   }
   return word;
 };
@@ -67,7 +67,9 @@ const WordInput: FC<{
       guide={true}
       autoFocus={autoFocus}
       placeholderChar={maskPlaceholder}
-      style={{ width: `calc(${mask.length}ch + 1.75em)` }}
+      style={{
+        width: `calc(${mask.length}ch + 1.75em + ${mask.filter((e) => !(e instanceof RegExp)).length} * 0.25ch)`,
+      }}
       render={(textMaskRef, props) => (
         <input
           {...props}
@@ -121,13 +123,10 @@ const generateMask = (word: string) => {
     // a letter
     if (/[a-z]/i.test(char)) {
       maskArray.push(/[a-z]/i);
-    }
-    // shouldn't really happen but still
-    else if (/\d/.test(char)) {
+    } else if (/\d/.test(char)) {
       maskArray.push(/\d/);
-    }
-    // some special character like e.x. "-" or "/"
-    else {
+    } else {
+      // some special character like e.x. "-" or "/"
       maskArray.push(char);
     }
   });
@@ -137,7 +136,7 @@ const generateMask = (word: string) => {
 const getCleanedValue = (value: string): string => {
   return value
     .split("")
-    .filter((c) => /[a-z]/i.test(c))
+    .filter((c) => /[a-z]/i.test(c) || /\d/.test(c))
     .join("");
 };
 
