@@ -89,7 +89,7 @@ const ListEntries = ({ entries, filterString }: Props) => {
             <EntryExpanded
               entry={entries.find((d) => d.slug === selectedEntryId) as APIData}
               selectEntry={selectEntry}
-              selectedId={selectedEntryId}
+              // selectedId={selectedEntryId}
               key={`expanded_${selectedEntryId}`}
             />
           </>

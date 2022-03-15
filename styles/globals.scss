@@ -1,9 +1,14 @@
 @use "variables";
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Source+Code+Pro:wght@600&display=swap");
 
-body {
-  min-height: 100vh;
+html,
+body,
+#__next {
+  min-height: 100%;
   height: auto;
+}
+
+body {
   padding: 0;
   margin: 0;
   background-color: var(--clr-background-300);
@@ -17,8 +22,6 @@ body {
 }
 
 #__next {
-  height: inherit;
-  min-height: inherit;
   display: flex;
   flex-direction: column;
 }
