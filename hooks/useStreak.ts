@@ -8,6 +8,10 @@ function useStreak() {
       setMaxStreak(streak);
     }
   }, [streak, maxStreak]);
-  return [streak, setStreak, maxStreak] as const;
+  const reset = () => {
+    setStreak(0);
+    setMaxStreak(0);
+  };
+  return [streak, setStreak, maxStreak, reset] as const;
 }
 export default useStreak;

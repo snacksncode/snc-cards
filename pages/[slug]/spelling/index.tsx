@@ -23,13 +23,14 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
   const { selectedItem, selectedIndex, nextItem, resetIndex, progress } = useIndexSelectedData(data);
   const [incorrectAnswers, setIncorrectAnswers] = useState<SpellingData[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<SpellingData[]>([]);
-  const [streak, setStreak, maxStreak] = useStreak();
+  const [streak, setStreak, maxStreak, resetStreak] = useStreak();
 
   const onRestart = () => {
     resetIndex();
     setIncorrectAnswers([]);
     setCorrectAnswers([]);
     reshuffle();
+    resetStreak();
   };
 
   const onAnswer = (answeredRight: boolean, input: string, expected: string, data: QuestionData) => {

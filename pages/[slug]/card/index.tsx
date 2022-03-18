@@ -61,7 +61,7 @@ export async function getStaticPaths() {
 export default function CardId({ rawData, dataClass }: Props) {
   const [incorrectAnswers, setIncorrectAnswers] = useState<QuestionData[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<QuestionData[]>([]);
-  const [streak, setStreak, maxStreak] = useStreak();
+  const [streak, setStreak, maxStreak, resetStreak] = useStreak();
   const { data, reshuffle } = useShuffledData(rawData);
   const {
     selectedItem,
@@ -91,6 +91,7 @@ export default function CardId({ rawData, dataClass }: Props) {
     setIncorrectAnswers([]);
     setCorrectAnswers([]);
     reshuffle();
+    resetStreak();
   };
 
   const getKeyFromData = (d: QuestionData) => {
