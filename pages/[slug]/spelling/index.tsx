@@ -7,6 +7,7 @@ import useIndexSelectedData from "@hooks/useIndexSelectedData";
 import EndCard from "@components/EndCard";
 import ProgressBar from "@components/ProgressBar";
 import SpellingByWord from "@components/SpellingByWord";
+import useStreak from "@hooks/useStreak";
 
 interface Props {
   rawData: QuestionData[] | undefined;
@@ -22,6 +23,7 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
   const { selectedItem, selectedIndex, nextItem, resetIndex, progress } = useIndexSelectedData(data);
   const [incorrectAnswers, setIncorrectAnswers] = useState<SpellingData[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<SpellingData[]>([]);
+  const [streak, setStreak, maxStreak] = useStreak();
 
   const onRestart = () => {
     resetIndex();
@@ -40,6 +42,12 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
     stateUpdater((prevState) => {
       return [...prevState, answerData];
     });
+    if (answeredRight === true) {
+      setStreak((c) => c + 1);
+    }
+    if (answeredRight === false) {
+      setStreak(0);
+    }
     nextItem();
   };
 
@@ -49,7 +57,7 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
       <AnimatePresence exitBeforeEnter>
         {!progress.isDone ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} />
+            <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} streak={streak} />
             <AnimatePresence>
               <SpellingByWord
                 data={selectedItem as QuestionData}
@@ -66,6 +74,7 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
             data={{ incorrect: incorrectAnswers, correct: correctAnswers }}
             amount={rawData.length}
             onRestart={onRestart}
+            streak={maxStreak}
           />
         )}
       </AnimatePresence>

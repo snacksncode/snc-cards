@@ -11,9 +11,10 @@ interface Props {
   data: CardsReviewData | SpellingReviewData;
   amount: number;
   dataClass: ClassString;
+  streak: number;
 }
 
-const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass }) => {
+const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }) => {
   const [isReviewOpened, setIsReviewOpened] = useState(false);
   const score = (((amount - data.incorrect.length) / amount) * 100).toFixed(1);
   const handleRestart = () => {
@@ -33,6 +34,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass }) => {
         <h1 className={styles.wrapper__title}>
           Your end score was <span>{score}%</span>
         </h1>
+        {streak >= 5 && <h3>Highest streak: {streak}🔥</h3>}
         <section className={styles.buttons}>
           <h5>
             <span>What&apos;s next?</span>

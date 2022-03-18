@@ -1,0 +1,30 @@
+.wrapper {
+  margin-top: 1rem;
+  width: fit-content;
+  font-size: 0.8em;
+  text-align: center;
+  font-weight: 500;
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+  border-radius: 4px;
+  border: 2px solid var(--clr-accent-peachy);
+  color: var(--clr-accent-peachy);
+  display: flex;
+  .content {
+    padding: 0.25rem 1.25rem;
+    position: relative;
+    z-index: 1;
+    background-color: var(--clr-background-300);
+  }
+  .pulse {
+    position: absolute;
+    z-index: -1;
+    background-color: var(--clr-accent-peachy);
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    height: 100%;
+    aspect-ratio: 1/1;
+  }
+}

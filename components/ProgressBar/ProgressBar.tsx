@@ -1,13 +1,15 @@
 import styles from "./ProgressBar.module.scss";
 import { animate, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
+import Streak from "@components/Streak";
 
 interface Props {
   maxAmount: number;
   currentAmount: number;
+  streak: number;
 }
 
-const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount }) => {
+const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak }) => {
   const percentageRef = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
     const node = percentageRef.current;
@@ -36,6 +38,7 @@ const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount }) => {
           </p>
         </motion.div>
       </div>
+      <Streak streak={streak} />
     </div>
   );
 };

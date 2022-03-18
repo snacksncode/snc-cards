@@ -8,6 +8,7 @@ import useShuffledData from "@hooks/useShuffledData";
 import { AnimatePresence, motion } from "framer-motion";
 import { MathJaxContext } from "better-react-mathjax";
 import styles from "@styles/Card.module.scss";
+import useStreak from "@hooks/useStreak";
 
 interface Props {
   rawData: QuestionData[];
@@ -60,6 +61,7 @@ export async function getStaticPaths() {
 export default function CardId({ rawData, dataClass }: Props) {
   const [incorrectAnswers, setIncorrectAnswers] = useState<QuestionData[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<QuestionData[]>([]);
+  const [streak, setStreak, maxStreak] = useStreak();
   const { data, reshuffle } = useShuffledData(rawData);
   const {
     selectedItem,
@@ -75,6 +77,12 @@ export default function CardId({ rawData, dataClass }: Props) {
       if (prevState == null) return [data];
       return [...prevState, data];
     });
+    if (rightAnswer === true) {
+      setStreak((c) => c + 1);
+    }
+    if (rightAnswer === false) {
+      setStreak(0);
+    }
     nextItem();
   };
 
@@ -97,7 +105,7 @@ export default function CardId({ rawData, dataClass }: Props) {
         <AnimatePresence exitBeforeEnter>
           {!isDone ? (
             <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} />
+              <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} streak={streak} />
               <AnimatePresence>
                 <FlipCard
                   key={getKeyFromData(selectedItem)}
@@ -115,6 +123,7 @@ export default function CardId({ rawData, dataClass }: Props) {
               dataClass={dataClass}
               amount={rawData.length}
               onRestart={handleRestart}
+              streak={maxStreak}
             />
           )}
         </AnimatePresence>
