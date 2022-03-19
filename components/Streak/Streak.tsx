@@ -1,3 +1,4 @@
+import getStreakEmojis from "@utils/getStreakEmojis";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { FC, useEffect, useState } from "react";
 import styles from "./Streak.module.scss";
@@ -14,6 +15,7 @@ const Streak: FC<Props> = ({ streak }) => {
       setShouldPulse(true);
     }
   }, [streak]);
+
   return (
     <AnimatePresence>
       {streak >= ACTIVATE_AT && (
@@ -24,7 +26,9 @@ const Streak: FC<Props> = ({ streak }) => {
           exit={{ opacity: 0 }}
           className={styles.wrapper}
         >
-          <div className={styles.content}>Streak x{streak} 🔥</div>
+          <div className={styles.content}>
+            Streak x{streak} {getStreakEmojis(streak)}
+          </div>
           {shouldPulse && (
             <motion.div
               key="pulse"

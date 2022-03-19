@@ -4,6 +4,7 @@ import { AnimateSharedLayout, motion, AnimatePresence } from "framer-motion";
 import styles from "./EndCard.module.scss";
 import { FC, useState } from "react";
 import EndCardReview from "@components/EndCardReview";
+import getStreakEmojis from "@utils/getStreakEmojis";
 
 interface Props {
   onRestart: () => void;
@@ -34,7 +35,12 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
         <h1 className={styles.wrapper__title}>
           Your end score was <span>{score}%</span>
         </h1>
-        {streak >= 5 && <h3>Highest streak: {streak}🔥</h3>}
+        {streak >= 5 && (
+          <h3>
+            Highest streak: {streak}
+            {getStreakEmojis(streak)}
+          </h3>
+        )}
         <section className={styles.buttons}>
           <h5>
             <span>What&apos;s next?</span>
