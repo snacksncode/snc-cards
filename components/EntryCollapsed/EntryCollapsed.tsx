@@ -21,14 +21,6 @@ const Tag: FC = ({ children }) => {
   return <div className={styles.tag}>{children}</div>;
 };
 
-// const EntryIcon = () => {
-//   return <motion.div layout className={styles.icon}></motion.div>;
-// };
-
-const WordsCount = ({ amount }: { amount: number }) => {
-  return <div className={styles.count}>{amount}</div>;
-};
-
 const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
   const [dupsData, setDupsData] = useState<QuestionData[][]>();
   const dueDate = new Date(entry.dueDate);

@@ -32,29 +32,6 @@
     background-image: linear-gradient(to right, var(--clr-card-accent), transparent);
   }
 
-  // .icon {
-  //   display: none;
-  //   width: 0.5rem;
-  //   height: 0.5rem;
-  //   position: inherit;
-  //   flex-shrink: 0;
-  //   margin-right: 0.5em;
-  //   border-radius: 50%;
-  //   background-color: var(--clr-card-accent);
-  // }
-
-  .count {
-    border: 2px solid var(--clr-background-500);
-    height: 2rem;
-    padding: 0 0.5em;
-    display: grid;
-    border-radius: 4px;
-    place-items: center;
-    color: var(--clr-text-muted);
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-
   .bang {
     margin: 0;
     letter-spacing: 3px;
