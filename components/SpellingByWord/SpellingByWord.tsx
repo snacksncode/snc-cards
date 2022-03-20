@@ -68,7 +68,7 @@ const WordInput: FC<{
       autoFocus={autoFocus}
       placeholderChar={maskPlaceholder}
       style={{
-        width: `calc(${mask.length}ch + 1.75em + ${mask.filter((e) => !(e instanceof RegExp)).length} * 0.25ch)`,
+        width: `calc(${mask.length}ch + 1.8em + ${mask.filter((e) => !(e instanceof RegExp)).length} * 0.5ch)`,
       }}
       render={(textMaskRef, props) => (
         <input

@@ -1,7 +1,7 @@
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
   border-radius: 4px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   background-color: var(--clr-background-400);
@@ -26,21 +26,22 @@
     transform: translateX(-50px);
     width: 150px;
     height: 100%;
-    opacity: 0.2;
+    opacity: 0.3;
     position: absolute;
     transition: transform 250ms ease, opacity 250ms ease;
     background-image: linear-gradient(to right, var(--clr-card-accent), transparent);
   }
 
-  .icon {
-    width: 0.5rem;
-    height: 0.5rem;
-    position: inherit;
-    flex-shrink: 0;
-    margin-right: 0.5em;
-    border-radius: 50%;
-    background-color: var(--clr-card-accent);
-  }
+  // .icon {
+  //   display: none;
+  //   width: 0.5rem;
+  //   height: 0.5rem;
+  //   position: inherit;
+  //   flex-shrink: 0;
+  //   margin-right: 0.5em;
+  //   border-radius: 50%;
+  //   background-color: var(--clr-card-accent);
+  // }
 
   .count {
     border: 2px solid var(--clr-background-500);
@@ -51,22 +52,45 @@
     place-items: center;
     color: var(--clr-text-muted);
     font-size: 0.75rem;
-    font-weight: 700;
+    font-weight: 500;
+  }
+
+  .bang {
+    margin: 0;
+    letter-spacing: 3px;
+    font-size: 0.65rem;
+    font-weight: 500;
   }
 
   .title {
+    display: -webkit-box;
     margin: 0;
-    font-size: 1rem;
-    width: 100%;
+    font-size: 1.125rem;
     color: var(--clr-card-accent);
-    filter: brightness(175%);
+    filter: brightness(150%);
     font-weight: 500;
-    max-width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
-    white-space: nowrap;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     &:focus {
       outline: none;
+    }
+  }
+
+  .tags {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    .tag {
+      color: var(--clr-card-accent);
+      filter: brightness(90%);
+      font-size: 0.75rem;
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 0.125em 0.5em;
+      border-radius: 4px;
     }
   }
 }

@@ -26,13 +26,13 @@ const ListEntries = ({ entries, filterString }: Props) => {
     setSelectedEntryId(id);
   };
 
-  useEffect(() => {
-    const shouldBlock = selectedEntryId == null ? false : true;
-    document.body.classList.toggle("no-scroll", shouldBlock);
-    return () => {
-      document.body.classList.remove("no-scroll");
-    };
-  }, [selectedEntryId]);
+  // useEffect(() => {
+  //   const shouldBlock = selectedEntryId == null ? false : true;
+  //   document.body.classList.toggle("no-scroll", shouldBlock);
+  //   return () => {
+  //     document.body.classList.remove("no-scroll");
+  //   };
+  // }, [selectedEntryId]);
 
   useEffect(() => {
     if (!filterString) {

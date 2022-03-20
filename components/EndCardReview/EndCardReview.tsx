@@ -22,7 +22,7 @@ const EndCardList: FC<{
       <div className={styles.list__item}>
         <div className={styles.question}>{question}</div>
         <div className={styles.spacer}></div>
-        <ArrowCircleDown2 size="32" variant="Bold" />
+        <ArrowCircleDown2 color="currentColor" size="32" variant="Bold" />
         <FormattedData className={styles.answer} type={dataClass} data={answer} />
       </div>
     );

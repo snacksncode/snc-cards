@@ -1,8 +1,9 @@
 import getAccentForClass from "@utils/getAccentForClass";
+import getHumanReadableClass from "@utils/getHumanReadableClass";
 import groupBy from "@utils/groupBy";
 import { motion } from "framer-motion";
 import { Danger } from "iconsax-react";
-import { KeyboardEventHandler, MouseEvent, useEffect, useState } from "react";
+import { FC, KeyboardEventHandler, MouseEvent, useEffect, useState } from "react";
 import styles from "./EntryCollapsed.module.scss";
 
 interface Props {
@@ -16,9 +17,13 @@ const Fade = () => {
   return <div className={styles.fade} />;
 };
 
-const EntryIcon = () => {
-  return <motion.div layout className={styles.icon}></motion.div>;
+const Tag: FC = ({ children }) => {
+  return <div className={styles.tag}>{children}</div>;
 };
+
+// const EntryIcon = () => {
+//   return <motion.div layout className={styles.icon}></motion.div>;
+// };
 
 const WordsCount = ({ amount }: { amount: number }) => {
   return <div className={styles.count}>{amount}</div>;
@@ -26,6 +31,7 @@ const WordsCount = ({ amount }: { amount: number }) => {
 
 const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
   const [dupsData, setDupsData] = useState<QuestionData[][]>();
+  const dueDate = new Date(entry.dueDate);
   const handleSelect = (_e: MouseEvent<HTMLDivElement>) => {
     onSelect(entry.slug);
   };
@@ -54,25 +60,23 @@ const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
       exit={{ opacity: 0 }}
       className={styles.container}
       style={{ "--clr-card-accent": getAccentForClass(entry.class) } as any}
-      layoutId={`container_${entry.slug}`}
       onClick={handleSelect}
     >
       <Fade />
-      <EntryIcon />
-      <motion.p
-        layout={selectedId ? true : "position"}
-        layoutId={`title_${entry.slug}`}
-        className={styles.title}
-        style={{ display: "block" }}
-      >
-        {entry.title}
-      </motion.p>
+      {/* <EntryIcon /> */}
+      <p className={styles.bang}>TITLE</p>
+      <h1 className={styles.title}>{entry.title}</h1>
       {dupsData && (
         <span className={styles.dupWarningIcon}>
           <Danger size="32" color="currentColor" variant="Bold" />
         </span>
       )}
-      <WordsCount amount={entry.questionData.length} />
+      <div className={styles.tags}>
+        <Tag>{getHumanReadableClass(entry.class)}</Tag>
+        <Tag>{dueDate.toLocaleDateString("en-US", { day: "2-digit", weekday: "short", month: "short" })}</Tag>
+        <Tag>{entry.questionData.length} words</Tag>
+      </div>
+      {/* <WordsCount amount={entry.questionData.length} /> */}
     </motion.div>
   );
 };
