@@ -16,7 +16,6 @@ type FilteredData = Fuse.FuseResult<APIData>[] | APIData[];
 const ListEntries = ({ entries, filterString }: Props) => {
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const [filteredData, setFilteredData] = useState<FilteredData>(entries);
-  const isFirstRender = useRef(true);
   const fuse = useRef(
     new Fuse(entries, {
       keys: ["title"],
@@ -26,10 +25,6 @@ const ListEntries = ({ entries, filterString }: Props) => {
   const selectEntry = (id: string | null) => {
     setSelectedEntryId(id);
   };
-
-  useEffect(() => {
-    if (isFirstRender.current === true) isFirstRender.current = false;
-  });
 
   useEffect(() => {
     if (!filterString) {
@@ -54,8 +49,7 @@ const ListEntries = ({ entries, filterString }: Props) => {
                   key={entryData.slug}
                   entry={entryData}
                   onSelect={selectEntry}
-                  entryDelay={isFirstRender.current ? 0.05 * (idx + 1) + 0.4 : 0.05 * (idx + 1) + 0.2}
-                  selectedId={selectedEntryId}
+                  entryDelay={0.05 * (idx + 1) + 0.2}
                 />
               );
             })

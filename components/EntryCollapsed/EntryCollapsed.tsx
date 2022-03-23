@@ -8,7 +8,6 @@ import styles from "./EntryCollapsed.module.scss";
 
 interface Props {
   entry: APIData;
-  selectedId: string | null;
   onSelect: (id: string | null) => void;
   entryDelay: number;
 }
@@ -21,7 +20,7 @@ const Tag: FC = ({ children }) => {
   return <div className={styles.tag}>{children}</div>;
 };
 
-const EntryCollapsed = ({ entry, onSelect, selectedId, entryDelay }: Props) => {
+const EntryCollapsed = ({ entry, onSelect, entryDelay }: Props) => {
   const [dupsData, setDupsData] = useState<QuestionData[][]>();
   const dueDate = new Date(entry.dueDate);
   const handleSelect = (_e: MouseEvent<HTMLDivElement>) => {
@@ -45,17 +44,11 @@ const EntryCollapsed = ({ entry, onSelect, selectedId, entryDelay }: Props) => {
   return (
     <motion.div
       layout
-      tabIndex={selectedId ? -1 : 0}
       onKeyPress={handleKeypress}
-      initial={{ opacity: 0, y: -20 }}
-      whileHover={{ scale: 1.03 }}
-      animate={{
-        opacity: 1,
-        y: 0,
-        // transition: { delay: isFirstRender.current ? 0.05 * (entryIndex + 1) + 0.4 : 0.05 * (entryIndex + 1) },
-        transition: { delay: entryDelay },
-      }}
+      initial={{ y: -25, opacity: 0 }}
+      animate={{ y: 0, opacity: 1, transition: { delay: entryDelay } }}
       exit={{ opacity: 0 }}
+      whileHover={{ scale: 1.03 }}
       className={styles.container}
       style={{ "--clr-card-accent": getAccentForClass(entry.class) } as any}
       onClick={handleSelect}

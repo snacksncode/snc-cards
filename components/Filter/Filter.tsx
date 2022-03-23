@@ -23,8 +23,8 @@ const Filter = ({ value, onChangeHandler }: Props) => {
   }, []);
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
+      initial={{ y: -50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1, transition: { delay: 0.1 } }}
       className={styles.field}
     >
       <label htmlFor="search">Filter topics</label>
