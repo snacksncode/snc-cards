@@ -7,8 +7,11 @@ import Filter from "@components/Filter";
 
 export const getStaticProps = async () => {
   const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
-  const rawData = await fetch(`${apiUrl}/entries?_sort=created_at:DESC`);
+  const rawData = await fetch(`${apiUrl}/entries`);
   let data: APIData[] = await rawData.json();
+  data.sort((a, b) => {
+    return Math.abs(Date.now() - new Date(a.dueDate).getTime()) - Math.abs(Date.now() - new Date(b.dueDate).getTime());
+  });
   return {
     props: {
       data,
@@ -37,17 +40,17 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ data }
 
   return (
     <main className={styles.wrapper}>
-      <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={styles.heading}>
+      <motion.h1 initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} className={styles.heading}>
         Hi! Select the topic that you want to revise
       </motion.h1>
-      <motion.a
+      {/* <motion.a
         initial={{ opacity: 0, y: -10 }}
         className={styles.adminLink}
         animate={{ opacity: 1, y: 0 }}
         href="https://snc-cards.herokuapp.com/admin"
       >
         Admin Panel
-      </motion.a>
+      </motion.a> */}
       <Filter value={inputValue} onChangeHandler={handleInputChange} />
       <ListEntries filterString={filterString} entries={data} />
     </main>

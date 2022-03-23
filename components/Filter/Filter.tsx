@@ -22,7 +22,11 @@ const Filter = ({ value, onChangeHandler }: Props) => {
     };
   }, []);
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.1 } }} className={styles.field}>
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0, transition: { delay: 0.2 } }}
+      className={styles.field}
+    >
       <label htmlFor="search">Filter topics</label>
       <div className={styles.input__wrapper}>
         <input

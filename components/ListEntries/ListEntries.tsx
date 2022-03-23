@@ -16,6 +16,7 @@ type FilteredData = Fuse.FuseResult<APIData>[] | APIData[];
 const ListEntries = ({ entries, filterString }: Props) => {
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const [filteredData, setFilteredData] = useState<FilteredData>(entries);
+  const isFirstRender = useRef(true);
   const fuse = useRef(
     new Fuse(entries, {
       keys: ["title", "slug", "class"],
@@ -26,13 +27,9 @@ const ListEntries = ({ entries, filterString }: Props) => {
     setSelectedEntryId(id);
   };
 
-  // useEffect(() => {
-  //   const shouldBlock = selectedEntryId == null ? false : true;
-  //   document.body.classList.toggle("no-scroll", shouldBlock);
-  //   return () => {
-  //     document.body.classList.remove("no-scroll");
-  //   };
-  // }, [selectedEntryId]);
+  useEffect(() => {
+    if (isFirstRender.current === true) isFirstRender.current = false;
+  });
 
   useEffect(() => {
     if (!filterString) {
@@ -57,7 +54,7 @@ const ListEntries = ({ entries, filterString }: Props) => {
                   key={entryData.slug}
                   entry={entryData}
                   onSelect={selectEntry}
-                  entryIndex={idx}
+                  entryDelay={isFirstRender.current ? 0.05 * (idx + 1) + 0.4 : 0.05 * (idx + 1) + 0.2}
                   selectedId={selectedEntryId}
                 />
               );
@@ -89,7 +86,6 @@ const ListEntries = ({ entries, filterString }: Props) => {
             <EntryExpanded
               entry={entries.find((d) => d.slug === selectedEntryId) as APIData}
               selectEntry={selectEntry}
-              // selectedId={selectedEntryId}
               key={`expanded_${selectedEntryId}`}
             />
           </>

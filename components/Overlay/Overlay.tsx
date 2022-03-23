@@ -10,12 +10,12 @@ const Overlay = ({ children, onClick }: PropsWithChildren<Props>) => {
   return (
     <motion.div
       role="dialog"
-      layout
       aria-modal="true"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      onClick={onClick}
+      transition={{ ease: "easeOut", duration: 0.2 }}
       exit={{ opacity: 0 }}
+      onClick={onClick}
       className={styles.wrapper}
     >
       {children}

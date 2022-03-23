@@ -10,7 +10,7 @@ interface Props {
   entry: APIData;
   selectedId: string | null;
   onSelect: (id: string | null) => void;
-  entryIndex: number;
+  entryDelay: number;
 }
 
 const Fade = () => {
@@ -21,7 +21,7 @@ const Tag: FC = ({ children }) => {
   return <div className={styles.tag}>{children}</div>;
 };
 
-const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
+const EntryCollapsed = ({ entry, onSelect, selectedId, entryDelay }: Props) => {
   const [dupsData, setDupsData] = useState<QuestionData[][]>();
   const dueDate = new Date(entry.dueDate);
   const handleSelect = (_e: MouseEvent<HTMLDivElement>) => {
@@ -34,6 +34,7 @@ const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
       target.blur();
     }
   };
+
   useEffect(() => {
     if (!entry) return;
     const grouped = groupBy(entry.questionData, (q) => q.question);
@@ -48,14 +49,18 @@ const EntryCollapsed = ({ entry, onSelect, selectedId, entryIndex }: Props) => {
       onKeyPress={handleKeypress}
       initial={{ opacity: 0, y: -20 }}
       whileHover={{ scale: 1.03 }}
-      animate={{ opacity: 1, y: 0, transition: { delay: 0.05 * (entryIndex + 1) + 0.125 } }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        // transition: { delay: isFirstRender.current ? 0.05 * (entryIndex + 1) + 0.4 : 0.05 * (entryIndex + 1) },
+        transition: { delay: entryDelay },
+      }}
       exit={{ opacity: 0 }}
       className={styles.container}
       style={{ "--clr-card-accent": getAccentForClass(entry.class) } as any}
       onClick={handleSelect}
     >
       <Fade />
-      {/* <EntryIcon /> */}
       <p className={styles.bang}>TITLE</p>
       <h1 className={styles.title}>{entry.title}</h1>
       {dupsData && (
