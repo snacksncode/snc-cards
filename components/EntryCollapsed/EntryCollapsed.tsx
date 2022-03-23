@@ -52,6 +52,7 @@ const EntryCollapsed = ({ entry, onSelect, entryDelay }: Props) => {
       className={styles.container}
       style={{ "--clr-card-accent": getAccentForClass(entry.class) } as any}
       onClick={handleSelect}
+      tabIndex={0}
     >
       <Fade />
       <p className={styles.bang}>TITLE</p>
