@@ -33,7 +33,7 @@ const Filter = ({ value, onChangeHandler }: Props) => {
           ref={inputRef}
           id="search"
           type="text"
-          placeholder="...by name & tags"
+          placeholder="Search for title"
           value={value}
           onChange={onChangeHandler}
         />

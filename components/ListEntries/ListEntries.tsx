@@ -19,7 +19,7 @@ const ListEntries = ({ entries, filterString }: Props) => {
   const isFirstRender = useRef(true);
   const fuse = useRef(
     new Fuse(entries, {
-      keys: ["title", "slug", "class"],
+      keys: ["title"],
     })
   );
 

@@ -84,7 +84,6 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
       exit="outExit"
       onClickCapture={() => setIsFlipped(true)}
       className={styles.wrapper}
-      tabIndex={0}
       style={{
         maxWidth: cardWidth,
       }}
@@ -93,7 +92,6 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
         {isFlipped && answeredRight == null && (
           <>
             <motion.div
-              tabIndex={0}
               className={styles.questionPreview}
               initial={{ top: 0, left: "50%", x: "-50%", y: 0, opacity: 0 }}
               animate={{ y: "calc(-100% - 20px)", opacity: 1 }}
