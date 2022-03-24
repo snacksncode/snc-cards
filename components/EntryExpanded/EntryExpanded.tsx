@@ -23,7 +23,7 @@ const EntryExpanded = ({ entry, selectEntry }: Props) => {
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
 
-  const handleClose = () => {
+  const handleClose: React.MouseEventHandler<HTMLButtonElement> = (_e) => {
     selectEntry(null);
   };
 
@@ -56,7 +56,7 @@ const EntryExpanded = ({ entry, selectEntry }: Props) => {
         }
         ref={ref}
         className={styles.container}
-        initial={{ scale: 0.85, opacity: 0 }}
+        initial={{ scale: 0.85, opacity: 0, y: "-50%", x: "-50%" }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.85, opacity: 0 }}
         transition={{ ease: "backOut" }}
