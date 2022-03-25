@@ -2,11 +2,12 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  display: table;
+  display: flex;
+  flex-direction: column;
   max-width: 550px;
   width: calc(100% - 2rem);
   outline: none;
-  max-height: 90vh;
+  max-height: 75vh;
   overflow: auto;
   border-radius: 4px;
   will-change: transform, opacity;
@@ -151,6 +152,8 @@
 
 @media screen and (min-width: 450px) {
   .container {
+    display: table;
+    height: auto;
     .buttons {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
