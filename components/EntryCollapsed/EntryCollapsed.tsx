@@ -55,13 +55,13 @@ const EntryCollapsed = ({ entry, onSelect, entryDelay }: Props) => {
       tabIndex={0}
     >
       <Fade />
-      <p className={styles.bang}>TITLE</p>
-      <h1 className={styles.title}>{entry.title}</h1>
       {dupsData && (
-        <span className={styles.dupWarningIcon}>
-          <Danger size="32" color="currentColor" variant="Bold" />
+        <span style={{ marginLeft: "auto" }} className={styles.dupWarningIcon}>
+          <Danger size="1em" color="currentColor" variant="Bold" />
         </span>
       )}
+      <p className={styles.bang}>TITLE</p>
+      <h1 className={styles.title}>{entry.title}</h1>
       <div className={styles.tags}>
         <Tag>{getHumanReadableClass(entry.class)}</Tag>
         <Tag>{dueDate.toLocaleDateString("en-US", { day: "2-digit", weekday: "short", month: "short" })}</Tag>
