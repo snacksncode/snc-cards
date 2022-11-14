@@ -2,7 +2,6 @@ import ExpandingBlob from "@components/ExpandingBlob";
 import Watermark from "@components/Watermark";
 import { MathJax } from "better-react-mathjax";
 import classNames from "classnames";
-import { AnimationDefinition } from "node_modules/framer-motion/types/render/utils/animation";
 import styles from "./Back.module.scss";
 
 interface Props {
@@ -10,7 +9,7 @@ interface Props {
   isMobile: boolean | undefined;
   dataClass: ClassString;
   answeredRight: boolean | null;
-  forwardAnswer: (a: AnimationDefinition) => void;
+  forwardAnswer: () => void;
 }
 
 function formatData(data: string, dataClass: ClassString) {

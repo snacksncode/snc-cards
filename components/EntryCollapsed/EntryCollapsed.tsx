@@ -3,7 +3,7 @@ import getHumanReadableClass from "@utils/getHumanReadableClass";
 import groupBy from "@utils/groupBy";
 import { motion } from "framer-motion";
 import { Danger } from "iconsax-react";
-import { FC, KeyboardEventHandler, MouseEvent, useEffect, useState } from "react";
+import { FC, KeyboardEventHandler, MouseEvent, PropsWithChildren, useEffect, useState } from "react";
 import styles from "./EntryCollapsed.module.scss";
 
 interface Props {
@@ -16,7 +16,7 @@ const Fade = () => {
   return <div className={styles.fade} />;
 };
 
-const Tag: FC = ({ children }) => {
+const Tag: FC<PropsWithChildren> = ({ children }) => {
   return <div className={styles.tag}>{children}</div>;
 };
 

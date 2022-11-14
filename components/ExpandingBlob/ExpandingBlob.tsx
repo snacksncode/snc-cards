@@ -1,12 +1,11 @@
 import classNames from "classnames";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { AnimationDefinition } from "node_modules/framer-motion/types/render/utils/animation";
 import { FC } from "react";
 import styles from "./ExpandingBlob.module.scss";
 
 interface Props {
-  onAnimationComplete: (a: AnimationDefinition) => void;
+  onAnimationComplete: () => void;
   type: "correct" | "wrong";
 }
 
