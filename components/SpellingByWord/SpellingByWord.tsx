@@ -1,12 +1,12 @@
 import { FC, useState, useEffect, FormEventHandler, useRef, FocusEventHandler } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import shoetest from "shoetest";
 import styles from "./SpellingByWord.module.scss";
 import Watermark from "@components/Watermark";
 import ExpandingBlob from "@components/ExpandingBlob";
 import classNames from "classnames";
 import MaskedInput from "react-text-mask";
-import { ArrowRight } from "iconsax-react";
+import { ArrowRight, Information } from "iconsax-react";
 
 interface Props {
   data: QuestionData;
@@ -96,6 +96,7 @@ const WordInput: FC<{
         onFocusCallback(e);
       }}
       onChange={(e) => {
+        if (isCorrect != null) return;
         const input = e.target;
         const value = input.value;
         const cleanValue = getCleanedValue(value);
@@ -167,6 +168,7 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
 
   const [answered, setAnswered] = useState<[boolean, string] | null>(null);
   const currentlyFocusedInput = useRef<HTMLInputElement | null>(null);
+  const [shouldShowCorrectAnswer, setShouldShowCorrectAnswer] = useState(false);
 
   const inputIdsInOrder = useRef<string[]>();
   const [inputData, setInputData] = useState<InputData | null>(null);
@@ -174,8 +176,12 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
   // used to trigger blob animation on answer which itself triggers onAnswer in parent component
   useEffect(() => {
     if (answered == null || hasFinishedEntering === false) return;
+    if (answered[0] === false) {
+      setShouldShowCorrectAnswer(true);
+      return;
+    }
     setShouldAnimateBlob(true);
-  }, [answered, hasFinishedEntering]);
+  }, [answered, hasFinishedEntering, shouldShowCorrectAnswer]);
 
   useEffect(() => {
     // if inputData is not null -> data is already generated
@@ -188,6 +194,9 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
   const checkAnswer: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (hasFinishedEntering === false || inputIdsInOrder.current == null || inputData == null) return;
+    if (shouldShowCorrectAnswer === true) {
+      setShouldAnimateBlob(true);
+    }
 
     let verdict = true;
     const userInput: string[] = [];
@@ -195,7 +204,7 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
     inputIdsInOrder.current.forEach((id, idIndex) => {
       const input = inputDataClone[id];
       const correspondingWord = inputArray[idIndex];
-      const inputVerdict = input.value === correspondingWord;
+      const inputVerdict = input.value.toLowerCase() === correspondingWord.toLowerCase();
       if (inputVerdict === false) verdict = false;
       userInput.push(input.value);
       input.isCorrect = inputVerdict;
@@ -267,6 +276,18 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
           })}
           <input className="hidden" type="submit" />
         </form>
+        <AnimatePresence>
+          {shouldShowCorrectAnswer && (
+            <motion.div
+              className={styles.answerPreview}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+            >
+              <Information size="1.25em" variant="Bold" color="currentColor" />
+              {answer}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {answered != null && shouldAnimateBlob && (
           <ExpandingBlob

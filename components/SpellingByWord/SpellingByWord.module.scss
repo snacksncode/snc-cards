@@ -88,6 +88,19 @@
     outline: 2px dashed var(--clr-accent-blue);
     outline-offset: 2rem;
   }
+  .answerPreview {
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--clr-text);
+    gap: 0.35rem;
+    margin-top: 1.25rem;
+    svg {
+      color: var(--clr-accent-blue);
+    }
+  }
   .question {
     margin: 0;
     margin-bottom: 1.5rem;
@@ -154,5 +167,8 @@
       font-size: 2.25rem;
       padding: 1.5em;
     }
+  }
+  .answerPreview {
+    font-size: 1.25rem !important;
   }
 }
