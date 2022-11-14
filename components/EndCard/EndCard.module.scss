@@ -45,6 +45,7 @@
       display: inline-flex;
       padding: 0.35rem 0.75rem;
       font-weight: 700;
+      font-size: 14px;
       align-items: center;
       border-radius: 4px;
       justify-content: center;
@@ -55,15 +56,18 @@
       &.orange {
         --accent: var(--clr-accent-peachy);
       }
+      &.green {
+        --accent: var(--clr-accent-green);
+      }
       &:focus-visible {
         outline: 2px dashed var(--accent);
         outline-offset: 0.5rem;
         background-color: var(--accent);
-        color: white;
+        color: var(--clr-background-200);
       }
       &:hover {
         background-color: var(--accent);
-        color: white;
+        color: var(--clr-background-200);
       }
     }
   }

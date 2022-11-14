@@ -1,10 +1,11 @@
 import classNames from "classnames";
-import { MessageQuestion, ArrowRotateRight } from "iconsax-react";
+import { MessageQuestion, ArrowRotateRight, Home2, Back } from "iconsax-react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import styles from "./EndCard.module.scss";
 import { FC, useState } from "react";
 import EndCardReview from "@components/EndCardReview";
 import getStreakEmojis from "@utils/getStreakEmojis";
+import Link from "next/link";
 
 interface Props {
   onRestart: () => void;
@@ -29,7 +30,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
         animate={{ opacity: 1, height: "100%", y: 0 }}
         exit={{ opacity: 0 }}
         key="endcard"
-        layout
+        layout="position"
         className={styles.wrapper}
       >
         <h1 className={styles.wrapper__title}>
@@ -45,12 +46,18 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
           <h5>
             <span>What&apos;s next?</span>
           </h5>
+          <Link href="/" className={classNames(styles.button)}>
+            <>
+              <Back color="currentColor" />
+              Go Back
+            </>
+          </Link>
           <button className={classNames(styles.button, styles.orange)} onClick={() => setIsReviewOpened((s) => !s)}>
-            <MessageQuestion color="currentColor" variant="Bold" />
+            <MessageQuestion color="currentColor" />
             Review Answers
           </button>
-          <button className={styles.button} onClick={handleRestart}>
-            <ArrowRotateRight color="currentColor" variant="Bold" />
+          <button className={classNames(styles.button, styles.green)} onClick={handleRestart}>
+            <ArrowRotateRight color="currentColor" />
             Restart
           </button>
         </section>
