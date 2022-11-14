@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { MessageQuestion, ArrowRotateRight, Home2, Back } from "iconsax-react";
+import { MessageQuestion, ArrowRotateRight, Back } from "iconsax-react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import styles from "./EndCard.module.scss";
 import { FC, useState } from "react";
