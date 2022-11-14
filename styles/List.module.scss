@@ -5,6 +5,17 @@
   max-width: 750px;
 }
 
+.backButton {
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  display: inline-flex;
+  background-color: var(--clr-background-400);
+}
+
 .title {
   font-size: 1.5rem;
   font-weight: 500;
@@ -12,6 +23,9 @@
     font-size: 1.35em;
     font-weight: 700;
     color: var(--clr-accent);
+    .line {
+      display: none;
+    }
   }
 }
 
@@ -148,18 +162,21 @@
 
   .title {
     font-size: 2rem;
-    position: relative;
-    isolation: isolate;
     span {
       padding-right: 0.25em;
       background-color: var(--clr-background-300);
     }
-    &::after {
-      content: "";
-      width: 100%;
+    span {
+      position: relative;
+      isolation: isolate;
+    }
+    .line {
+      display: block !important;
+      width: 750px;
       height: 3px;
       position: absolute;
-      bottom: calc(0.9em + 1px);
+      transform-origin: left;
+      top: 50%;
       left: 0;
       background: var(--clr-accent);
       z-index: -2;

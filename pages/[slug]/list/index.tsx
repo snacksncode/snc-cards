@@ -5,7 +5,9 @@ import getAccentForClass from "@utils/getAccentForClass";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { GetStaticPropsContext } from "next";
 import groupBy from "@utils/groupBy";
-import { ArrowCircleDown2, ArrowCircleRight2, Danger } from "iconsax-react";
+import { ArrowCircleDown2, ArrowCircleRight2, Back, Danger } from "iconsax-react";
+import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface Props {
   data: APIData | null;
@@ -77,17 +79,38 @@ export default function CardId({ data }: Props) {
   if (!data) return <div>Building...</div>;
   return (
     <DataWrapper type={data.class}>
-      <div
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         className={styles.container}
         style={{ margin: "2rem auto 0", ["--clr-accent" as any]: getAccentForClass(data.class) }}
       >
+        <div>
+          <Link href="/">
+            <a className={styles.backButton}>
+              <Back variant="Outline" size="1.125rem" color="currentColor" />
+              Go Back
+            </a>
+          </Link>
+        </div>
         <h1 className={styles.title}>
           List view for <br />
-          <span>{data.title}</span>
+          <span>
+            {data.title}
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1, transition: { delay: 0.3 } }}
+              className={styles.line}
+            />
+          </span>
         </h1>
-      </div>
+      </motion.div>
       {dupsData && (
-        <div className={classNames(styles.container, styles.dupWarning)}>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, transition: { delay: 0.3 } }}
+          className={classNames(styles.container, styles.dupWarning)}
+        >
           <h1>
             <Danger size="32" color="currentColor" variant="Bold" />
             Duplicates found in this dataset
@@ -99,9 +122,11 @@ export default function CardId({ data }: Props) {
               return <li key={dup[0].question}>{dup[0].question}</li>;
             })}
           </ol>
-        </div>
+        </motion.div>
       )}
-      <div
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { delay: 0.3 } }}
         ref={headerRef}
         className={topContainerClasses}
         style={{ ["--clr-accent" as any]: getAccentForClass(data.class) }}
@@ -113,18 +138,23 @@ export default function CardId({ data }: Props) {
             <p>Answer</p>
           </header>
         </div>
-      </div>
+      </motion.div>
       <div className={styles.container} style={{ ["--clr-accent" as any]: getAccentForClass(data.class) }}>
         <div className={styles.list}>
-          {data.questionData.map((d) => {
+          {data.questionData.map((d, index) => {
             let { answer, question } = d;
             return (
-              <div className={styles.list__item} key={`${question}-${answer}`}>
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1, transition: { delay: 0.05 * index + 0.3 } }}
+                className={styles.list__item}
+                key={`${question}-${answer}`}
+              >
                 <div className={styles.question}>{question}</div>
                 <div className={styles.spacer}></div>
                 <ArrowCircleDown2 size="32" color="var(--clr-accent)" variant="Bold" />
                 <FormatedData type={data.class} data={answer} />
-              </div>
+              </motion.div>
             );
           })}
         </div>

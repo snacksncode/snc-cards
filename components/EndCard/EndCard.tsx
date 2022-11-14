@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { MessageQuestion, ArrowRotateRight } from "iconsax-react";
-import { AnimateSharedLayout, motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import styles from "./EndCard.module.scss";
 import { FC, useState } from "react";
 import EndCardReview from "@components/EndCardReview";
@@ -23,13 +23,13 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
     onRestart();
   };
   return (
-    <AnimateSharedLayout>
+    <LayoutGroup>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, height: "100%", y: 0 }}
         exit={{ opacity: 0 }}
         key="endcard"
-        layout="position"
+        layout
         className={styles.wrapper}
       >
         <h1 className={styles.wrapper__title}>
@@ -58,7 +58,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
           {isReviewOpened && <EndCardReview data={data} mode={mode} dataClass={dataClass} />}
         </AnimatePresence>
       </motion.div>
-    </AnimateSharedLayout>
+    </LayoutGroup>
   );
 };
 
