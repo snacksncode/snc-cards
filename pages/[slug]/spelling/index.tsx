@@ -55,7 +55,7 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
   if (!rawData || !isShuffled) return <div>Building...</div>;
   return (
     <div className={styles.container}>
-      <AnimatePresence exitBeforeEnter>
+      <AnimatePresence mode="wait">
         {!progress.isDone ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} streak={streak} />

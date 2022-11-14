@@ -103,7 +103,7 @@ export default function CardId({ rawData, dataClass }: Props) {
   return (
     <DataWrapper type={dataClass}>
       <div className={styles.container}>
-        <AnimatePresence exitBeforeEnter>
+        <AnimatePresence mode="wait">
           {!isDone ? (
             <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} streak={streak} />
