@@ -86,11 +86,11 @@ export default function CardId({ data }: Props) {
         style={{ margin: "2rem auto 0", ["--clr-accent" as any]: getAccentForClass(data.class) }}
       >
         <div>
-          <Link href="/">
-            <a className={styles.backButton}>
+          <Link className={styles.backButton} href="/">
+            <>
               <Back variant="Outline" size="1.125rem" color="currentColor" />
               Go Back
-            </a>
+            </>
           </Link>
         </div>
         <h1 className={styles.title}>

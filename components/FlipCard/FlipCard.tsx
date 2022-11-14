@@ -78,6 +78,7 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
 
   return (
     <motion.div
+      key={`card_${data.id}`}
       variants={card}
       initial="out"
       animate="in"

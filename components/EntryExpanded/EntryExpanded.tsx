@@ -86,24 +86,24 @@ const EntryExpanded = ({ entry, selectEntry }: Props) => {
 
         <div className={styles.buttons}>
           <Link href={`${slug}/card`}>
-            <a key={slug}>
+            <>
               <Category size="32" color="currentColor" variant="Bold" />
               Cards
-            </a>
+            </>
           </Link>
 
           <Link href={`${slug}/list`}>
-            <a key={slug}>
+            <>
               <NoteText size="32" color="currentColor" variant="Bold" />
               List
-            </a>
+            </>
           </Link>
           {dataClass !== "math" && (
             <Link href={`${slug}/spelling`}>
-              <a key={slug}>
+              <>
                 <Edit size="32" color="currentColor" variant="Bold" />
                 Spelling
-              </a>
+              </>
             </Link>
           )}
         </div>
