@@ -165,20 +165,18 @@
     span {
       padding-right: 0.25em;
       background-color: var(--clr-background-300);
-    }
-    span {
       position: relative;
-    }
-    .line {
-      display: block !important;
-      width: 750px;
-      height: 3px;
-      position: absolute;
-      transform-origin: left;
-      top: 50%;
-      left: 0;
-      background: var(--clr-accent);
-      z-index: -2;
+      .line {
+        display: block !important;
+        width: 750px;
+        height: 3px;
+        position: absolute;
+        transform-origin: left;
+        top: 50%;
+        left: 0;
+        background: var(--clr-accent);
+        z-index: -2;
+      }
     }
   }
 
