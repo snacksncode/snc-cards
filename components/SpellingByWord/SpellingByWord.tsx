@@ -9,8 +9,8 @@ import MaskedInput from "react-text-mask";
 import { ArrowRight, Information } from "iconsax-react";
 
 interface Props {
-  data: QuestionData;
-  onAnswer: (answeredRight: boolean, input: string, expected: string, data: QuestionData) => void;
+  data: Question;
+  onAnswer: (answeredRight: boolean, input: string, expected: string, data: Question) => void;
 }
 
 interface InputProps {
