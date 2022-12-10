@@ -1,65 +1,43 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./ListEntries.module.scss";
 import Fuse from "fuse.js";
-import EntryCollapsed from "@components/EntryCollapsed";
-import Overlay from "@components/Overlay";
-import EntryExpanded from "@components/EntryExpanded";
 import { CloseSquare } from "iconsax-react";
+import Entry from "@components/Entry";
 
 interface Props {
-  entries: APIData[];
+  data: Card[];
   filterString: string | null;
 }
-type FilteredData = Fuse.FuseResult<APIData>[] | APIData[];
 
-const ListEntries = ({ entries, filterString }: Props) => {
-  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
-  const [filteredData, setFilteredData] = useState<FilteredData>(entries);
+type FilteredData = Fuse.FuseResult<Card>[] | Card[];
+
+const ListEntries = ({ data, filterString }: Props) => {
+  const [filteredData, setFilteredData] = useState<FilteredData>(data);
   const fuse = useRef(
-    new Fuse(entries, {
-      keys: ["title"],
+    new Fuse(data, {
+      keys: ["attributes.title"],
     })
   );
 
-  const selectEntry = (id: string | null) => {
-    setSelectedEntryId(id);
-  };
-
-  useEffect(() => {
-    const shouldBlock = selectedEntryId == null ? false : true;
-    document.body.classList.toggle("no-scroll", shouldBlock);
-    return () => {
-      document.body.classList.remove("no-scroll");
-    };
-  }, [selectedEntryId]);
-
   useEffect(() => {
     if (!filterString) {
-      setFilteredData(entries);
+      setFilteredData(data);
       return;
     }
-    const data = fuse.current.search(filterString);
-    setFilteredData(data);
-  }, [filterString, entries]);
+    const searchData = fuse.current.search(filterString);
+    setFilteredData(searchData);
+  }, [filterString, data]);
 
   return (
-    <>
-      {/* Each element */}
-      <motion.div className={styles.container}>
+    <div className={styles.container}>
+      <LayoutGroup>
         <AnimatePresence>
           {filteredData.length > 0 ? (
             filteredData.map((d, idx) => {
-              const isFuseResult = Boolean((d as Fuse.FuseResult<APIData>).item);
-              const entryData = isFuseResult ? (d as Fuse.FuseResult<APIData>).item : (d as APIData);
-              return (
-                <EntryCollapsed
-                  key={entryData.slug}
-                  entry={entryData}
-                  onSelect={selectEntry}
-                  entryDelay={0.05 * (idx + 1) + 0.2}
-                />
-              );
+              const isFuseResult = Boolean((d as Fuse.FuseResult<Card>).item);
+              const data = isFuseResult ? (d as Fuse.FuseResult<Card>).item : (d as Card);
+              return <Entry key={data.attributes.slug} data={data} animationDelay={0.05 * (idx + 1) + 0.2} />;
             })
           ) : (
             <motion.h1
@@ -74,26 +52,8 @@ const ListEntries = ({ entries, filterString }: Props) => {
             </motion.h1>
           )}
         </AnimatePresence>
-      </motion.div>
-
-      {/* Expanded */}
-      <AnimatePresence>
-        {selectedEntryId && (
-          <>
-            <Overlay
-              onClick={(_e) => {
-                setSelectedEntryId(null);
-              }}
-            />
-            <EntryExpanded
-              entry={entries.find((d) => d.slug === selectedEntryId) as APIData}
-              selectEntry={selectEntry}
-              key={`expanded_${selectedEntryId}`}
-            />
-          </>
-        )}
-      </AnimatePresence>
-    </>
+      </LayoutGroup>
+    </div>
   );
 };
 

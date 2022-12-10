@@ -1,6 +1,7 @@
 .wrapper {
   padding: 2rem;
   margin: 0 auto;
+  width: 100%;
   max-width: 800px;
   display: flex;
   flex-direction: column;
@@ -16,15 +17,13 @@
 
 .heading {
   margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-size: clamp(1.5rem, 8vw, 2.5rem);
   font-weight: 700;
-  line-height: 125%;
 }
 
 @media (min-width: 450px) {
   .heading {
-    font-size: clamp(2.5rem, 10vw, 3rem);
     font-weight: 700;
   }
 }

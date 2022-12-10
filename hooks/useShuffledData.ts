@@ -1,7 +1,7 @@
 import shuffle from "@utils/shuffle";
 import { useEffect, useState } from "react";
 
-const useShuffledData = <T>(initialData: T[] | undefined) => {
+const useShuffledData = <T>(initialData: T[]) => {
   const [shuffledData, setShuffledData] = useState<typeof initialData>(initialData);
   const [shuffleId, setShuffleId] = useState(Math.random());
   const [isShuffled, setIsShuffled] = useState(false);

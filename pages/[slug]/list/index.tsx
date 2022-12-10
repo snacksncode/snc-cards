@@ -1,8 +1,7 @@
-import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "@styles/List.module.scss";
 import classNames from "classnames";
 import getAccentForClass from "@utils/getAccentForClass";
-import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { GetStaticPropsContext } from "next";
 import groupBy from "@utils/groupBy";
 import { ArrowCircleDown2, ArrowCircleRight2, Back, Danger } from "iconsax-react";
@@ -10,55 +9,29 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 interface Props {
-  data: APIData | null;
+  data: Card;
 }
 
-const FormatedData = ({ data, type }: { data: string; type: ClassString }) => {
-  const [loaded, setLoaded] = useState(false);
-  return (
-    <>
-      <div className={styles.answer}>
-        {type !== "math" ? (
-          <span>{data}</span>
-        ) : (
-          <>
-            {!loaded && <span>Loading...</span>}
-            <span style={{ display: loaded ? "block" : "none", fontSize: "1.5rem" }}>
-              <MathJax onInitTypeset={() => setLoaded(true)}>{String.raw`${data}`}</MathJax>
-            </span>
-          </>
-        )}
-      </div>
-    </>
-  );
-};
-
-const DataWrapper = ({ type, children }: PropsWithChildren<{ type: ClassString }>) => {
-  if (type === "math")
-    return (
-      <MathJaxContext config={{ options: { enableMenu: false } }} hideUntilTypeset={"first"}>
-        {children}
-      </MathJaxContext>
-    );
-  return <>{children}</>;
-};
-
-export default function CardId({ data }: Props) {
+export default function CardId({
+  data: {
+    attributes: { questions, title, class: classString },
+  },
+}: Props) {
   const headerRef = useRef<HTMLHeadingElement | null>(null);
   const [isSticky, setIsSticky] = useState(false);
-  const [dupsData, setDupsData] = useState<QuestionData[][]>();
+  const [dupsData, setDupsData] = useState<Question[][]>();
 
   const topContainerClasses = classNames(styles["top__container"], {
     [`${styles["top__container--sticky"]}`]: isSticky,
   });
 
   useEffect(() => {
-    if (!data) return;
-    const grouped = groupBy(data.questionData, (q) => q.question);
+    if (!questions) return;
+    const grouped = groupBy(questions, (q) => q.question);
     const values = Object.values(grouped);
     const dups = values.filter((v) => v.length > 1);
     if (dups.length > 0) setDupsData(dups);
-  }, [data]);
+  }, [questions]);
 
   useEffect(() => {
     const cachedRef = headerRef.current;
@@ -76,14 +49,13 @@ export default function CardId({ data }: Props) {
     };
   }, []);
 
-  if (!data) return <div>Building...</div>;
   return (
-    <DataWrapper type={data.class}>
+    <>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className={styles.container}
-        style={{ margin: "2rem auto 0", ["--clr-accent" as any]: getAccentForClass(data.class) }}
+        style={{ margin: "2rem auto 0", ["--clr-accent" as any]: getAccentForClass(classString) }}
       >
         <div>
           <Link className={styles.backButton} href="/">
@@ -96,7 +68,7 @@ export default function CardId({ data }: Props) {
         <h1 className={styles.title}>
           List view for <br />
           <span>
-            {data.title}
+            {title}
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1, transition: { delay: 0.3 } }}
@@ -129,7 +101,7 @@ export default function CardId({ data }: Props) {
         animate={{ opacity: 1, transition: { delay: 0.3 } }}
         ref={headerRef}
         className={topContainerClasses}
-        style={{ ["--clr-accent" as any]: getAccentForClass(data.class) }}
+        style={{ ["--clr-accent" as any]: getAccentForClass(classString) }}
       >
         <div className={styles.container}>
           <header className={styles.top}>
@@ -139,9 +111,9 @@ export default function CardId({ data }: Props) {
           </header>
         </div>
       </motion.div>
-      <div className={styles.container} style={{ ["--clr-accent" as any]: getAccentForClass(data.class) }}>
+      <div className={styles.container} style={{ ["--clr-accent" as any]: getAccentForClass(classString) }}>
         <div className={styles.list}>
-          {data.questionData.map((d, index) => {
+          {questions.map((d, index) => {
             let { answer, question } = d;
             return (
               <motion.div
@@ -153,22 +125,29 @@ export default function CardId({ data }: Props) {
                 <div className={styles.question}>{question}</div>
                 <div className={styles.spacer}></div>
                 <ArrowCircleDown2 size="32" color="var(--clr-accent)" variant="Bold" />
-                <FormatedData type={data.class} data={answer} />
+                <div className={styles.answer}>
+                  <span>{answer}</span>
+                </div>
               </motion.div>
             );
           })}
         </div>
       </div>
-    </DataWrapper>
+    </>
   );
 }
 
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
-  const apiData = await fetch(`${apiUrl}/entries?slug=${params?.slug}`);
-  let dataArray: APIData[] = await apiData.json();
+  const apiData = await fetch(`${process.env.API_URL}/cards?filters[slug][$eq]=${params?.slug}&populate=questions`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${process.env.API_TOKEN}`,
+      "content-type": "application/json",
+    },
+  });
+  let dataArray: ApiResponse = await apiData.json();
 
-  if (!dataArray.length) {
+  if (!dataArray.data.length) {
     return {
       redirect: {
         destination: "/",
@@ -177,7 +156,7 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
     };
   }
 
-  const rawData = dataArray[0];
+  const rawData = dataArray.data[0];
   return {
     props: {
       data: rawData,
@@ -187,15 +166,20 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
 };
 
 export async function getStaticPaths() {
-  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
-  const rawData = await fetch(`${apiUrl}/entries`);
-  let data: APIData[] = await rawData.json();
+  const rawData = await fetch(`${process.env.API_URL}/cards`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${process.env.API_TOKEN}`,
+      "content-type": "application/json",
+    },
+  });
+  let data: ApiResponse = await rawData.json();
 
-  const paths = data.map((d) => {
+  const paths = data.data.map((d) => {
     return {
-      params: { slug: d.slug },
+      params: { slug: d.attributes.slug },
     };
   });
 
-  return { paths, fallback: true };
+  return { paths, fallback: false };
 }

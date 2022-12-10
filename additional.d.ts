@@ -1,21 +1,26 @@
 declare module "shoetest";
-interface APIData {
+interface CardFields {
   id: number;
   title: string;
   slug: string;
   class: ClassString;
-  description: string;
-  dueDate: string;
-  questionData: QuestionData[];
+  questions: Question[];
 
-  created_at: string;
-  published_at: string;
-  updated_at: string;
+  createdAt: string;
+  publishedAt: string;
+  updatedAt: string;
 }
 
-type ClassString = "en" | "de" | "math" | "geo";
+type Card = { id: number; attributes: CardFields };
 
-interface QuestionData {
+type ApiResponse = {
+  data: Card[];
+  meta: { pagination: { page: number; pageSize: number; pageCount: number; total: number } };
+};
+
+type ClassString = "en" | "de";
+
+interface Question {
   id: number;
   question: string;
   answer: string;

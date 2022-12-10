@@ -6,21 +6,24 @@ import { motion } from "framer-motion";
 import Filter from "@components/Filter";
 
 export const getStaticProps = async () => {
-  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
-  const rawData = await fetch(`${apiUrl}/entries`);
-  let data: APIData[] = await rawData.json();
-  data.sort((a, b) => {
-    return Math.abs(Date.now() - new Date(a.dueDate).getTime()) - Math.abs(Date.now() - new Date(b.dueDate).getTime());
+  const rawData = await fetch(`${process.env.API_URL}/cards?populate=questions&sort=updatedAt%3Adesc`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${process.env.API_TOKEN}`,
+      "content-type": "application/json",
+    },
   });
+  let data: ApiResponse = await rawData.json();
+
   return {
     props: {
-      data,
+      data: data,
     },
     revalidate: 60,
   };
 };
 
-const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ data }) => {
+const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ data: { data, meta: _ } }) => {
   const [inputValue, setInputValue] = useState("");
   const [filterString, setFilterString] = useState<string | null>(null);
 
@@ -41,10 +44,10 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ data }
   return (
     <main className={styles.wrapper}>
       <motion.h1 initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={styles.heading}>
-        Hi! Select the topic that you want to revise
+        Select one of the topics below
       </motion.h1>
       <Filter value={inputValue} onChangeHandler={handleInputChange} />
-      <ListEntries filterString={filterString} entries={data} />
+      <ListEntries filterString={filterString} data={data} />
     </main>
   );
 };

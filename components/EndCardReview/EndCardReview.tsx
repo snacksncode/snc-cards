@@ -1,4 +1,3 @@
-import FormattedData from "@components/FormattedData";
 import classNames from "classnames";
 import { motion } from "framer-motion";
 import { ArrowCircleDown2 } from "iconsax-react";
@@ -13,17 +12,17 @@ interface Props {
 
 const EndCardList: FC<{
   dataClass: ClassString;
-  data: QuestionData | SpellingData;
+  data: Question | SpellingData;
   mode: "spelling" | "cards";
-}> = ({ data, mode, dataClass }) => {
+}> = ({ data, mode }) => {
   if (mode === "cards") {
-    const { answer, question } = data as QuestionData;
+    const { answer, question } = data as Question;
     return (
       <div className={styles.list__item}>
         <div className={styles.question}>{question}</div>
         <div className={styles.spacer}></div>
         <ArrowCircleDown2 color="currentColor" size="32" variant="Bold" />
-        <FormattedData className={styles.answer} type={dataClass} data={answer} />
+        <div className={styles.answer}>{answer}</div>
       </div>
     );
   }
@@ -50,7 +49,7 @@ const EndCardList: FC<{
       <ArrowCircleDown2 color="currentColor" size="32" variant="Bold" />
       <div>
         <small className={styles.typed}>You typed</small>
-        <FormattedData className={styles.answer} type={dataClass} data={input} />
+        <div className={styles.answer}>{input}</div>
       </div>
     </div>
   );

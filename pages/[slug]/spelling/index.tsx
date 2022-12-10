@@ -10,11 +10,11 @@ import SpellingByWord from "@components/SpellingByWord";
 import useStreak from "@hooks/useStreak";
 
 interface Props {
-  rawData: QuestionData[] | undefined;
+  rawData: Question[];
   dataClass: ClassString;
 }
 
-const getKeyFromData = (d: QuestionData) => {
+const getKeyFromQuestion = (d: Question) => {
   return `${d.id}_${d.question}_${d.answer}`;
 };
 
@@ -33,7 +33,7 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
     resetStreak();
   };
 
-  const onAnswer = (answeredRight: boolean, input: string, expected: string, data: QuestionData) => {
+  const onAnswer = (answeredRight: boolean, input: string, expected: string, data: Question) => {
     const stateUpdater = answeredRight ? setCorrectAnswers : setIncorrectAnswers;
     const answerData: SpellingData = {
       input,
@@ -61,9 +61,9 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
             <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} streak={streak} />
             <AnimatePresence>
               <SpellingByWord
-                data={selectedItem as QuestionData}
+                data={selectedItem as Question}
                 onAnswer={onAnswer}
-                key={getKeyFromData(selectedItem as QuestionData)}
+                key={getKeyFromQuestion(selectedItem as Question)}
               />
             </AnimatePresence>
           </motion.div>
@@ -84,11 +84,16 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
 };
 
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
-  const apiData = await fetch(`${apiUrl}/entries?slug=${params?.slug}`);
-  let dataArray: APIData[] = await apiData.json();
+  const apiData = await fetch(`${process.env.API_URL}/cards?filters[slug][$eq]=${params?.slug}&populate=questions`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${process.env.API_TOKEN}`,
+      "content-type": "application/json",
+    },
+  });
+  let dataArray: ApiResponse = await apiData.json();
 
-  if (!dataArray.length) {
+  if (!dataArray.data.length) {
     return {
       redirect: {
         destination: "/",
@@ -97,28 +102,35 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
     };
   }
 
-  const rawData = dataArray[0];
+  const {
+    attributes: { questions, class: classString },
+  } = dataArray.data[0];
   return {
     props: {
-      rawData: rawData.questionData,
-      dataClass: rawData.class,
+      rawData: questions,
+      dataClass: classString,
     },
     revalidate: 60,
   };
 };
 
 export async function getStaticPaths() {
-  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
-  const rawData = await fetch(`${apiUrl}/entries`);
-  let data: APIData[] = await rawData.json();
+  const rawData = await fetch(`${process.env.API_URL}/cards`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${process.env.API_TOKEN}`,
+      "content-type": "application/json",
+    },
+  });
+  let data: ApiResponse = await rawData.json();
 
-  const paths = data.map((d) => {
+  const paths = data.data.map((d) => {
     return {
-      params: { slug: d.slug },
+      params: { slug: d.attributes.slug },
     };
   });
 
-  return { paths, fallback: true };
+  return { paths, fallback: false };
 }
 
 export default CardId;
