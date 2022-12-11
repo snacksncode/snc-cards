@@ -40,7 +40,7 @@ export default function CardId({
       ([entry]) => {
         setIsSticky(entry.intersectionRatio < 1);
       },
-      { threshold: [1] }
+      { threshold: [1], rootMargin: "0px 100% 0px 100%" }
     );
 
     observer.observe(cachedRef);
