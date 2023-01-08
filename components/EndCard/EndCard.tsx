@@ -8,7 +8,7 @@ import getStreakEmojis from "@utils/getStreakEmojis";
 import Link from "next/link";
 
 interface Props {
-  onRestart: () => void;
+  onRestart: (newData: any[] | null) => void;
   mode: "spelling" | "cards";
   data: CardsReviewData | SpellingReviewData;
   amount: number;
@@ -19,9 +19,15 @@ interface Props {
 const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }) => {
   const [isReviewOpened, setIsReviewOpened] = useState(false);
   const score = (((amount - data.incorrect.length) / amount) * 100).toFixed(1);
-  const handleRestart = () => {
+  const handleRestart = (newData: Question[] | SpellingData[] | null = null) => {
     setIsReviewOpened(false);
-    onRestart();
+    onRestart(newData);
+  };
+  const handleRestartIncorrect = () => {
+    handleRestart(data.incorrect);
+  };
+  const handleRestartAll = () => {
+    handleRestart();
   };
   return (
     <LayoutGroup>
@@ -46,20 +52,28 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
           <h5>
             <span>What&apos;s next?</span>
           </h5>
-          <Link href="/" className={classNames(styles.button)}>
-            <>
-              <Back color="currentColor" />
-              Go Back
-            </>
-          </Link>
-          <button className={classNames(styles.button, styles.orange)} onClick={() => setIsReviewOpened((s) => !s)}>
-            <MessageQuestion color="currentColor" />
-            Review Answers
-          </button>
-          <button className={classNames(styles.button, styles.green)} onClick={handleRestart}>
-            <ArrowRotateRight color="currentColor" />
-            Restart
-          </button>
+          <div className={styles.buttons_grid}>
+            <Link href="/" className={classNames(styles.button)}>
+              <>
+                <Back color="currentColor" />
+                Go Back
+              </>
+            </Link>
+            <button className={classNames(styles.button, styles.orange)} onClick={() => setIsReviewOpened((s) => !s)}>
+              <MessageQuestion color="currentColor" />
+              Review
+            </button>
+            <button className={classNames(styles.button, styles.green)} onClick={handleRestartAll}>
+              <ArrowRotateRight color="currentColor" />
+              Restart
+            </button>
+            {data.incorrect.length > 0 && (
+              <button className={classNames(styles.button, styles.purple)} onClick={handleRestartIncorrect}>
+                <ArrowRotateRight color="currentColor" />
+                Incorrect
+              </button>
+            )}
+          </div>
         </section>
         <AnimatePresence>
           {isReviewOpened && <EndCardReview data={data} mode={mode} dataClass={dataClass} />}

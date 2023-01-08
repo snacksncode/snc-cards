@@ -1,22 +1,19 @@
 import shuffle from "@utils/shuffle";
 import { useEffect, useState } from "react";
 
-const useShuffledData = <T>(initialData: T[]) => {
-  const [shuffledData, setShuffledData] = useState<typeof initialData>(initialData);
-  const [shuffleId, setShuffleId] = useState(Math.random());
+const useShuffledData = <T>(data: T[]) => {
+  const [shuffledData, setShuffledData] = useState(data);
   const [isShuffled, setIsShuffled] = useState(false);
-  const reshuffle = () => setShuffleId(Math.random());
+  const reshuffle = (newData: T[] | null = null) => {
+    setShuffledData(() => {
+      return shuffle(newData == null ? shuffledData : newData);
+    });
+  };
 
   useEffect(() => {
-    if (initialData == null) return;
-
-    const shuffled = shuffle(initialData);
-    setShuffledData(shuffled);
-  }, [initialData, shuffleId]);
-
-  useEffect(() => {
+    setShuffledData(shuffle(data));
     setIsShuffled(true);
-  }, [shuffledData]);
+  }, [data]);
 
   return {
     data: shuffledData,

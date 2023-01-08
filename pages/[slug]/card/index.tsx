@@ -68,12 +68,13 @@ export default function CardId({ rawData, dataClass }: Props) {
   const [incorrectAnswers, setIncorrectAnswers] = useState<Question[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<Question[]>([]);
   const [streak, setStreak, maxStreak, resetStreak] = useStreak();
-  const { data, reshuffle } = useShuffledData(rawData);
+  const { data, isShuffled, reshuffle } = useShuffledData(rawData);
   const {
     selectedItem,
     selectedIndex,
     nextItem,
     resetIndex,
+    amountOfItems,
     progress: { isDone },
   } = useIndexSelectedData(data);
 
@@ -92,11 +93,11 @@ export default function CardId({ rawData, dataClass }: Props) {
     nextItem();
   };
 
-  const handleRestart = () => {
+  const handleRestart = (newData: Question[] | null = null) => {
     resetIndex();
     setIncorrectAnswers([]);
     setCorrectAnswers([]);
-    reshuffle();
+    reshuffle(newData);
     resetStreak();
   };
 
@@ -104,14 +105,13 @@ export default function CardId({ rawData, dataClass }: Props) {
     return `${d.id}_${d.question}_${d.answer}`;
   };
 
-  if (!rawData) return <div>Building...</div>;
-  if (selectedItem == null) return;
+  if (!rawData || !isShuffled || selectedItem == null) return null;
   return (
     <div className={styles.container}>
       <AnimatePresence mode="wait">
         {!isDone ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} streak={streak} />
+            <ProgressBar currentAmount={selectedIndex} maxAmount={amountOfItems} streak={streak} />
             <AnimatePresence>
               <FlipCard
                 key={getKeyFromData(selectedItem)}

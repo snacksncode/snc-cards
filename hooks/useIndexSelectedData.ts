@@ -4,6 +4,7 @@ const useIndexSelectedData = <T>(dataArray: T[] | undefined, startingIndex?: num
   const [selectedIndex, setSelectedIndex] = useState(startingIndex || 0);
   const [isDone, setIsDone] = useState(false);
   const selectedItem = dataArray?.[selectedIndex];
+  const amountOfItems = dataArray?.length ?? 0;
   const nextItem = () => {
     if (dataArray == null) return;
     setSelectedIndex((i) => {
@@ -32,6 +33,7 @@ const useIndexSelectedData = <T>(dataArray: T[] | undefined, startingIndex?: num
   return {
     selectedItem,
     selectedIndex,
+    amountOfItems,
     progress: {
       isDone,
       isFirst: selectedIndex === 0,

@@ -29,7 +29,7 @@ interface Question {
 interface SpellingData {
   input: string;
   expected: string;
-  data: QuestionData;
+  data: Question;
 }
 
 interface SpellingReviewData {
@@ -38,6 +38,6 @@ interface SpellingReviewData {
 }
 
 interface CardsReviewData {
-  incorrect: QuestionData[];
-  correct: QuestionData[];
+  incorrect: Question[];
+  correct: Question[];
 }

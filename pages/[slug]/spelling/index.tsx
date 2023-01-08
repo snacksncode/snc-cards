@@ -25,11 +25,11 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
   const [correctAnswers, setCorrectAnswers] = useState<SpellingData[]>([]);
   const [streak, setStreak, maxStreak, resetStreak] = useStreak();
 
-  const onRestart = () => {
+  const onRestart = (newData: Question[] | null = null) => {
     resetIndex();
     setIncorrectAnswers([]);
     setCorrectAnswers([]);
-    reshuffle();
+    reshuffle(newData);
     resetStreak();
   };
 
@@ -52,7 +52,7 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
     nextItem();
   };
 
-  if (!rawData || !isShuffled) return <div>Building...</div>;
+  if (!rawData || !isShuffled || selectedItem == null) return null;
   return (
     <div className={styles.container}>
       <AnimatePresence mode="wait">
