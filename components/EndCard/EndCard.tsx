@@ -8,7 +8,7 @@ import getStreakEmojis from "@utils/getStreakEmojis";
 import Link from "next/link";
 
 interface Props {
-  onRestart: (newData: any[] | null) => void;
+  onRestart: (newData: Question[] | null) => void;
   mode: "spelling" | "cards";
   data: CardsReviewData | SpellingReviewData;
   amount: number;
@@ -16,12 +16,23 @@ interface Props {
   streak: number;
 }
 
+const isSpellingData = (input: Question[] | SpellingData[]): input is SpellingData[] => {
+  if ("data" in input[0]) {
+    return true;
+  }
+  return false;
+};
+
 const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }) => {
   const [isReviewOpened, setIsReviewOpened] = useState(false);
   const score = (((amount - data.incorrect.length) / amount) * 100).toFixed(1);
   const handleRestart = (newData: Question[] | SpellingData[] | null = null) => {
     setIsReviewOpened(false);
-    onRestart(newData);
+    if (newData && isSpellingData(newData)) {
+      onRestart(newData.map((item) => item.data));
+    } else {
+      onRestart(newData);
+    }
   };
   const handleRestartIncorrect = () => {
     handleRestart(data.incorrect);

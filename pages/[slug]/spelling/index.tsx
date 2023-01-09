@@ -20,7 +20,7 @@ const getKeyFromQuestion = (d: Question) => {
 
 const CardId: FC<Props> = ({ rawData, dataClass }) => {
   const { data, isShuffled, reshuffle } = useShuffledData(rawData);
-  const { selectedItem, selectedIndex, nextItem, resetIndex, progress } = useIndexSelectedData(data);
+  const { selectedItem, selectedIndex, nextItem, resetIndex, progress, amountOfItems } = useIndexSelectedData(data);
   const [incorrectAnswers, setIncorrectAnswers] = useState<SpellingData[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<SpellingData[]>([]);
   const [streak, setStreak, maxStreak, resetStreak] = useStreak();
@@ -58,7 +58,7 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
       <AnimatePresence mode="wait">
         {!progress.isDone ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <ProgressBar currentAmount={selectedIndex} maxAmount={rawData.length} streak={streak} />
+            <ProgressBar currentAmount={selectedIndex} maxAmount={amountOfItems} streak={streak} />
             <AnimatePresence>
               <SpellingByWord
                 data={selectedItem as Question}
