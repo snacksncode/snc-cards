@@ -40,10 +40,9 @@
   }
 
   .dupWarningIcon {
-    margin-right: 0.5em;
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: -0.5rem;
+    right: -0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -126,6 +125,7 @@
     justify-content: flex-end;
     gap: 0.5rem;
     .tag {
+      position: relative;
       color: var(--clr-card-accent);
       font-size: 0.7rem;
       background-color: rgba(0, 0, 0, 0.2);

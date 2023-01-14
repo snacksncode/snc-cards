@@ -76,14 +76,14 @@ const Entry = ({
           <Tag>{getHumanReadableClass(classString)}</Tag>
           <Tag>
             {questions?.length} {questions.length > 1 ? "cards" : "card"}
+            {dupsData && (
+              <motion.span layout key="dups" className={styles.dupWarningIcon}>
+                <Danger size="1rem" color="currentColor" variant="Bold" />
+              </motion.span>
+            )}
           </Tag>
         </motion.div>
       </motion.div>
-      {dupsData && (
-        <motion.span key="dups" style={{ marginLeft: "auto" }} className={styles.dupWarningIcon}>
-          <Danger size="1em" color="currentColor" variant="Bold" />
-        </motion.span>
-      )}
 
       <motion.div
         layout
