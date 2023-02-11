@@ -18,7 +18,7 @@ type ApiResponse = {
   meta: { pagination: { page: number; pageSize: number; pageCount: number; total: number } };
 };
 
-type ClassString = "en" | "de";
+type ClassString = "en" | "de" | "geo";
 
 interface Question {
   id: number;

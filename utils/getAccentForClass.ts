@@ -4,5 +4,7 @@ export default function getAccentForClass(cls: ClassString) {
       return "var(--clr-accent-peachy)";
     case "en":
       return "var(--clr-accent-blue)";
+    case "geo":
+      return "var(--clr-accent-green)";
   }
 }
