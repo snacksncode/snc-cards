@@ -4,7 +4,7 @@ import groupBy from "@utils/groupBy";
 import { AnimatePresence, motion } from "framer-motion";
 import { Category, Danger, Edit, NoteText } from "iconsax-react";
 import Link from "next/link";
-import { FC, KeyboardEventHandler, PropsWithChildren, useEffect, useRef, useState } from "react";
+import { FC, PropsWithChildren, useEffect, useRef, useState } from "react";
 import { useHover } from "usehooks-ts";
 import styles from "./Entry.module.scss";
 
@@ -25,16 +25,8 @@ const Entry = ({
 }: Props) => {
   const [dupsData, setDupsData] = useState<Question[][]>();
   const [isExpanded, setIsExpanded] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLButtonElement>(null);
   const isHovered = useHover(containerRef);
-
-  const handleKeypress: KeyboardEventHandler<HTMLDivElement> = (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      const target = e.target as HTMLDivElement;
-      target.click();
-      target.blur();
-    }
-  };
 
   useEffect(() => {
     if (!questions) return;
@@ -45,11 +37,10 @@ const Entry = ({
   }, [questions]);
 
   return (
-    <motion.div
+    <motion.button
       layout
       key={slug}
       ref={containerRef}
-      onKeyPress={handleKeypress}
       initial={{ y: -25, opacity: 0 }}
       animate={{ y: 0, opacity: 1, transition: { delay: animationDelay } }}
       exit={{ opacity: 0 }}
@@ -57,13 +48,15 @@ const Entry = ({
       style={{ "--clr-card-accent": getAccentForClass(classString) } as any}
       onClick={(e) => {
         e.stopPropagation();
-        return setIsExpanded((a) => !a);
+        setIsExpanded((isExpanded) => !isExpanded);
+      }}
+      onBlur={(e) => {
+        if (!containerRef.current?.contains(e.relatedTarget)) {
+          setIsExpanded(false);
+        }
       }}
     >
-      <motion.div
-        key="content"
-        style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem" }}
-      >
+      <motion.div layout key="content" className={styles.wrapper}>
         <div>
           <motion.p layout className={styles.bang}>
             TOPIC
@@ -114,8 +107,9 @@ const Entry = ({
           <motion.div
             layout
             key="additional-content"
+            style={{ width: "100%" }}
             initial={{ opacity: 0, paddingBottom: "1.5rem" }}
-            animate={{ opacity: 1, transition: { delay: 0.25 } }}
+            animate={{ opacity: 1, transition: { delay: 0.15 } }}
             exit={{ opacity: 0, transition: { delay: 0 } }}
           >
             <div className={styles.buttons}>
@@ -153,7 +147,7 @@ const Entry = ({
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </motion.button>
   );
 };
 

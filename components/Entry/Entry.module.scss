@@ -1,16 +1,25 @@
 .container {
   display: flex;
+  border: none;
+  font-family: inherit;
   flex-direction: column;
   justify-content: center;
   border-radius: 4px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   background-color: var(--clr-background-400);
   overflow: hidden;
-  transition: border-color 250ms ease;
   padding: 1.5rem;
   cursor: pointer;
-  outline: none;
+  outline-color: transparent;
   position: relative;
+
+  .wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 
   .indicator {
     width: 1.5rem;
@@ -100,7 +109,9 @@
 
   .bang {
     margin: 0;
+    color: var(--clr-text);
     letter-spacing: 4px;
+    text-align: left;
     font-size: 0.65rem;
     font-weight: 500;
   }
@@ -110,10 +121,10 @@
     margin: 0;
     font-size: 1.375rem;
     color: var(--clr-card-accent);
-    filter: brightness(135%);
     font-weight: 700;
     text-overflow: ellipsis;
     overflow: hidden;
+    text-align: left;
     &:focus {
       outline: none;
     }
@@ -138,13 +149,6 @@
 
 @media screen and (min-width: 450px) {
   .container {
-    &:hover,
-    &:focus {
-      .fade {
-        transform: translateX(0);
-        opacity: 0.3;
-      }
-    }
     &:focus-visible {
       outline: 2px dashed var(--clr-card-accent);
       outline-offset: 0.5rem;
