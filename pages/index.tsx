@@ -4,6 +4,7 @@ import styles from "@styles/Home.module.scss";
 import ListEntries from "@components/ListEntries";
 import { motion } from "framer-motion";
 import Filter from "@components/Filter";
+import Head from "next/head";
 
 export const getStaticProps = async () => {
   const rawData = await fetch(`${process.env.API_URL}/cards?populate=questions&sort=updatedAt%3Adesc`, {
@@ -42,13 +43,18 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ data: 
   }, [inputValue]);
 
   return (
-    <main className={styles.wrapper}>
-      <motion.h1 initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={styles.heading}>
-        Select one of the topics below
-      </motion.h1>
-      <Filter value={inputValue} onChangeHandler={handleInputChange} />
-      <ListEntries filterString={filterString} data={data} />
-    </main>
+    <>
+      <Head>
+        <title>Flash Card App</title>
+      </Head>
+      <main className={styles.wrapper}>
+        <motion.h1 initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={styles.heading}>
+          Select one of the topics below
+        </motion.h1>
+        <Filter value={inputValue} onChangeHandler={handleInputChange} />
+        <ListEntries filterString={filterString} data={data} />
+      </main>
+    </>
   );
 };
 

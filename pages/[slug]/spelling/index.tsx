@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 import styles from "@styles/Spelling.module.scss";
 import { GetStaticPropsContext } from "next";
 import { AnimatePresence, motion } from "framer-motion";
@@ -8,8 +8,10 @@ import EndCard from "@components/EndCard";
 import ProgressBar from "@components/ProgressBar";
 import SpellingByWord from "@components/SpellingByWord";
 import useStreak from "@hooks/useStreak";
+import Head from "next/head";
 
 interface Props {
+  title: string;
   rawData: Question[];
   dataClass: ClassString;
 }
@@ -18,7 +20,7 @@ const getKeyFromQuestion = (d: Question) => {
   return `${d.id}_${d.question}_${d.answer}`;
 };
 
-const CardId: FC<Props> = ({ rawData, dataClass }) => {
+const CardId: FC<Props> = ({ title, rawData, dataClass }) => {
   const { data, isShuffled, reshuffle } = useShuffledData(rawData);
   const { selectedItem, selectedIndex, nextItem, resetIndex, progress, amountOfItems } = useIndexSelectedData(data);
   const [incorrectAnswers, setIncorrectAnswers] = useState<SpellingData[]>([]);
@@ -54,32 +56,37 @@ const CardId: FC<Props> = ({ rawData, dataClass }) => {
 
   if (!rawData || !isShuffled || selectedItem == null) return null;
   return (
-    <div className={styles.container}>
-      <AnimatePresence mode="wait">
-        {!progress.isDone ? (
-          <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <ProgressBar currentAmount={selectedIndex} maxAmount={amountOfItems} streak={streak} />
-            <AnimatePresence>
-              <SpellingByWord
-                data={selectedItem as Question}
-                onAnswer={onAnswer}
-                key={getKeyFromQuestion(selectedItem as Question)}
-              />
-            </AnimatePresence>
-          </motion.div>
-        ) : (
-          <EndCard
-            key="endcard"
-            mode="spelling"
-            dataClass={dataClass}
-            data={{ incorrect: incorrectAnswers, correct: correctAnswers }}
-            amount={rawData.length}
-            onRestart={onRestart}
-            streak={maxStreak}
-          />
-        )}
-      </AnimatePresence>
-    </div>
+    <>
+      <Head>
+        <title>{title} | Spelling Mode | Flash Card App</title>
+      </Head>
+      <div className={styles.container}>
+        <AnimatePresence mode="wait">
+          {!progress.isDone ? (
+            <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <ProgressBar currentAmount={selectedIndex} maxAmount={amountOfItems} streak={streak} />
+              <AnimatePresence>
+                <SpellingByWord
+                  data={selectedItem as Question}
+                  onAnswer={onAnswer}
+                  key={getKeyFromQuestion(selectedItem as Question)}
+                />
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <EndCard
+              key="endcard"
+              mode="spelling"
+              dataClass={dataClass}
+              data={{ incorrect: incorrectAnswers, correct: correctAnswers }}
+              amount={rawData.length}
+              onRestart={onRestart}
+              streak={maxStreak}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 };
 
@@ -103,10 +110,11 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
   }
 
   const {
-    attributes: { questions, class: classString },
+    attributes: { title, questions, class: classString },
   } = dataArray.data[0];
   return {
     props: {
+      title,
       rawData: questions,
       dataClass: classString,
     },

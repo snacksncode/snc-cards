@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "@styles/List.module.scss";
 import classNames from "classnames";
 import getAccentForClass from "@utils/getAccentForClass";
@@ -7,6 +7,7 @@ import groupBy from "@utils/groupBy";
 import { ArrowCircleDown2, ArrowCircleRight2, Back, Danger } from "iconsax-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Head from "next/head";
 
 interface Props {
   data: Card;
@@ -51,6 +52,9 @@ export default function CardId({
 
   return (
     <>
+      <Head>
+        <title>{title} | List View | Flash Card App</title>
+      </Head>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

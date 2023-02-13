@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { GetStaticPropsContext } from "next";
 import FlipCard from "@components/FlipCard";
 import EndCard from "@components/EndCard";
@@ -8,8 +8,10 @@ import useShuffledData from "@hooks/useShuffledData";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "@styles/Card.module.scss";
 import useStreak from "@hooks/useStreak";
+import Head from "next/head";
 
 interface Props {
+  title: string;
   rawData: Question[];
   dataClass: ClassString;
 }
@@ -34,10 +36,11 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
   }
 
   const {
-    attributes: { questions, class: classString },
+    attributes: { title, questions, class: classString },
   } = dataArray.data[0];
   return {
     props: {
+      title,
       rawData: questions,
       dataClass: classString,
     },
@@ -64,7 +67,7 @@ export async function getStaticPaths() {
   return { paths, fallback: "blocking" };
 }
 
-export default function CardId({ rawData, dataClass }: Props) {
+export default function CardId({ title, rawData, dataClass }: Props) {
   const [incorrectAnswers, setIncorrectAnswers] = useState<Question[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<Question[]>([]);
   const [streak, setStreak, maxStreak, resetStreak] = useStreak();
@@ -107,32 +110,37 @@ export default function CardId({ rawData, dataClass }: Props) {
 
   if (!rawData || !isShuffled || selectedItem == null) return null;
   return (
-    <div className={styles.container}>
-      <AnimatePresence mode="wait">
-        {!isDone ? (
-          <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <ProgressBar currentAmount={selectedIndex} maxAmount={amountOfItems} streak={streak} />
-            <AnimatePresence>
-              <FlipCard
-                key={getKeyFromData(selectedItem)}
-                dataClass={dataClass}
-                onAnswer={onAnswer}
-                data={selectedItem}
-              />
-            </AnimatePresence>
-          </motion.div>
-        ) : (
-          <EndCard
-            key="endcard"
-            mode="cards"
-            data={{ correct: correctAnswers, incorrect: incorrectAnswers }}
-            dataClass={dataClass}
-            amount={rawData.length}
-            onRestart={handleRestart}
-            streak={maxStreak}
-          />
-        )}
-      </AnimatePresence>
-    </div>
+    <>
+      <Head>
+        <title>{title} | Card Mode | Flash Card App</title>
+      </Head>
+      <div className={styles.container}>
+        <AnimatePresence mode="wait">
+          {!isDone ? (
+            <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <ProgressBar currentAmount={selectedIndex} maxAmount={amountOfItems} streak={streak} />
+              <AnimatePresence>
+                <FlipCard
+                  key={getKeyFromData(selectedItem)}
+                  dataClass={dataClass}
+                  onAnswer={onAnswer}
+                  data={selectedItem}
+                />
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <EndCard
+              key="endcard"
+              mode="cards"
+              data={{ correct: correctAnswers, incorrect: incorrectAnswers }}
+              dataClass={dataClass}
+              amount={rawData.length}
+              onRestart={handleRestart}
+              streak={maxStreak}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }
