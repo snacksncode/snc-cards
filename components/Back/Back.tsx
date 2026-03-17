@@ -1,6 +1,7 @@
 import ExpandingBlob from "@components/ExpandingBlob";
 import Watermark from "@components/Watermark";
 import { cn } from "@lib/cn";
+import type { ClassString } from "@/types";
 
 interface Props {
   data: string;

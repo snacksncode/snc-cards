@@ -1,6 +1,5 @@
 import Watermark from "@components/Watermark";
 import { cn } from "@lib/cn";
-import React from "react";
 
 interface Props {
   data: string;

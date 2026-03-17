@@ -20,7 +20,7 @@ const getKeyFromQuestion = (d: Question) => {
   return `${d.id}_${d.question}_${d.answer}`
 }
 
-export default function SpellingClient({ title, rawData, dataClass }: Props) {
+export default function SpellingClient({ title: _title, rawData, dataClass }: Props) {
   const { data, isShuffled, reshuffle } = useShuffledData(rawData)
   const { selectedItem, selectedIndex, nextItem, resetIndex, progress, amountOfItems } = useIndexSelectedData(data)
   const [incorrectAnswers, setIncorrectAnswers] = useState<SpellingData[]>([])

@@ -1,6 +1,6 @@
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
-import React, { useEffect, useRef, useState } from "react";
-import Fuse from "fuse.js";
+import { useEffect, useRef, useState } from "react";
+import Fuse, { type FuseResult } from "fuse.js";
 import { CloseSquare } from "@components/icons";
 import Entry from "@components/Entry";
 import type { Topic } from "@/types";
@@ -10,7 +10,7 @@ interface Props {
   filterString: string | null;
 }
 
-type FilteredData = Fuse.FuseResult<Topic>[] | Topic[];
+type FilteredData = FuseResult<Topic>[] | Topic[];
 
 const ListEntries = ({ data, filterString }: Props) => {
   const [filteredData, setFilteredData] = useState<FilteredData>(data);
@@ -36,10 +36,10 @@ const ListEntries = ({ data, filterString }: Props) => {
           {filteredData.length > 0 ? (
             filteredData.map((d, idx) => {
               const isFuseResult = Boolean(
-                (d as Fuse.FuseResult<Topic>).item
+                (d as FuseResult<Topic>).item
               );
               const topic = isFuseResult
-                ? (d as Fuse.FuseResult<Topic>).item
+                ? (d as FuseResult<Topic>).item
                 : (d as Topic);
               return (
                 <Entry

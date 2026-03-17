@@ -6,6 +6,7 @@ import { ArrowRight, Information } from "@components/icons"
 import { cn } from "@lib/cn"
 import Watermark from "@components/Watermark"
 import ExpandingBlob from "@components/ExpandingBlob"
+import type { Question } from "@/types"
 
 interface Props {
   data: Question
@@ -31,8 +32,8 @@ const applyFixesTable = (word: string): string => {
 
 const card = {
   out: { opacity: 0, x: "50%", y: "-50%", scale: 0.25 },
-  in: { opacity: 1, x: "-50%", scale: 1, transition: { type: "spring", damping: 12 } },
-  outExit: { opacity: 0, x: "-150%", scale: 0.25, transition: { type: "spring", damping: 12 } },
+  in: { opacity: 1, x: "-50%", scale: 1, transition: { type: "spring" as const, damping: 12 } },
+  outExit: { opacity: 0, x: "-150%", scale: 0.25, transition: { type: "spring" as const, damping: 12 } },
 }
 
 const getCleanedValue = (value: string): string => {
@@ -151,7 +152,7 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
   const currentlyFocusedInput = useRef<HTMLInputElement | null>(null)
   const [shouldShowCorrectAnswer, setShouldShowCorrectAnswer] = useState(false)
 
-  const inputIdsInOrder = useRef<string[]>()
+  const inputIdsInOrder = useRef<string[] | null>(null)
   const [inputData, setInputData] = useState<InputData | null>(null)
 
   // trigger blob animation on answer which itself triggers onAnswer in parent component

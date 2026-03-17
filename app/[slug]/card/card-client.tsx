@@ -16,7 +16,7 @@ interface Props {
   dataClass: ClassString
 }
 
-export default function CardClient({ title, rawData, dataClass }: Props) {
+export default function CardClient({ title: _title, rawData, dataClass }: Props) {
   const [incorrectAnswers, setIncorrectAnswers] = useState<Question[]>([])
   const [correctAnswers, setCorrectAnswers] = useState<Question[]>([])
   const [streak, setStreak, maxStreak, resetStreak] = useStreak()

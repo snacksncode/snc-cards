@@ -3,7 +3,7 @@ import { MessageQuestion, ArrowRotateRight, Back } from "@components/icons";
 import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import { FC, useState } from "react";
 import EndCardReview from "@components/EndCardReview";
-import getStreakEmojis from "@utils/getStreakEmojis";
+import { getStreakEmojis } from "@lib/utils";
 import Link from "next/link";
 import type { CardsReviewData, SpellingReviewData, ClassString, Question } from "@/types";
 
