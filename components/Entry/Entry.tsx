@@ -2,12 +2,14 @@ import { getAccentForClass, getHumanReadableClass, groupBy } from "@lib/utils";
 import { AnimatePresence, motion } from "motion/react";
 import { Category, Danger, Edit, NoteText } from "@components/icons";
 import Link from "next/link";
-import { FC, PropsWithChildren, useEffect, useRef, useState } from "react";
+import { FC, PropsWithChildren, useState } from "react";
 import type { Topic } from "@/types";
 
 interface Props {
   data: Topic;
   animationDelay: number;
+  isExpanded: boolean;
+  onToggle: (slug: string) => void;
 }
 
 const Tag: FC<PropsWithChildren> = ({ children }) => {
@@ -21,29 +23,22 @@ const Tag: FC<PropsWithChildren> = ({ children }) => {
 const Entry = ({
   data: { title, slug, questions, class: classString },
   animationDelay,
+  isExpanded,
+  onToggle,
 }: Props) => {
-  const [dupsData, setDupsData] = useState<ReturnType<typeof groupBy<typeof questions[number], string>>>();
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const containerRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!questions) return;
-    const grouped = groupBy(questions, (q) => q.question);
-    const values = Object.values(grouped);
-    const dups = values.filter((v) => v.length > 1);
-    if (dups.length > 0) setDupsData(grouped);
-  }, [questions]);
+  const hasDups = questions
+    ? Object.values(groupBy(questions, (q) => q.question)).some((v) => v.length > 1)
+    : false;
 
   return (
     <motion.button
       layout
       key={slug}
-      ref={containerRef}
       initial={{ y: -25, opacity: 0 }}
       animate={{ y: 0, opacity: 1, transition: { delay: animationDelay } }}
       exit={{ opacity: 0 }}
-      className="flex border-none font-[inherit] flex-col justify-center rounded shadow-[0_4px_15px_rgba(0,0,0,0.1)] bg-bg-400 overflow-hidden p-6 cursor-pointer outline-transparent relative focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+      className="flex border-none font-[inherit] flex-col justify-center rounded shadow-[0_4px_15px_rgba(0,0,0,0.1)] bg-bg-400 overflow-hidden p-8 cursor-pointer outline-transparent relative focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
       style={
         {
           "--clr-card-accent": getAccentForClass(classString),
@@ -51,15 +46,7 @@ const Entry = ({
       }
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={(e) => {
-        e.stopPropagation();
-        setIsExpanded((isExpanded) => !isExpanded);
-      }}
-      onBlur={(e) => {
-        if (!containerRef.current?.contains(e.relatedTarget)) {
-          setIsExpanded(false);
-        }
-      }}
+      onClick={() => onToggle(slug)}
     >
       <motion.div
         layout
@@ -84,7 +71,7 @@ const Entry = ({
           <Tag>{getHumanReadableClass(classString)}</Tag>
           <Tag>
             {questions?.length} {questions.length > 1 ? "cards" : "card"}
-            {dupsData && (
+            {hasDups && (
               <motion.span
                 layout
                 key="dups"
@@ -105,7 +92,7 @@ const Entry = ({
           y: 90,
           position: "absolute",
         }}
-        animate={{ y: isHovered || isExpanded ? 50 : 90 }}
+        animate={{ y: isExpanded ? 90 : isHovered ? 50 : 90 }}
         key="indicator"
         className="w-6 h-20 rounded-full bg-bg-500 flex justify-center pt-1 [&_svg]:w-4 [&_svg]:h-4"
       >
@@ -117,8 +104,6 @@ const Entry = ({
           stroke="var(--clr-card-accent)"
         >
           <motion.path
-            initial={{ rotate: 0 }}
-            animate={{ rotate: isExpanded ? 180 : 0 }}
             strokeLinecap="round"
             strokeLinejoin="round"
             d="M12 4.5v15m0 0l6.75-6.75M12 19.5l-6.75-6.75"
@@ -131,15 +116,15 @@ const Entry = ({
           <motion.div
             layout
             key="additional-content"
-            style={{ width: "100%" }}
-            initial={{ opacity: 0, paddingBottom: "1.5rem" }}
-            animate={{ opacity: 1, transition: { delay: 0.15 } }}
-            exit={{ opacity: 0, transition: { delay: 0 } }}
+            style={{ width: "100%", overflow: "hidden" }}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto", transition: { delay: 0.15, ease: "circOut", duration: 0.3 } }}
+            exit={{ opacity: 0, height: 0, transition: { ease: "circOut", duration: 0.3 } }}
           >
             <div className="flex flex-wrap items-center justify-center mt-4 gap-6">
               <Link
                 onClick={(e) => e.stopPropagation()}
-                className="flex basis-full py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+                className="flex flex-1 py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
                 href={`${slug}/card`}
               >
                 <Category size={32} color="currentColor" />
@@ -147,7 +132,7 @@ const Entry = ({
               </Link>
               <Link
                 onClick={(e) => e.stopPropagation()}
-                className="flex basis-full py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+                className="flex flex-1 py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
                 href={`${slug}/spelling`}
               >
                 <Edit size={32} color="currentColor" />
@@ -155,7 +140,7 @@ const Entry = ({
               </Link>
               <Link
                 onClick={(e) => e.stopPropagation()}
-                className="flex basis-full py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+                className="flex flex-1 py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
                 href={`${slug}/list`}
               >
                 <NoteText size={32} color="currentColor" />

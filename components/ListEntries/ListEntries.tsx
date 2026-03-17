@@ -1,5 +1,5 @@
-import { AnimatePresence, LayoutGroup, motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useRef, useState } from "react";
 import Fuse, { type FuseResult } from "fuse.js";
 import { CloseSquare } from "@components/icons";
 import Entry from "@components/Entry";
@@ -13,26 +13,22 @@ interface Props {
 type FilteredData = FuseResult<Topic>[] | Topic[];
 
 const ListEntries = ({ data, filterString }: Props) => {
-  const [filteredData, setFilteredData] = useState<FilteredData>(data);
+  const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
   const fuse = useRef(
     new Fuse(data, {
       keys: ["title"],
     })
   );
 
-  useEffect(() => {
-    if (!filterString) {
-      setFilteredData(data);
-      return;
-    }
-    const searchData = fuse.current.search(filterString);
-    setFilteredData(searchData);
-  }, [filterString, data]);
+  const filteredData: FilteredData = filterString ? fuse.current.search(filterString) : data;
+
+  const handleToggle = (slug: string) => {
+    setExpandedSlug((prev) => (prev === slug ? null : slug));
+  };
 
   return (
     <div className="grid mt-6 gap-6 flex-1 grid-cols-1 auto-rows-min relative">
-      <LayoutGroup>
-        <AnimatePresence>
+      <AnimatePresence mode="popLayout">
           {filteredData.length > 0 ? (
             filteredData.map((d, idx) => {
               const isFuseResult = Boolean(
@@ -45,6 +41,8 @@ const ListEntries = ({ data, filterString }: Props) => {
                 <Entry
                   key={topic.slug}
                   data={topic}
+                  isExpanded={expandedSlug === topic.slug}
+                  onToggle={handleToggle}
                   animationDelay={0.05 * (idx + 1) + 0.2}
                 />
               );
@@ -62,7 +60,6 @@ const ListEntries = ({ data, filterString }: Props) => {
             </motion.h1>
           )}
         </AnimatePresence>
-      </LayoutGroup>
     </div>
   );
 };

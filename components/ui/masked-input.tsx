@@ -1,10 +1,8 @@
 'use client'
 
-import { useMaskito } from '@maskito/react'
-import type { MaskitoOptions } from '@maskito/core'
+import { IMaskInput } from 'react-imask'
 import {
   forwardRef,
-  useMemo,
   type ChangeEvent,
   type FocusEvent,
   type KeyboardEvent,
@@ -25,13 +23,40 @@ interface MaskedInputProps {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
 }
 
+function buildIMaskPattern(mask: (RegExp | string)[]) {
+  const KEYS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  let keyIdx = 0
+  let pattern = ''
+  const definitions: Record<string, RegExp> = {}
+  const literalChars = new Set<string>()
+
+  for (const part of mask) {
+    if (typeof part === 'string') literalChars.add(part)
+  }
+
+  for (const part of mask) {
+    if (typeof part === 'string') {
+      pattern += `\\${part}`
+    } else {
+      let key = KEYS[keyIdx % KEYS.length]
+      while (literalChars.has(key)) {
+        keyIdx++
+        key = KEYS[keyIdx % KEYS.length]
+      }
+      definitions[key] = part
+      pattern += key
+      keyIdx++
+    }
+  }
+
+  return { pattern, definitions }
+}
+
 const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
   (
     {
       mask,
       placeholderChar = '_',
-      showMask = true,
-      guide = true,
       autoFocus = false,
       className,
       style,
@@ -42,35 +67,30 @@ const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
     },
     forwardedRef
   ) => {
-    const maskitoOptions = useMemo<MaskitoOptions>(() => ({ mask }), [mask])
-    const maskitoRef = useMaskito({ options: maskitoOptions })
-
-    const guidePlaceholder =
-      showMask || guide
-        ? mask
-            .map((part) => (typeof part === 'string' ? part : placeholderChar))
-            .join('')
-        : undefined
+    const { pattern, definitions } = buildIMaskPattern(mask)
 
     return (
-      <input
-        ref={(node) => {
-          maskitoRef(node)
-          if (typeof forwardedRef === 'function') {
-            forwardedRef(node)
-          } else if (forwardedRef) {
-            forwardedRef.current = node
-          }
-        }}
-        type="text"
-        placeholder={guidePlaceholder}
+      <IMaskInput
+        mask={pattern}
+        definitions={definitions}
+        lazy={false}
+        placeholderChar={placeholderChar}
         autoFocus={autoFocus}
         className={className}
         style={style}
         data-id={dataId}
-        onChange={onChange}
-        onFocus={onFocus}
-        onKeyDown={onKeyDown}
+        inputRef={(el: HTMLInputElement | null) => {
+          if (typeof forwardedRef === 'function') {
+            forwardedRef(el)
+          } else if (forwardedRef) {
+            forwardedRef.current = el
+          }
+        }}
+        onInput={(e: React.FormEvent<HTMLInputElement>) => {
+          if (onChange) onChange(e as unknown as ChangeEvent<HTMLInputElement>)
+        }}
+        onFocus={onFocus as any}
+        onKeyDown={onKeyDown as any}
       />
     )
   }

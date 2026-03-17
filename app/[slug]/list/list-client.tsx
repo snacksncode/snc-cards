@@ -5,7 +5,7 @@ import { getAccentForClass, groupBy } from '@lib/utils'
 import { Back, ArrowCircleDown2, ArrowCircleRight2, Danger } from '@components/icons'
 import { motion } from 'motion/react'
 import Link from 'next/link'
-import type { Question, Topic } from '@/types'
+import type { Topic } from '@/types'
 import { cn } from '@lib/cn'
 
 interface Props {
@@ -16,15 +16,9 @@ export default function ListClient({ topic }: Props) {
   const { questions, title, class: classString } = topic
   const headerRef = useRef<HTMLDivElement | null>(null)
   const [isSticky, setIsSticky] = useState(false)
-  const [dupsData, setDupsData] = useState<Question[][]>()
 
-  useEffect(() => {
-    if (!questions) return
-    const grouped = groupBy(questions, (q) => q.question)
-    const values = Object.values(grouped)
-    const dups = values.filter((v) => v.length > 1)
-    if (dups.length > 0) setDupsData(dups)
-  }, [questions])
+  const dups = Object.values(groupBy(questions, (q) => q.question)).filter((v) => v.length > 1)
+  const dupsData = dups.length > 0 ? dups : undefined
 
   useEffect(() => {
     const cachedRef = headerRef.current
@@ -57,7 +51,7 @@ export default function ListClient({ topic }: Props) {
             Go Back
           </Link>
         </div>
-        <h1 className="text-2xl sm:text-[2rem] font-medium mt-4">
+        <h1 className="text-2xl sm:text-[2rem] font-medium mt-6 mb-8">
           List view for <br />
           <span className="text-[1.35em] font-bold text-[var(--clr-accent)] sm:pr-[0.25em] sm:bg-bg-300 sm:relative">
             {title}
@@ -80,9 +74,9 @@ export default function ListClient({ topic }: Props) {
             <Danger size={32} className="w-12 h-12 sm:mr-3 mb-1 sm:mb-0 flex-shrink-0" />
             Duplicates found in this dataset
           </h1>
-          <p>Please combine them into one for a better learning experience by using e.x. a comma</p>
+          <p className="mb-2">Please combine them into one for a better learning experience by using e.x. a comma</p>
           <h3 className="m-0 mb-2">List of duplicates</h3>
-          <ol className="m-0 pl-4 font-medium">
+          <ol className="m-0 pl-4 font-medium list-disc">
             {dupsData.map((dup) => (
               <li key={dup[0].question}>{dup[0].question}</li>
             ))}
@@ -122,7 +116,7 @@ export default function ListClient({ topic }: Props) {
             const { answer, question } = d
             return (
               <motion.div
-                key={`${question}-${answer}`}
+                key={index}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1, transition: { delay: 0.05 * index + 0.3 } }}
                 className="p-4 shadow rounded bg-bg-400 grid grid-rows-[auto_40px_auto] sm:grid-rows-[auto] sm:grid-cols-[1fr_20px_1fr] gap-x-4"

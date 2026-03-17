@@ -28,7 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${poppins.variable} ${sourceCodePro.variable}`}>
-      <body className="min-h-screen flex flex-col bg-bg-300 text-text font-sans">
+      <body className="min-h-screen w-screen! overflow-x-hidden flex flex-col bg-bg-300 text-text font-sans">
         {children}
       </body>
     </html>

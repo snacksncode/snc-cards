@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { ChangeEventHandler, useEffect, useMemo, useRef } from "react";
+import { ChangeEventHandler, useEffect, useRef, useState } from "react";
 
 interface Props {
   value: string;
@@ -8,12 +8,11 @@ interface Props {
 
 const Filter = ({ value, onChangeHandler }: Props) => {
   const inputRef = useRef<null | HTMLInputElement>(null);
-  const isMac = useMemo(
-    () =>
-      typeof navigator !== "undefined" &&
-      /Mac|iPhone|iPad|iPod/.test(navigator.platform),
-    []
-  );
+  const [modKey, setModKey] = useState("Ctrl");
+
+  useEffect(() => {
+    if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) setModKey("⌘");
+  }, []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -52,10 +51,10 @@ const Filter = ({ value, onChangeHandler }: Props) => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: value.length === 0 ? 1 : 0 }}
-          className="hidden sm:flex absolute top-1/2 right-4 gap-2 -translate-y-1/2"
+          className="max-sm:hidden flex absolute top-1/2 right-4 gap-2 -translate-y-1/2 pointer-events-none"
         >
           <div className="bg-bg-500 rounded-sm px-2 py-1 text-xs font-bold text-text-muted shadow-[0_3px_0px_var(--color-bg-300)]">
-            {isMac ? "\u2318" : "Ctrl"}
+            {modKey}
           </div>
           <div className="bg-bg-500 rounded-sm px-2 py-1 text-xs font-bold text-text-muted shadow-[0_3px_0px_var(--color-bg-300)]">
             K

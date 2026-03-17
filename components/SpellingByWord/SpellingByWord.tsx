@@ -21,14 +21,7 @@ interface InputProps {
 
 type InputData = Record<string, InputProps>
 
-const FIXES_TABLE = [{ from: /\s\/\s/g, to: "/" }]
-
-const applyFixesTable = (word: string): string => {
-  for (const fix of FIXES_TABLE) {
-    word = word.replaceAll(fix.from, fix.to)
-  }
-  return word
-}
+const SEPARATOR = "/"
 
 const card = {
   out: { opacity: 0, x: "50%", y: "-50%", scale: 0.25 },
@@ -83,13 +76,15 @@ const WordInput: FC<{
         const key = e.key
         const cleanValue = getCleanedValue(e.target.value)
         if (key === "Backspace" && inputIsEmpty.current) {
-          const prevInput = targetInput.previousElementSibling
-          if (prevInput instanceof HTMLInputElement) prevInput.focus()
+          const form = targetInput.closest("form")
+          const inputs = form ? Array.from(form.querySelectorAll<HTMLInputElement>("input[data-id]")) : []
+          const idx = inputs.indexOf(targetInput)
+          if (idx > 0) inputs[idx - 1].focus()
         }
         inputIsEmpty.current = cleanValue.length === 0
       }}
       onFocus={(e) => {
-        if (inputIsEmpty.current) e.target.setSelectionRange(0, 0)
+        if (inputIsEmpty.current) setTimeout(() => e.target.setSelectionRange(0, 0), 0)
         onFocusCallback(e)
       }}
       onChange={(e) => {
@@ -128,6 +123,7 @@ const generateInputData = (answer: string): [InputData, string[]] => {
   const generatedData: InputData = {}
   const idsInOrder: string[] = []
   inputArray.forEach((word, wordIdx) => {
+    if (word === SEPARATOR) return
     const id = `${word}_${wordIdx}`
     idsInOrder.push(id)
     const data: InputProps = {
@@ -142,7 +138,7 @@ const generateInputData = (answer: string): [InputData, string[]] => {
 }
 
 const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
-  const answer = applyFixesTable(data.answer)
+  const answer = data.answer
   const inputArray = splitInput(answer)
 
   const [hasFinishedEntering, setHasFinishedEntering] = useState(false)
@@ -153,7 +149,11 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
   const [shouldShowCorrectAnswer, setShouldShowCorrectAnswer] = useState(false)
 
   const inputIdsInOrder = useRef<string[] | null>(null)
-  const [inputData, setInputData] = useState<InputData | null>(null)
+  const [inputData, setInputData] = useState<InputData | null>(() => {
+    const [generatedData, idsInOrder] = generateInputData(answer)
+    inputIdsInOrder.current = idsInOrder
+    return generatedData
+  })
 
   // trigger blob animation on answer which itself triggers onAnswer in parent component
   useEffect(() => {
@@ -165,13 +165,6 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
     setShouldAnimateBlob(true)
   }, [answered, hasFinishedEntering, shouldShowCorrectAnswer])
 
-  useEffect(() => {
-    if (inputData != null) return
-    const [generatedData, idsInOrder] = generateInputData(answer)
-    setInputData(generatedData)
-    inputIdsInOrder.current = idsInOrder
-  }, [answer, inputData])
-
   const checkAnswer: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
     if (hasFinishedEntering === false || inputIdsInOrder.current == null || inputData == null) return
@@ -182,10 +175,9 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
     let verdict = true
     const userInput: string[] = []
     const inputDataClone = Object.assign({}, inputData)
-    inputIdsInOrder.current.forEach((id, idIndex) => {
+    inputIdsInOrder.current.forEach((id) => {
       const input = inputDataClone[id]
-      const correspondingWord = inputArray[idIndex]
-      const inputVerdict = input.value.toLowerCase() === correspondingWord.toLowerCase()
+      const inputVerdict = getCleanedValue(input.value).toLowerCase() === input.expectedValue.toLowerCase()
       if (inputVerdict === false) verdict = false
       userInput.push(input.value)
       input.isCorrect = inputVerdict
@@ -201,8 +193,12 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
     // auto-advance to next input when word is fully filled
     if (cleanValue.length === getCleanedValue(input.expectedValue).length) {
       const currentInput = currentlyFocusedInput.current
-      const nextInput = currentInput?.nextElementSibling
-      if (nextInput instanceof HTMLInputElement) nextInput.focus()
+      if (currentInput) {
+        const form = currentInput.closest("form")
+        const inputs = form ? Array.from(form.querySelectorAll<HTMLInputElement>("input[data-id]")) : []
+        const idx = inputs.indexOf(currentInput)
+        if (idx >= 0 && idx + 1 < inputs.length) inputs[idx + 1].focus()
+      }
     }
     setInputData((oldState) => {
       return {
@@ -246,15 +242,26 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
           className="flex flex-wrap items-center relative justify-center gap-3 font-mono text-[1.125rem]"
         >
           {inputArray.map((word, wordIdx) => {
+            if (word === SEPARATOR) {
+              return (
+                <span
+                  key={`sep_${wordIdx}`}
+                  className="text-text-muted font-bold select-none px-1"
+                >
+                  /
+                </span>
+              )
+            }
             const mask = generateMask(word)
             const id = `${word}_${wordIdx}`
             const inputProps = inputData[id]
+            const isFirstInput = inputIdsInOrder.current?.[0] === id
             const props = {
               id: id,
               mask: mask,
               isCorrect: inputProps.isCorrect,
               maskPlaceholder: "_",
-              autoFocus: wordIdx === 0,
+              autoFocus: isFirstInput,
               onFocusCallback: onFocusHandler,
               onChangeCallback: onChangeHandler,
             }
@@ -294,11 +301,11 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
         whileTap={{ scale: 0.95, transition: { delay: 0 } }}
         onClick={checkAnswer as any}
         className={cn(
-          "absolute isolate bottom-[-3.5rem] -z-10 left-1/2 bg-transparent text-accent-blue cursor-pointer border-none inline-flex py-[0.4em] px-[1.25em] text-[0.9rem] font-bold items-center rounded-[4px] justify-center transition-colors duration-200",
+          "relative isolate bottom-[-3.5rem] -z-10 left-1/2 bg-transparent text-accent-blue cursor-pointer border-none inline-flex py-[0.4em] px-[1.25em] text-[0.9rem] font-bold items-center rounded-[4px] justify-center transition-colors duration-200",
           "hover:text-white focus-visible:text-white",
           "focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-accent-blue focus-visible:outline-offset-[0.5rem]",
           "after:content-[''] after:rounded-[inherit] after:absolute after:inset-0 after:scale-50 after:opacity-0 after:bg-accent-blue after:-z-10",
-          "after:transition-[transform,opacity] after:duration-300 after:[transition-timing-function:cubic-bezier(0.83,0,0.17,1)]",
+          "after:transition-[scale,opacity] after:duration-300 after:[transition-timing-function:cubic-bezier(0.83,0,0.17,1)]",
           "hover:after:scale-100 hover:after:opacity-100 focus-visible:after:scale-100 focus-visible:after:opacity-100"
         )}
       >

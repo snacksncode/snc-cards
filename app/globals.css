@@ -50,31 +50,12 @@
 }
 
 /* Global resets */
-html,
 body {
-  min-height: 100%;
-  width: 100%;
-}
-
-body {
-  background-color: var(--color-bg-300);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  margin: 0;
 }
 
 body.no-scroll {
   overflow-y: hidden;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
 }
 
 input {
@@ -85,8 +66,4 @@ input {
 *::before,
 *::after {
   box-sizing: border-box;
-}
-
-.hidden {
-  display: none;
 }

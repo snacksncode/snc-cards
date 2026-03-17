@@ -15,8 +15,8 @@ const flip = {
 
 const card = {
   out: { opacity: 0, x: "50%", y: "-50%", scale: 0.25 },
-  in: { opacity: 1, x: "-50%", scale: 1, transition: { type: "spring" as const, damping: 12 } },
-  outExit: { opacity: 0, x: "-150%", scale: 0.25, transition: { type: "spring" as const, damping: 12 } },
+  in: { opacity: 1, x: "-50%", y: "-50%", scale: 1, transition: { type: "spring" as const, damping: 12 } },
+  outExit: { opacity: 0, x: "-150%", y: "-50%", scale: 0.25, transition: { type: "spring" as const, damping: 12 } },
 };
 
 interface Props {
