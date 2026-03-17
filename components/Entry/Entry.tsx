@@ -1,39 +1,38 @@
-import getAccentForClass from "@utils/getAccentForClass";
-import getHumanReadableClass from "@utils/getHumanReadableClass";
-import groupBy from "@utils/groupBy";
-import { AnimatePresence, motion } from "framer-motion";
-import { Category, Danger, Edit, NoteText } from "iconsax-react";
+import { getAccentForClass, getHumanReadableClass, groupBy } from "@lib/utils";
+import { AnimatePresence, motion } from "motion/react";
+import { Category, Danger, Edit, NoteText } from "@components/icons";
 import Link from "next/link";
 import { FC, PropsWithChildren, useEffect, useRef, useState } from "react";
-import { useHover } from "usehooks-ts";
-import styles from "./Entry.module.scss";
+import type { Topic } from "@/types";
 
 interface Props {
-  data: Card;
+  data: Topic;
   animationDelay: number;
 }
 
 const Tag: FC<PropsWithChildren> = ({ children }) => {
-  return <div className={styles.tag}>{children}</div>;
+  return (
+    <div className="relative text-[var(--clr-card-accent)] text-[0.7rem] bg-black/20 px-[1.125em] py-[0.375em] font-medium rounded">
+      {children}
+    </div>
+  );
 };
 
 const Entry = ({
-  data: {
-    attributes: { title, slug, questions, class: classString },
-  },
+  data: { title, slug, questions, class: classString },
   animationDelay,
 }: Props) => {
-  const [dupsData, setDupsData] = useState<Question[][]>();
+  const [dupsData, setDupsData] = useState<ReturnType<typeof groupBy<typeof questions[number], string>>>();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const containerRef = useRef<HTMLButtonElement>(null);
-  const isHovered = useHover(containerRef);
 
   useEffect(() => {
     if (!questions) return;
     const grouped = groupBy(questions, (q) => q.question);
     const values = Object.values(grouped);
     const dups = values.filter((v) => v.length > 1);
-    if (dups.length > 0) setDupsData(dups);
+    if (dups.length > 0) setDupsData(grouped);
   }, [questions]);
 
   return (
@@ -44,8 +43,14 @@ const Entry = ({
       initial={{ y: -25, opacity: 0 }}
       animate={{ y: 0, opacity: 1, transition: { delay: animationDelay } }}
       exit={{ opacity: 0 }}
-      className={styles.container}
-      style={{ "--clr-card-accent": getAccentForClass(classString) } as any}
+      className="flex border-none font-[inherit] flex-col justify-center rounded shadow-[0_4px_15px_rgba(0,0,0,0.1)] bg-bg-400 overflow-hidden p-6 cursor-pointer outline-transparent relative focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+      style={
+        {
+          "--clr-card-accent": getAccentForClass(classString),
+        } as React.CSSProperties
+      }
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={(e) => {
         e.stopPropagation();
         setIsExpanded((isExpanded) => !isExpanded);
@@ -56,22 +61,36 @@ const Entry = ({
         }
       }}
     >
-      <motion.div layout key="content" className={styles.wrapper}>
+      <motion.div
+        layout
+        key="content"
+        className="w-full flex justify-between items-start gap-4"
+      >
         <div>
-          <motion.p layout className={styles.bang}>
+          <motion.p
+            layout
+            className="m-0 text-text tracking-[4px] text-left text-[0.65rem] font-medium"
+          >
             TOPIC
           </motion.p>
-          <motion.h1 layout className={styles.title}>
+          <motion.h1
+            layout
+            className="m-0 text-[1.375rem] text-[var(--clr-card-accent)] font-bold overflow-hidden text-ellipsis text-left focus:outline-none line-clamp-2"
+          >
             {title}
           </motion.h1>
         </div>
-        <motion.div layout className={styles.tags}>
+        <motion.div layout className="flex flex-wrap justify-end gap-2">
           <Tag>{getHumanReadableClass(classString)}</Tag>
           <Tag>
             {questions?.length} {questions.length > 1 ? "cards" : "card"}
             {dupsData && (
-              <motion.span layout key="dups" className={styles.dupWarningIcon}>
-                <Danger size="1rem" color="currentColor" variant="Bold" />
+              <motion.span
+                layout
+                key="dups"
+                className="absolute -top-2 -right-2 flex items-center justify-center text-accent-yellow"
+              >
+                <Danger size="1rem" color="currentColor" />
               </motion.span>
             )}
           </Tag>
@@ -80,10 +99,15 @@ const Entry = ({
 
       <motion.div
         layout
-        initial={{ left: "calc(50% - 0.75rem)", bottom: 0, y: 90, position: "absolute" }}
+        initial={{
+          left: "calc(50% - 0.75rem)",
+          bottom: 0,
+          y: 90,
+          position: "absolute",
+        }}
         animate={{ y: isHovered || isExpanded ? 50 : 90 }}
         key="indicator"
-        className={styles.indicator}
+        className="w-6 h-20 rounded-full bg-bg-500 flex justify-center pt-1 [&_svg]:w-4 [&_svg]:h-4"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -112,35 +136,29 @@ const Entry = ({
             animate={{ opacity: 1, transition: { delay: 0.15 } }}
             exit={{ opacity: 0, transition: { delay: 0 } }}
           >
-            <div className={styles.buttons}>
+            <div className="flex flex-wrap items-center justify-center mt-4 gap-6">
               <Link
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                style={{ display: "flex", flex: 1 }}
+                onClick={(e) => e.stopPropagation()}
+                className="flex basis-full py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
                 href={`${slug}/card`}
               >
-                <Category size="32" color="currentColor" variant="Bold" />
+                <Category size={32} color="currentColor" />
                 Cards
               </Link>
               <Link
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                style={{ display: "flex", flex: 1 }}
+                onClick={(e) => e.stopPropagation()}
+                className="flex basis-full py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
                 href={`${slug}/spelling`}
               >
-                <Edit size="32" color="currentColor" variant="Bold" />
+                <Edit size={32} color="currentColor" />
                 Spelling
               </Link>
               <Link
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                style={{ display: "flex", flex: 1 }}
+                onClick={(e) => e.stopPropagation()}
+                className="flex basis-full py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
                 href={`${slug}/list`}
               >
-                <NoteText size="32" color="currentColor" variant="Bold" />
+                <NoteText size={32} color="currentColor" />
                 List
               </Link>
             </div>
