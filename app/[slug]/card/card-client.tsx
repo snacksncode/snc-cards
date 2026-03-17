@@ -8,7 +8,7 @@ import useIndexSelectedData from '@hooks/useIndexSelectedData'
 import useShuffledData from '@hooks/useShuffledData'
 import { AnimatePresence, motion } from 'motion/react'
 import useStreak from '@hooks/useStreak'
-import { saveSession, loadSession, clearSession, saveScore } from '@lib/storage'
+import { saveSession, loadSession, clearSession, saveScore, getCardStats, updateCardStat } from '@lib/storage'
 import type { ClassString, Question } from '@/types'
 
 const Shortcut = ({ keys, action }: { keys: string[]; action: string }) => (
@@ -43,7 +43,8 @@ export default function CardClient({ slug, title: _title, rawData, dataClass, re
   const [correctAnswers, setCorrectAnswers] = useState<Question[]>([])
   const [streak, setStreak, maxStreak, resetStreak] = useStreak()
   const [showHints, setShowHints] = useState<boolean | null>(null)
-  const { data, isShuffled, reshuffle } = useShuffledData(displayData)
+  const [cardStats] = useState(() => getCardStats(slug))
+  const { data, isShuffled, reshuffle } = useShuffledData(displayData, cardStats)
   const {
     selectedItem,
     selectedIndex,
@@ -78,6 +79,7 @@ export default function CardClient({ slug, title: _title, rawData, dataClass, re
   }
 
   const onAnswer = (rightAnswer: boolean, data: Question) => {
+    updateCardStat(slug, data.id, rightAnswer)
     const newCorrectIds = rightAnswer
       ? [...correctAnswers.map((q) => q.id), data.id]
       : correctAnswers.map((q) => q.id)
