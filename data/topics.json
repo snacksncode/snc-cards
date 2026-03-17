@@ -1,0 +1,87 @@
+[
+  {
+    "id": "1",
+    "title": "Common Greetings",
+    "slug": "common-greetings",
+    "class": "en",
+    "questions": [
+      { "id": 1, "question": "Dzień dobry", "answer": "Good morning" },
+      { "id": 2, "question": "Do widzenia", "answer": "Goodbye" },
+      { "id": 3, "question": "Dziękuję", "answer": "Thank you" },
+      { "id": 4, "question": "Proszę", "answer": "Please / You're welcome" },
+      { "id": 5, "question": "Przepraszam", "answer": "Excuse me / I'm sorry" },
+      { "id": 6, "question": "Jak się masz?", "answer": "How are you?" },
+      { "id": 7, "question": "Dobrze, dziękuję", "answer": "Fine, thank you" },
+      { "id": 8, "question": "Miło cię poznać", "answer": "Nice to meet you" }
+    ]
+  },
+  {
+    "id": "2",
+    "title": "Kitchen Vocabulary",
+    "slug": "kitchen-vocabulary",
+    "class": "de",
+    "questions": [
+      { "id": 9, "question": "kuchenka", "answer": "der Herd" },
+      { "id": 10, "question": "lodówka", "answer": "der Kühlschrank" },
+      { "id": 11, "question": "zlew", "answer": "das Spülbecken" },
+      { "id": 12, "question": "garnek", "answer": "der Topf" },
+      { "id": 13, "question": "patelnia", "answer": "die Pfanne" },
+      { "id": 14, "question": "talerz", "answer": "der Teller" },
+      { "id": 15, "question": "kubek", "answer": "die Tasse" },
+      { "id": 16, "question": "nóż", "answer": "das Messer" },
+      { "id": 17, "question": "widelec", "answer": "die Gabel" },
+      { "id": 18, "question": "łyżka", "answer": "der Löffel" }
+    ]
+  },
+  {
+    "id": "3",
+    "title": "European Capitals",
+    "slug": "european-capitals",
+    "class": "geo",
+    "questions": [
+      { "id": 19, "question": "France", "answer": "Paris" },
+      { "id": 20, "question": "Germany", "answer": "Berlin" },
+      { "id": 21, "question": "Spain", "answer": "Madrid" },
+      { "id": 22, "question": "Italy", "answer": "Rome" },
+      { "id": 23, "question": "Poland", "answer": "Warsaw" },
+      { "id": 24, "question": "Netherlands", "answer": "Amsterdam" },
+      { "id": 25, "question": "Portugal", "answer": "Lisbon" },
+      { "id": 26, "question": "Austria", "answer": "Vienna" },
+      { "id": 27, "question": "Belgium", "answer": "Brussels" },
+      { "id": 28, "question": "Sweden", "answer": "Stockholm" },
+      { "id": 29, "question": "Norway", "answer": "Oslo" },
+      { "id": 30, "question": "Denmark", "answer": "Copenhagen" }
+    ]
+  },
+  {
+    "id": "4",
+    "title": "Travel Phrases",
+    "slug": "travel-phrases",
+    "class": "en",
+    "questions": [
+      { "id": 31, "question": "Gdzie jest dworzec?", "answer": "Where is the train station?" },
+      { "id": 32, "question": "Ile to kosztuje?", "answer": "How much does it cost?" },
+      { "id": 33, "question": "Poproszę bilet", "answer": "One ticket, please" },
+      { "id": 34, "question": "Gdzie jest toaleta?", "answer": "Where is the restroom?" },
+      { "id": 35, "question": "Nie rozumiem", "answer": "I don't understand" },
+      { "id": 36, "question": "Czy mówisz po angielsku?", "answer": "Do you speak English?" }
+    ]
+  },
+  {
+    "id": "5",
+    "title": "Colors and Numbers",
+    "slug": "colors-and-numbers",
+    "class": "de",
+    "questions": [
+      { "id": 37, "question": "czerwony", "answer": "rot" },
+      { "id": 38, "question": "niebieski", "answer": "blau" },
+      { "id": 39, "question": "zielony", "answer": "grün" },
+      { "id": 40, "question": "żółty", "answer": "gelb" },
+      { "id": 41, "question": "jeden", "answer": "eins" },
+      { "id": 42, "question": "dwa", "answer": "zwei" },
+      { "id": 43, "question": "trzy", "answer": "drei" },
+      { "id": 44, "question": "czerwony", "answer": "rot" },
+      { "id": 45, "question": "niebieski", "answer": "blau" }
+    ]
+  }
+]
