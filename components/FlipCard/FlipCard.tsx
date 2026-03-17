@@ -1,12 +1,11 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import React, { useState } from "react";
 import Back from "../Back";
 import Front from "../Front";
-import styles from "./FlipCard.module.scss";
 import useWindowSize from "@hooks/useWindowSize";
 import FlipCardButton from "@components/FlipCardButton";
-import { CloseSquare, TickSquare, MessageQuestion } from "iconsax-react";
-import { useEventListener } from "usehooks-ts";
+import { CloseSquare, TickSquare, MessageQuestion } from "@components/icons";
+import { useEventListener } from "@hooks/useEventListener";
 
 const flip = {
   unflipped: { rotateX: 0, transition: { type: "spring", stiffness: 100 } },
@@ -74,7 +73,7 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
       animate="in"
       exit="outExit"
       onClickCapture={() => setIsFlipped(true)}
-      className={styles.wrapper}
+      className="perspective-1000 w-full h-[50vh] max-h-[calc(5*3em)] select-none absolute top-1/2 isolate rounded-lg left-1/2 will-change-transform focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-accent-blue focus-visible:outline-offset-[2rem]"
       style={{
         maxWidth: cardWidth,
       }}
@@ -83,25 +82,25 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
         {isFlipped && answeredRight == null && (
           <>
             <motion.div
-              className={styles.questionPreview}
+              className="absolute rounded-[5px] text-accent-blue font-medium text-base border-2 border-accent-blue max-w-full w-max bg-bg-400 text-center grid grid-cols-[repeat(2,auto)] items-center justify-center cursor-pointer px-[1em] py-[0.5em] gap-2 [&_svg]:w-[1.75em] [&_svg]:h-[1.75em] focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-current focus-visible:outline-offset-[0.75rem]"
               initial={{ top: 0, left: "50%", x: "-50%", y: 0, opacity: 0 }}
               animate={{ y: "calc(-100% - 20px)", opacity: 1 }}
               transition={{ type: "spring", stiffness: 100 }}
               exit={{ y: 0, opacity: 0 }}
               onClickCapture={() => setIsFlipped(false)}
             >
-              <MessageQuestion color="currentColor" variant="Linear" />
+              <MessageQuestion color="currentColor" />
               {data.question}
             </motion.div>
             <FlipCardButton
               isMobile={isMobile}
               onClick={() => setAnsweredRight(false)}
-              icon={<CloseSquare color="currentColor" variant="Bold" />}
+              icon={<CloseSquare color="currentColor" />}
               color="red"
               position="left"
             />
             <FlipCardButton
-              icon={<TickSquare color="currentColor" variant="Bold" />}
+              icon={<TickSquare color="currentColor" />}
               isMobile={isMobile}
               onClick={() => setAnsweredRight(true)}
               color="green"
@@ -114,7 +113,7 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
         variants={flip}
         initial="unflipped"
         animate={isFlipped ? "flipped" : "unflipped"}
-        className={styles.content}
+        className="relative text-center w-full h-full preserve-3d shadow-[0_4px_15px_rgba(0,0,0,0.15)]"
       >
         <Front isMobile={isMobile} data={data.question} />
         <Back
