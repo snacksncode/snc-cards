@@ -8,6 +8,7 @@ import useIndexSelectedData from '@hooks/useIndexSelectedData'
 import useShuffledData from '@hooks/useShuffledData'
 import { AnimatePresence, motion } from 'motion/react'
 import useStreak from '@hooks/useStreak'
+import { saveSession, loadSession, clearSession, saveScore } from '@lib/storage'
 import type { ClassString, Question } from '@/types'
 
 const Shortcut = ({ keys, action }: { keys: string[]; action: string }) => (
@@ -25,17 +26,24 @@ const Shortcut = ({ keys, action }: { keys: string[]; action: string }) => (
 )
 
 interface Props {
+  slug: string
   title: string
   rawData: Question[]
   dataClass: ClassString
+  reversed?: boolean
 }
 
-export default function CardClient({ title: _title, rawData, dataClass }: Props) {
+export default function CardClient({ slug, title: _title, rawData, dataClass, reversed = false }: Props) {
+  const displayData = reversed
+    ? rawData.map((q) => ({ ...q, question: q.answer, answer: q.question }))
+    : rawData
+  const [resumeSession] = useState(() => loadSession(slug))
+  const [showResume, setShowResume] = useState(resumeSession !== null)
   const [incorrectAnswers, setIncorrectAnswers] = useState<Question[]>([])
   const [correctAnswers, setCorrectAnswers] = useState<Question[]>([])
   const [streak, setStreak, maxStreak, resetStreak] = useStreak()
   const [showHints, setShowHints] = useState<boolean | null>(null)
-  const { data, isShuffled, reshuffle } = useShuffledData(rawData)
+  const { data, isShuffled, reshuffle } = useShuffledData(displayData)
   const {
     selectedItem,
     selectedIndex,
@@ -52,7 +60,44 @@ export default function CardClient({ title: _title, rawData, dataClass }: Props)
     setShowHints(!dismissed)
   }, [])
 
+  const handleResume = () => {
+    if (!resumeSession) return
+    const correct = displayData.filter((q) => resumeSession.correctIds.includes(q.id))
+    const incorrect = displayData.filter((q) => resumeSession.incorrectIds.includes(q.id))
+    setCorrectAnswers(correct)
+    setIncorrectAnswers(incorrect)
+    for (let i = 0; i < resumeSession.currentIndex; i++) {
+      nextItem()
+    }
+    setShowResume(false)
+  }
+
+  const handleStartFresh = () => {
+    clearSession(slug)
+    setShowResume(false)
+  }
+
   const onAnswer = (rightAnswer: boolean, data: Question) => {
+    const newCorrectIds = rightAnswer
+      ? [...correctAnswers.map((q) => q.id), data.id]
+      : correctAnswers.map((q) => q.id)
+    const newIncorrectIds = !rightAnswer
+      ? [...incorrectAnswers.map((q) => q.id), data.id]
+      : incorrectAnswers.map((q) => q.id)
+    const nextIndex = selectedIndex + 1
+    if (nextIndex >= amountOfItems) {
+      clearSession(slug)
+      const correctCount = rightAnswer ? correctAnswers.length + 1 : correctAnswers.length
+      saveScore(slug, { score: Math.round((correctCount / rawData.length) * 100), total: rawData.length, mode: 'cards' })
+    } else {
+      saveSession(slug, {
+        currentIndex: nextIndex,
+        shuffleOrder: [],
+        correctIds: newCorrectIds,
+        incorrectIds: newIncorrectIds,
+        mode: 'cards',
+      })
+    }
     const stateUpdater = rightAnswer ? setCorrectAnswers : setIncorrectAnswers
     stateUpdater((prevState) => {
       if (prevState == null) return [data]
@@ -69,10 +114,10 @@ export default function CardClient({ title: _title, rawData, dataClass }: Props)
 
   const handleUndo = () => {
     if (selectedIndex === 0) return
-    
+
     const lastCorrect = correctAnswers[correctAnswers.length - 1]
     const lastIncorrect = incorrectAnswers[incorrectAnswers.length - 1]
-    
+
     if (lastCorrect && correctAnswers.length > 0) {
       setCorrectAnswers((prev) => prev.slice(0, -1))
       setStreak((c) => c - 1)
@@ -80,7 +125,7 @@ export default function CardClient({ title: _title, rawData, dataClass }: Props)
       setIncorrectAnswers((prev) => prev.slice(0, -1))
       setStreak(0)
     }
-    
+
     prevItem()
   }
 
@@ -115,6 +160,37 @@ export default function CardClient({ title: _title, rawData, dataClass }: Props)
   if (!rawData || !isShuffled || selectedItem == null) return null
   return (
     <div className="min-h-screen p-4 flex flex-col items-center justify-center relative overflow-hidden">
+      <AnimatePresence>
+        {showResume && resumeSession && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-bg-300/90 backdrop-blur-sm flex items-center justify-center z-50"
+          >
+            <div className="bg-bg-400 border border-bg-600 rounded-xl p-6 max-w-sm w-full mx-4 flex flex-col gap-4">
+              <p className="text-text font-semibold text-lg">Resume session?</p>
+              <p className="text-text-muted text-sm">
+                You left off at card {resumeSession.currentIndex + 1} of {rawData.length}
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleResume}
+                  className="flex-1 px-4 py-2 rounded-lg bg-accent-blue text-bg-300 font-medium hover:opacity-90 transition-opacity"
+                >
+                  Resume
+                </button>
+                <button
+                  onClick={handleStartFresh}
+                  className="flex-1 px-4 py-2 rounded-lg border border-bg-600 text-text-muted hover:text-text hover:border-text-muted transition-colors"
+                >
+                  Start Fresh
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <AnimatePresence mode="wait">
         {!isDone ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>

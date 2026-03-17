@@ -22,11 +22,14 @@ export async function generateMetadata({
 
 export default async function SpellingPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{ dir?: string }>
 }) {
   const { slug } = await params
+  const { dir } = await searchParams
   const topic = getTopicBySlug(slug)
   if (!topic) notFound()
-  return <SpellingClient title={topic.title} rawData={topic.questions} dataClass={topic.class} />
+  return <SpellingClient slug={slug} title={topic.title} rawData={topic.questions} dataClass={topic.class} reversed={dir === 'reverse'} />
 }

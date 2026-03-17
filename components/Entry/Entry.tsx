@@ -1,8 +1,10 @@
 import { getAccentForClass, getHumanReadableClass, groupBy } from "@lib/utils";
+import { getScoreHistory } from "@lib/storage";
 import { AnimatePresence, motion } from "motion/react";
 import { Category, Danger, Edit, NoteText } from "@components/icons";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import Link from "next/link";
-import { FC, PropsWithChildren, useState } from "react";
+import { FC, PropsWithChildren, useEffect, useState } from "react";
 import type { Topic } from "@/types";
 
 interface Props {
@@ -27,9 +29,15 @@ const Entry = ({
   onToggle,
 }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [scoreHistory, setScoreHistory] = useState<{ date: string; score: number; total: number; mode: string }[]>([]);
   const hasDups = questions
     ? Object.values(groupBy(questions, (q) => q.question)).some((v) => v.length > 1)
     : false;
+  const lastScore = scoreHistory.at(-1);
+
+  useEffect(() => {
+    setScoreHistory(getScoreHistory(slug));
+  }, [slug]);
 
   return (
     <motion.button
@@ -81,6 +89,7 @@ const Entry = ({
               </motion.span>
             )}
           </Tag>
+          {lastScore && <Tag>Last: {lastScore.score}%</Tag>}
         </motion.div>
       </motion.div>
 
@@ -122,22 +131,40 @@ const Entry = ({
             exit={{ opacity: 0, height: 0, transition: { ease: "circOut", duration: 0.3 } }}
           >
             <div className="flex flex-wrap items-center justify-center mt-4 gap-6">
-              <Link
-                onClick={(e) => e.stopPropagation()}
-                className="flex flex-1 py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
-                href={`${slug}/card`}
-              >
-                <Category size={32} color="currentColor" />
-                Cards
-              </Link>
-              <Link
-                onClick={(e) => e.stopPropagation()}
-                className="flex flex-1 py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
-                href={`${slug}/spelling`}
-              >
-                <Edit size={32} color="currentColor" />
-                Spelling
-              </Link>
+              <div className="flex-1 flex flex-col gap-2">
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex w-full py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+                  href={`${slug}/card`}
+                >
+                  <Category size={32} color="currentColor" />
+                  Cards
+                </Link>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex w-full py-1.5 px-4 rounded text-sm items-center justify-center gap-1.5 font-medium bg-bg-500 text-[var(--clr-card-accent)] opacity-60 hover:opacity-100 transition-opacity focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+                  href={`${slug}/card?dir=reverse`}
+                >
+                  ↔ Reverse
+                </Link>
+              </div>
+              <div className="flex-1 flex flex-col gap-2">
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex w-full py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+                  href={`${slug}/spelling`}
+                >
+                  <Edit size={32} color="currentColor" />
+                  Spelling
+                </Link>
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex w-full py-1.5 px-4 rounded text-sm items-center justify-center gap-1.5 font-medium bg-bg-500 text-[var(--clr-card-accent)] opacity-60 hover:opacity-100 transition-opacity focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+                  href={`${slug}/spelling?dir=reverse`}
+                >
+                  ↔ Reverse
+                </Link>
+              </div>
               <Link
                 onClick={(e) => e.stopPropagation()}
                 className="flex flex-1 py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
@@ -147,6 +174,23 @@ const Entry = ({
                 List
               </Link>
             </div>
+            {scoreHistory.length > 0 && (
+              <div className="mt-4 rounded-md bg-bg-500 p-3" onClick={(e) => e.stopPropagation()}>
+                <p className="text-[0.65rem] tracking-[2px] text-text-muted font-medium mb-2">SCORE HISTORY</p>
+                <ResponsiveContainer width="100%" height={100}>
+                  <LineChart data={scoreHistory.map((h, i) => ({ i: i + 1, score: h.score }))}>
+                    <XAxis dataKey="i" hide />
+                    <YAxis domain={[0, 100]} hide />
+                    <Tooltip
+                      formatter={(v) => `${v}%`}
+                      contentStyle={{ background: "var(--color-bg-500)", border: "1px solid var(--color-bg-600)", borderRadius: "6px", fontSize: "0.75rem" }}
+                      labelFormatter={(l) => `Attempt ${l}`}
+                    />
+                    <Line type="monotone" dataKey="score" stroke="var(--color-accent-blue)" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

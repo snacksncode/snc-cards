@@ -22,11 +22,14 @@ export async function generateMetadata({
 
 export default async function CardPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{ dir?: string }>
 }) {
   const { slug } = await params
+  const { dir } = await searchParams
   const topic = getTopicBySlug(slug)
   if (!topic) notFound()
-  return <CardClient title={topic.title} rawData={topic.questions} dataClass={topic.class} />
+  return <CardClient slug={slug} title={topic.title} rawData={topic.questions} dataClass={topic.class} reversed={dir === 'reverse'} />
 }
