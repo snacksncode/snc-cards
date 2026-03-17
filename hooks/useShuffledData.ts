@@ -1,4 +1,4 @@
-import shuffle from "@utils/shuffle";
+import { shuffle } from "@lib/utils";
 import { useEffect, useState } from "react";
 
 const useShuffledData = <T>(data: T[]) => {
