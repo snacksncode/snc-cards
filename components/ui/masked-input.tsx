@@ -89,8 +89,8 @@ const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
         onInput={(e: React.FormEvent<HTMLInputElement>) => {
           if (onChange) onChange(e as unknown as ChangeEvent<HTMLInputElement>)
         }}
-        onFocus={onFocus as any}
-        onKeyDown={onKeyDown as any}
+        onFocus={onFocus as React.FocusEventHandler<HTMLInputElement>}
+        onKeyDown={onKeyDown as React.KeyboardEventHandler<HTMLInputElement>}
       />
     )
   }

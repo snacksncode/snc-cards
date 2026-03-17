@@ -299,7 +299,7 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
           transition: { delay: shouldAnimateBlob ? 0 : 0.5 },
         }}
         whileTap={{ scale: 0.95, transition: { delay: 0 } }}
-        onClick={checkAnswer as any}
+        onClick={checkAnswer as unknown as React.MouseEventHandler<HTMLButtonElement>}
         className={cn(
           "relative isolate bottom-[-3.5rem] -z-10 left-1/2 bg-transparent text-accent-blue cursor-pointer border-none inline-flex py-[0.4em] px-[1.25em] text-[0.9rem] font-bold items-center rounded-[4px] justify-center transition-colors duration-200",
           "hover:text-white focus-visible:text-white",

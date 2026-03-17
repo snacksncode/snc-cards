@@ -11,7 +11,7 @@ export function shuffle<T>(a: T[]) {
 }
 
 // Generic groupBy utility
-export const groupBy = <T, K extends keyof any>(
+export const groupBy = <T, K extends PropertyKey>(
   list: T[],
   getKey: (item: T) => K
 ) =>
