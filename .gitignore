@@ -32,3 +32,10 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# bun
+bun.lock
+bun.lockb
+
+# sisyphus plan artifacts
+.sisyphus/
