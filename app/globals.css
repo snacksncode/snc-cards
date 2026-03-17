@@ -1,0 +1,93 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Source+Code+Pro:wght@600&display=swap");
+
+@theme {
+  /* Fonts */
+  --font-sans: 'Poppins', system-ui, sans-serif;
+  --font-mono: 'Source Code Pro', monospace;
+
+  /* Background scale (dark theme) */
+  --color-bg-200: hsl(0 0% 10%);
+  --color-bg-300: hsl(0 0% 13%);
+  --color-bg-400: hsl(0 0% 16%);
+  --color-bg-500: hsl(0 0% 20%);
+  --color-bg-600: hsl(0 0% 30%);
+  --color-bg-card: hsl(0 0% 20%);
+
+  /* Text */
+  --color-text: hsl(0 0% 96%);
+  --color-text-muted: hsl(0 0% 70%);
+
+  /* Accent colors */
+  --color-accent-blue: hsl(212 75% 70%);
+  --color-accent-green: hsl(124 60% 69%);
+  --color-accent-green-darker: hsl(124 40% 56%);
+  --color-accent-peachy: hsl(23 90% 68%);
+  --color-accent-red: hsl(359 100% 70%);
+  --color-accent-red-darker: hsl(359 63% 54%);
+  --color-accent-yellow: hsl(49 100% 50%);
+  --color-accent-pink: hsl(333 71% 51%);
+}
+
+/* Custom 3D transform utilities for card flip */
+@utility perspective-1000 {
+  perspective: 1000px;
+}
+
+@utility preserve-3d {
+  transform-style: preserve-3d;
+}
+
+@utility backface-hidden {
+  backface-visibility: hidden;
+}
+
+@utility rotate-x-180 {
+  transform: rotateX(180deg);
+}
+
+@utility will-change-transform {
+  will-change: transform;
+}
+
+/* Global resets */
+html,
+body {
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  background-color: var(--color-bg-300);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+body.no-scroll {
+  overflow-y: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input {
+  font-family: inherit;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.hidden {
+  display: none;
+}
