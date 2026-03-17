@@ -8,28 +8,28 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@maskito/core": "latest",
-    "@maskito/react": "latest",
-    "clsx": "latest",
-    "fuse.js": "latest",
-    "lucide-react": "latest",
-    "motion": "latest",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "tailwind-merge": "latest"
+    "@maskito/core": "5.1.2",
+    "@maskito/react": "5.1.2",
+    "clsx": "2.1.1",
+    "fuse.js": "7.1.0",
+    "lucide-react": "0.577.0",
+    "motion": "12.38.0",
+    "next": "16.1.7",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwind-merge": "3.5.0"
   },
   "devDependencies": {
-    "@eslint/js": "latest",
-    "@next/eslint-plugin-next": "latest",
-    "@tailwindcss/postcss": "latest",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "eslint": "latest",
-    "postcss": "latest",
-    "tailwindcss": "latest",
-    "typescript": "latest",
-    "typescript-eslint": "latest"
+    "@eslint/js": "10.0.1",
+    "@next/eslint-plugin-next": "16.1.7",
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/node": "25.5.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "10.0.3",
+    "postcss": "8.5.8",
+    "tailwindcss": "4.2.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.57.1"
   }
 }
