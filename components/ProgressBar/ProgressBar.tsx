@@ -1,5 +1,4 @@
-import styles from "./ProgressBar.module.scss";
-import { animate, motion } from "framer-motion";
+import { animate, motion } from "motion/react";
 import { useEffect, useRef } from "react";
 import Streak from "@components/Streak";
 
@@ -26,14 +25,14 @@ const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak }) => {
   });
 
   return (
-    <div className={styles.progress}>
-      <div className={styles.bar}>
+    <div className="fixed top-4 left-4 w-[calc(100%-2rem)] flex flex-col items-center justify-center">
+      <div className="w-full max-w-[450px] h-[25px] rounded flex relative overflow-hidden border border-bg-400 shadow-[0_0_7px_rgba(0,0,0,0.15)]">
         <motion.div
-          className={styles.bar__fill}
+          className="bg-gradient-to-r from-accent-red to-accent-peachy"
           animate={{ width: `${(currentAmount / maxAmount) * 100}%` }}
           transition={{ ease: "easeInOut" }}
         >
-          <p className={styles.percentage}>
+          <p className="m-0 select-none w-[7ch] text-center text-[0.5rem] font-bold tracking-[1px] absolute px-1 py-0.5 rounded-sm top-1/2 left-1/2 mix-blend-difference -translate-x-1/2 -translate-y-1/2 text-text-muted">
             <span ref={percentageRef}>0.00%</span>
           </p>
         </motion.div>
