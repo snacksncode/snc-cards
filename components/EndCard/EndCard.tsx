@@ -1,11 +1,17 @@
-import classNames from "classnames";
-import { MessageQuestion, ArrowRotateRight, Back } from "iconsax-react";
-import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
-import styles from "./EndCard.module.scss";
+import { cn } from "@lib/cn";
+import { MessageQuestion, ArrowRotateRight, Back } from "@components/icons";
+import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import { FC, useState } from "react";
 import EndCardReview from "@components/EndCardReview";
 import getStreakEmojis from "@utils/getStreakEmojis";
 import Link from "next/link";
+import type { CardsReviewData, SpellingReviewData, ClassString, Question } from "@/types";
+
+interface SpellingData {
+  input: string;
+  expected: string;
+  data: Question;
+}
 
 interface Props {
   onRestart: (newData: Question[] | null) => void;
@@ -22,6 +28,15 @@ const isSpellingData = (input: Question[] | SpellingData[]): input is SpellingDa
   }
   return false;
 };
+
+const buttonBase = cn(
+  "bg-transparent cursor-pointer border-2 border-[var(--accent)] text-[var(--accent)]",
+  "rounded px-3 py-1.5 font-bold text-sm inline-flex items-center justify-center gap-2",
+  "transition-colors duration-200",
+  "hover:bg-[var(--accent)] hover:text-bg-200",
+  "focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
+  "focus-visible:bg-[var(--accent)] focus-visible:text-bg-200"
+);
 
 const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }) => {
   const [isReviewOpened, setIsReviewOpened] = useState(false);
@@ -48,10 +63,10 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
         exit={{ opacity: 0 }}
         key="endcard"
         layout="position"
-        className={styles.wrapper}
+        className="w-full max-w-[750px] mx-8 rounded z-[2] px-4"
       >
-        <h1 className={styles.wrapper__title}>
-          Your end score was <span>{score}%</span>
+        <h1 className="text-4xl sm:text-[2.75rem] font-bold leading-[120%] mb-4">
+          Your end score was <span className="text-accent-green">{score}%</span>
         </h1>
         {streak >= 5 && (
           <h3>
@@ -59,28 +74,46 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
             {getStreakEmojis(streak)}
           </h3>
         )}
-        <section className={styles.buttons}>
-          <h5>
-            <span>What&apos;s next?</span>
+        <section className="flex flex-col gap-4">
+          <h5 className="text-xl text-accent-blue m-0 relative isolate">
+            <span className="z-[1] pr-2 bg-bg-300 relative">What&apos;s next?</span>
+            <span
+              className="absolute inset-0 top-1/2 h-0.5 -z-[1] bg-current"
+              aria-hidden="true"
+            />
           </h5>
-          <div className={styles.buttons_grid}>
-            <Link href="/" className={classNames(styles.button)}>
-              <>
-                <Back color="currentColor" />
-                Go Back
-              </>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
+            <Link
+              href="/"
+              className={buttonBase}
+              style={{ "--accent": "var(--color-accent-blue)" } as React.CSSProperties}
+            >
+              <Back className="size-4" />
+              Go Back
             </Link>
-            <button className={classNames(styles.button, styles.orange)} onClick={() => setIsReviewOpened((s) => !s)}>
-              <MessageQuestion color="currentColor" />
+            <button
+              className={buttonBase}
+              style={{ "--accent": "var(--color-accent-peachy)" } as React.CSSProperties}
+              onClick={() => setIsReviewOpened((s) => !s)}
+            >
+              <MessageQuestion className="size-4" />
               Review
             </button>
-            <button className={classNames(styles.button, styles.green)} onClick={handleRestartAll}>
-              <ArrowRotateRight color="currentColor" />
+            <button
+              className={buttonBase}
+              style={{ "--accent": "var(--color-accent-green)" } as React.CSSProperties}
+              onClick={handleRestartAll}
+            >
+              <ArrowRotateRight className="size-4" />
               Restart
             </button>
             {data.incorrect.length > 0 && (
-              <button className={classNames(styles.button, styles.purple)} onClick={handleRestartIncorrect}>
-                <ArrowRotateRight color="currentColor" />
+              <button
+                className={buttonBase}
+                style={{ "--accent": "var(--color-accent-pink)" } as React.CSSProperties}
+                onClick={handleRestartIncorrect}
+              >
+                <ArrowRotateRight className="size-4" />
                 Incorrect
               </button>
             )}
