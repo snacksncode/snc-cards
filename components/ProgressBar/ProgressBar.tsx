@@ -6,9 +6,10 @@ interface Props {
   maxAmount: number;
   currentAmount: number;
   streak: number;
+  accentColor: string;
 }
 
-const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak }) => {
+const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak, accentColor }) => {
   const percentageRef = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
     const node = percentageRef.current;
@@ -28,7 +29,7 @@ const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak }) => {
     <div className="fixed top-4 left-4 w-[calc(100%-2rem)] flex flex-col items-center justify-center">
       <div className="w-full max-w-[450px] h-[25px] rounded flex relative overflow-hidden border border-bg-400 shadow-[0_0_7px_rgba(0,0,0,0.15)]">
         <motion.div
-          className="bg-gradient-to-r from-accent-red to-accent-peachy"
+          style={{ backgroundColor: accentColor }}
           animate={{ width: `${(currentAmount / maxAmount) * 100}%` }}
           transition={{ ease: "easeInOut" }}
         >

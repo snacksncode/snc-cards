@@ -7,7 +7,7 @@ import ProgressBar from "@/components/ProgressBar"
 import SpellingByWord from "@/components/SpellingByWord"
 import { db, saveSession, clearSession, saveScore } from "@lib/storage"
 import { useLiveQuery } from "dexie-react-hooks"
-import { shuffle } from "@lib/utils"
+import { shuffle, getAccentForClass } from "@lib/utils"
 import type { ClassString, Question, SpellingData } from "@/types"
 
 interface SpellingEntry {
@@ -130,7 +130,7 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
       <AnimatePresence mode="wait">
         {!isDone && currentCard ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <ProgressBar currentAmount={answered.length} maxAmount={cards.length} streak={streak} />
+            <ProgressBar currentAmount={answered.length} maxAmount={cards.length} streak={streak} accentColor={getAccentForClass(dataClass)} />
             <AnimatePresence>
               <SpellingByWord
                 data={currentCard.question}

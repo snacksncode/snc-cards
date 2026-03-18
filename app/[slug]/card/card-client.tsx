@@ -7,7 +7,7 @@ import ProgressBar from '@components/ProgressBar'
 import { AnimatePresence, motion } from 'motion/react'
 import { db, saveSession, clearSession, saveScore } from '@lib/storage'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { shuffle } from '@lib/utils'
+import { shuffle, getAccentForClass } from '@lib/utils'
 import type { ClassString, Question } from '@/types'
 
 const Shortcut = ({ keys, action }: { keys: string[]; action: string }) => (
@@ -177,7 +177,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
         {!isDone && currentCard ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <div className="mb-4">
-              <ProgressBar currentAmount={answered.length} maxAmount={cards.length} streak={streak} />
+              <ProgressBar currentAmount={answered.length} maxAmount={cards.length} streak={streak} accentColor={getAccentForClass(dataClass)} />
             </div>
             <AnimatePresence>
               <FlipCard
