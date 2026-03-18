@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Poppins, Source_Code_Pro } from 'next/font/google'
+import { Poppins, Source_Code_Pro, Instrument_Serif } from 'next/font/google'
 import './globals.css'
 
 const poppins = Poppins({
@@ -16,6 +16,14 @@ const sourceCodePro = Source_Code_Pro({
   display: 'swap',
 })
 
+const instrumentSerif = Instrument_Serif({
+  weight: ['400'],
+  subsets: ['latin'],
+  variable: '--font-instrument-serif',
+  display: 'swap',
+  style: ['normal', 'italic'],
+})
+
 export const metadata: Metadata = {
   title: 'Flash Card App',
   description: 'A demo flashcard app for learning vocabulary and more.',
@@ -27,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${sourceCodePro.variable}`}>
+    <html lang="en" className={`${poppins.variable} ${sourceCodePro.variable} ${instrumentSerif.variable}`}>
       <body className="min-h-screen w-screen! overflow-x-hidden flex flex-col bg-bg-300 text-text font-sans">
         {children}
       </body>
