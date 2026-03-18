@@ -16,10 +16,11 @@ export default function HomeClient({ topics }: Props) {
   const [inputValue, setInputValue] = useState('')
   const [filterString, setFilterString] = useState<string | null>(null)
   const [showDebug, setShowDebug] = useState(false)
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem('snc-cards-tutorial-collapsed') === 'true'
-  })
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  useEffect(() => {
+    setIsCollapsed(localStorage.getItem('snc-cards-tutorial-collapsed') === 'true')
+  }, [])
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     setInputValue(e.target.value)
