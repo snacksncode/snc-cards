@@ -33,7 +33,7 @@ const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak, accent
           animate={{ width: `${(currentAmount / maxAmount) * 100}%` }}
           transition={{ ease: "easeInOut" }}
         >
-          <p className="m-0 select-none w-[7ch] text-center text-[0.5rem] font-bold tracking-[1px] absolute px-1 py-0.5 rounded-sm top-1/2 left-1/2 mix-blend-difference -translate-x-1/2 -translate-y-1/2 text-text-muted">
+          <p className="m-0 select-none w-[7ch] text-center text-[0.5rem] font-bold tracking-[0.08em] absolute px-1 py-0.5 rounded-sm top-1/2 left-1/2 mix-blend-difference -translate-x-1/2 -translate-y-1/2 text-text-muted">
             <span ref={percentageRef}>0.00%</span>
           </p>
         </motion.div>

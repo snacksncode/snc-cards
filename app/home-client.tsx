@@ -45,9 +45,9 @@ export default function HomeClient({ topics }: Props) {
       <motion.h1
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="mt-0 mb-8 text-[clamp(1.5rem,8vw,2.5rem)] font-bold"
+        className="mt-0 mb-8 text-[clamp(1.75rem,6vw,3rem)] font-serif font-bold"
       >
-        Select one of the topics below
+        What would you like to learn?
       </motion.h1>
       <motion.section
         initial={{ opacity: 0, marginBottom: 0 }}

@@ -94,7 +94,7 @@ const Entry = ({
         <div>
           <motion.p
             layout
-            className="m-0 text-text tracking-[4px] text-left text-[0.65rem] font-medium"
+            className="m-0 text-text tracking-[0.1em] text-left text-[0.65rem] font-medium"
           >
             TOPIC
           </motion.p>
@@ -242,7 +242,7 @@ const Entry = ({
 
             {scoreHistory.length > 0 && (
               <div className="mt-4 rounded-md bg-bg-500 p-3 [&_svg]:outline-none" onClick={(e) => e.stopPropagation()}>
-                <p className="text-[0.65rem] tracking-[2px] text-text-muted font-medium mb-2">SCORE HISTORY</p>
+                <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium mb-2">SCORE HISTORY</p>
                 <ScoreChart data={scoreHistory.map((h, i) => ({ i: i + 1, score: h.score }))} stroke={getAccentForClass(classString)} />
               </div>
             )}

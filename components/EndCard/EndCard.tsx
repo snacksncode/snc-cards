@@ -65,7 +65,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
         layout="position"
         className="w-full max-w-[750px] mx-8 rounded z-[2] px-4"
       >
-        <h1 className="text-4xl sm:text-[2.75rem] font-bold leading-[120%] mb-4">
+        <h1 className="text-4xl sm:text-[2.75rem] font-serif font-bold leading-[120%] mb-4">
           Your end score was <span className="text-accent-green">{score}%</span>
         </h1>
         {streak >= 5 && (
