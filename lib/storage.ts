@@ -156,7 +156,7 @@ export async function populateAllFakeData(
 
       for (let j = 0; j < numEntries; j++) {
         const entryDate = new Date(baseDate.getTime() + j * (1.5 * 24 * 60 * 60 * 1000))
-        const mode = j % 3 === 0 ? 'spelling' : 'cards'
+        const mode: 'cards' | 'spelling' = j % 3 === 0 ? 'spelling' : 'cards'
 
         let score: number
         if (j < 3) {
@@ -173,7 +173,7 @@ export async function populateAllFakeData(
           date: entryDate.toISOString(),
           score,
           total: numQuestions,
-          mode: mode as 'cards' | 'spelling',
+          mode,
         })
       }
 

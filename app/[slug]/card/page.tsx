@@ -31,5 +31,5 @@ export default async function CardPage({
   const { dir, resume } = await searchParams
   const topic = getTopicBySlug(slug)
   if (!topic) notFound()
-  return <CardClient slug={slug} title={topic.title} rawData={topic.questions} dataClass={topic.class} reversed={dir === 'reverse'} resume={resume === '1'} />
+  return <CardClient slug={slug} rawData={topic.questions} dataClass={topic.class} reversed={dir === 'reverse'} resume={resume === '1'} />
 }

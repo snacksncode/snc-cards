@@ -27,14 +27,13 @@ const Shortcut = ({ keys, action }: { keys: string[]; action: string }) => (
 
 interface Props {
   slug: string
-  title: string
   rawData: Question[]
   dataClass: ClassString
   reversed?: boolean
   resume?: boolean
 }
 
-export default function CardClient({ slug, title: _title, rawData, dataClass, reversed = false, resume = false }: Props) {
+export default function CardClient({ slug, rawData, dataClass, reversed = false, resume = false }: Props) {
   const displayData = reversed
     ? rawData.map((q) => ({ ...q, question: q.answer, answer: q.question }))
     : rawData

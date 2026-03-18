@@ -31,5 +31,5 @@ export default async function SpellingPage({
   const { dir, resume } = await searchParams
   const topic = getTopicBySlug(slug)
   if (!topic) notFound()
-  return <SpellingClient slug={slug} title={topic.title} rawData={topic.questions} dataClass={topic.class} reversed={dir === 'reverse'} resume={resume === '1'} />
+  return <SpellingClient slug={slug} rawData={topic.questions} dataClass={topic.class} reversed={dir === 'reverse'} resume={resume === '1'} />
 }

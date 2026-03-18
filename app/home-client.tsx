@@ -146,7 +146,7 @@ export default function HomeClient({ topics }: Props) {
       <button
         onClick={() => setShowDebug(true)}
         className="fixed bottom-4 left-4 z-40 w-10 h-10 rounded-full bg-bg-500 border border-bg-600 text-text-muted hover:text-text flex items-center justify-center cursor-pointer transition-colors"
-        aria-label="Debug tools"
+        aria-label="Load demo data"
       >
         <svg
           width="18"
@@ -158,7 +158,11 @@ export default function HomeClient({ topics }: Props) {
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+          <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+          <path d="M20 3v4" />
+          <path d="M22 5h-4" />
+          <path d="M4 17v2" />
+          <path d="M5 18H3" />
         </svg>
       </button>
       <AnimatePresence>
@@ -178,7 +182,7 @@ export default function HomeClient({ topics }: Props) {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-text m-0">Debug Tools</h2>
+                <h2 className="text-lg font-bold text-text m-0">Try It Out</h2>
                 <button
                   onClick={() => setShowDebug(false)}
                   className="w-8 h-8 flex items-center justify-center rounded-lg bg-transparent border-none text-text-muted hover:text-text cursor-pointer transition-colors"
@@ -200,7 +204,8 @@ export default function HomeClient({ topics }: Props) {
                 </button>
               </div>
               <p className="text-xs text-text-muted mb-4 m-0">
-                Populates realistic fake score history, sessions, and card stats for all topics
+                This app works best with some data. Load demo data to see score history, resume
+                sessions, and all other features in action.
               </p>
               <div className="flex flex-col gap-3">
                 <button
@@ -210,7 +215,7 @@ export default function HomeClient({ topics }: Props) {
                   }}
                   className="w-full py-2.5 px-4 rounded-lg bg-accent-blue text-white font-semibold text-sm border-none cursor-pointer hover:brightness-110 transition-all"
                 >
-                  Populate All Topics
+                   Load Demo Data
                 </button>
                 <button
                   onClick={async () => {
@@ -219,7 +224,7 @@ export default function HomeClient({ topics }: Props) {
                   }}
                   className="w-full py-2.5 px-4 rounded-lg bg-transparent border border-bg-600 text-accent-red font-semibold text-sm cursor-pointer hover:bg-bg-500 transition-all"
                 >
-                  Clear All Data
+                   Reset Everything
                 </button>
               </div>
             </motion.div>
