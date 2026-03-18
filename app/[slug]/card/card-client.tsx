@@ -151,6 +151,11 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showHints) {
+        setShowHints(false)
+        localStorage.setItem('card-hints-dismissed', 'true')
+        return
+      }
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         e.preventDefault()
         handleUndo()
@@ -159,7 +164,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedIndex, correctAnswers, incorrectAnswers])
+  }, [selectedIndex, correctAnswers, incorrectAnswers, showHints])
 
   const handleRestart = (newData: Question[] | null = null) => {
     resetIndex()

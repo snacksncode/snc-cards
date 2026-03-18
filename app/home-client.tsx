@@ -34,6 +34,14 @@ export default function HomeClient({ topics }: Props) {
     return () => clearTimeout(timeoutId)
   }, [inputValue])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showDebug) setShowDebug(false)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [showDebug])
+
   const toggleCollapse = () => {
     const newState = !isCollapsed
     localStorage.setItem('snc-cards-tutorial-collapsed', String(newState))
