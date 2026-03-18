@@ -16,11 +16,7 @@ export default function HomeClient({ topics }: Props) {
   const [inputValue, setInputValue] = useState('')
   const [filterString, setFilterString] = useState<string | null>(null)
   const [showDebug, setShowDebug] = useState(false)
-  const [isCollapsed, setIsCollapsed] = useState(false)
-
-  useEffect(() => {
-    setIsCollapsed(localStorage.getItem('snc-cards-tutorial-collapsed') === 'true')
-  }, [])
+  const [isCollapsed, setIsCollapsed] = useState(true)
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     setInputValue(e.target.value)
@@ -42,11 +38,7 @@ export default function HomeClient({ topics }: Props) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [showDebug])
 
-  const toggleCollapse = () => {
-    const newState = !isCollapsed
-    localStorage.setItem('snc-cards-tutorial-collapsed', String(newState))
-    setIsCollapsed(newState)
-  }
+  const toggleCollapse = () => setIsCollapsed((prev) => !prev)
 
   return (
     <main className="px-8 py-8 mx-auto w-full max-w-[800px] flex flex-col">
