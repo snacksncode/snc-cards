@@ -5,8 +5,9 @@ import FlipCard from '@components/FlipCard'
 import EndCard from '@components/EndCard'
 import ProgressBar from '@components/ProgressBar'
 import { AnimatePresence, motion } from 'motion/react'
-import { saveSession, loadSession, clearSession, saveScore, getCardStats, updateCardStat } from '@lib/storage'
-import { shuffle, weightedShuffle } from '@lib/utils'
+import { db, saveSession, clearSession, saveScore } from '@lib/storage'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { shuffle } from '@lib/utils'
 import type { ClassString, Question } from '@/types'
 
 const Shortcut = ({ keys, action }: { keys: string[]; action: string }) => (
@@ -40,9 +41,40 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   const displayData = reversed
     ? rawData.map((q) => ({ ...q, question: q.answer, answer: q.question }))
     : rawData
-  const [cards, setCards] = useState<CardEntry[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+
+  const [cards, setCards] = useState<CardEntry[]>(() =>
+    shuffle(displayData).map((q) => ({ question: q, status: null }))
+  )
   const [showHints, setShowHints] = useState<boolean | null>(null)
+
+  const session = useLiveQuery(
+    () => resume ? db.sessions.get(slug) : undefined,
+    [slug, resume]
+  )
+  const [resumeApplied, setResumeApplied] = useState(false)
+
+  if (resume && session && !resumeApplied) {
+    const restored = session.shuffleOrder
+      .map((id) => displayData.find((q) => q.id === id))
+      .filter((q): q is Question => q != null)
+      .map((q) => ({
+        question: q,
+        status: session.correctIds.includes(q.id)
+          ? ('correct' as const)
+          : session.incorrectIds.includes(q.id)
+            ? ('wrong' as const)
+            : null,
+      }))
+    if (restored.length === displayData.length) {
+      setCards(restored)
+      setResumeApplied(true)
+    }
+  }
+
+  if (!resume && !resumeApplied) {
+    clearSession(slug)
+    setResumeApplied(true)
+  }
 
   const currentIndex = cards.findIndex((c) => c.status === null)
   const isDone = cards.length > 0 && currentIndex === -1
@@ -68,42 +100,6 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   }
 
   useEffect(() => {
-    const init = async () => {
-      if (!resume) await clearSession(slug)
-
-      if (resume) {
-        const session = await loadSession(slug)
-        if (session && session.shuffleOrder.length > 0) {
-          const restored = session.shuffleOrder
-            .map((id) => displayData.find((q) => q.id === id))
-            .filter((q): q is Question => q != null)
-            .map((q) => ({
-              question: q,
-              status: session.correctIds.includes(q.id)
-                ? ('correct' as const)
-                : session.incorrectIds.includes(q.id)
-                  ? ('wrong' as const)
-                  : null,
-            }))
-          if (restored.length === displayData.length) {
-            setCards(restored)
-            setIsLoading(false)
-            return
-          }
-        }
-      }
-
-      const stats = await getCardStats(slug)
-      const shuffled = Object.keys(stats).length > 0
-        ? weightedShuffle(displayData, stats)
-        : shuffle(displayData)
-      setCards(shuffled.map((q) => ({ question: q, status: null })))
-      setIsLoading(false)
-    }
-    init()
-  }, [slug, resume])
-
-  useEffect(() => {
     if (typeof window === 'undefined') return
     const dismissed = localStorage.getItem('card-hints-dismissed')
     setShowHints(!dismissed)
@@ -111,8 +107,6 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
 
   const onAnswer = (rightAnswer: boolean, _question: Question) => {
     if (currentIndex === -1) return
-    const card = cards[currentIndex]
-    updateCardStat(slug, card.question.id, rightAnswer)
 
     const newCards = cards.map((c, i) =>
       i === currentIndex ? { ...c, status: rightAnswer ? ('correct' as const) : ('wrong' as const) } : c
@@ -164,7 +158,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
     setCards(shuffle(dataToShuffle).map((q) => ({ question: q, status: null })))
   }
 
-  if (!rawData || cards.length === 0 || isLoading) return null
+  if (resume && !resumeApplied) return null
   return (
     <div className="min-h-screen p-4 flex flex-col items-center justify-center relative overflow-hidden">
       {answered.length > 0 && !isDone && (

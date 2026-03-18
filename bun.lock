@@ -6,6 +6,7 @@
       "name": "snc-cards",
       "dependencies": {
         "clsx": "2.1.1",
+        "dexie-react-hooks": "^4.2.0",
         "fuse.js": "7.1.0",
         "imask": "^7.6.1",
         "lucide-react": "0.577.0",
@@ -303,6 +304,10 @@
     "deep-is": ["deep-is@0.1.4", "", {}, "sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ=="],
 
     "detect-libc": ["detect-libc@2.1.2", "", {}, "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ=="],
+
+    "dexie": ["dexie@4.4.0", "", {}, "sha512-7ZZ7NCcPfHnSiIwE24GLiV3TmUzFclFv6K7PdjXpf7mDhmXp9eQegW0S3fo2RonNJBTgRfIUSbNmN8uXhjC1zA=="],
+
+    "dexie-react-hooks": ["dexie-react-hooks@4.2.0", "", { "peerDependencies": { "@types/react": ">=16", "dexie": ">=4.2.0-alpha.1 <5.0.0", "react": ">=16" } }, "sha512-u7KqTX9JpBQK8+tEyA9X0yMGXlSCsbm5AU64N6gjvGk/IutYDpLBInMYEAEC83s3qhIvryFS+W+sqLZUBEvePQ=="],
 
     "enhanced-resolve": ["enhanced-resolve@5.20.1", "", { "dependencies": { "graceful-fs": "^4.2.4", "tapable": "^2.3.0" } }, "sha512-Qohcme7V1inbAfvjItgw0EaxVX5q2rdVEZHRBrEQdRZTssLDGsL8Lwrznl8oQ/6kuTJONLaDcGjkNP247XEhcA=="],
 

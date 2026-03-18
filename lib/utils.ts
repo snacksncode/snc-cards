@@ -64,14 +64,4 @@ export function removeDiacritics(str: string): string {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 }
 
-export function weightedShuffle<T extends { id: number }>(
-  arr: T[],
-  stats: Record<number, { correct: number; incorrect: number }>
-): T[] {
-  const weighted = arr.map((item) => {
-    const s = stats[item.id]
-    const weight = s ? 1 + s.incorrect / (s.correct + 1) : 1
-    return { item, sort: -weight + Math.random() * 0.5 }
-  })
-  return weighted.sort((a, b) => a.sort - b.sort).map((w) => w.item)
-}
+

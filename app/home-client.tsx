@@ -217,23 +217,23 @@ export default function HomeClient({ topics }: Props) {
               </p>
               <div className="flex flex-col gap-3">
                 <button
-                  onClick={async () => {
-                    await populateAllFakeData(topics)
-                    window.location.reload()
-                  }}
-                  className="w-full py-2.5 px-4 rounded-lg bg-accent-blue text-white font-semibold text-sm border-none cursor-pointer hover:brightness-110 transition-all"
-                >
-                   Load Demo Data
-                </button>
-                <button
-                  onClick={async () => {
-                    await clearAllData()
-                    window.location.reload()
-                  }}
-                  className="w-full py-2.5 px-4 rounded-lg bg-transparent border border-bg-600 text-accent-red font-semibold text-sm cursor-pointer hover:bg-bg-500 transition-all"
-                >
-                   Reset Everything
-                </button>
+                   onClick={async () => {
+                     await populateAllFakeData(topics)
+                     setShowDebug(false)
+                   }}
+                   className="w-full py-2.5 px-4 rounded-lg bg-accent-blue text-white font-semibold text-sm border-none cursor-pointer hover:brightness-110 transition-all"
+                 >
+                    Load Demo Data
+                 </button>
+                 <button
+                   onClick={async () => {
+                     await clearAllData()
+                     setShowDebug(false)
+                   }}
+                   className="w-full py-2.5 px-4 rounded-lg bg-transparent border border-bg-600 text-accent-red font-semibold text-sm cursor-pointer hover:bg-bg-500 transition-all"
+                 >
+                    Reset Everything
+                 </button>
               </div>
             </motion.div>
           </motion.div>

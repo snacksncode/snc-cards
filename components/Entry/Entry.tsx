@@ -1,10 +1,11 @@
 import { getAccentForClass, getHumanReadableClass, groupBy } from "@lib/utils";
-import { getScoreHistory, loadSession } from "@lib/storage";
+import { db } from "@lib/storage";
+import { useLiveQuery } from "dexie-react-hooks";
 import { AnimatePresence, motion } from "motion/react";
 import { Category, Danger, Edit, NoteText } from "@components/icons";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { FC, PropsWithChildren, useEffect, useState } from "react";
+import { FC, PropsWithChildren, useState } from "react";
 
 const ScoreChart = dynamic(() => import("./ScoreChart"), { ssr: false, loading: () => null });
 import type { Topic } from "@/types";
@@ -45,25 +46,17 @@ const Entry = ({
   onToggle,
 }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [scoreHistory, setScoreHistory] = useState<{ date: string; score: number; total: number; mode: string }[]>([]);
-  const [savedSession, setSavedSession] = useState<{ currentIndex: number; mode: string } | null>(null);
   const [reverseCards, setReverseCards] = useState(false);
   const [reverseSpelling, setReverseSpelling] = useState(false);
   const hasDups = questions
     ? Object.values(groupBy(questions, (q) => q.question)).some((v) => v.length > 1)
     : false;
 
-  useEffect(() => {
-    getScoreHistory(slug).then(setScoreHistory);
-  }, [slug]);
-
-  useEffect(() => {
-    if (isExpanded) {
-      loadSession(slug).then((session) => {
-        setSavedSession(session ? { currentIndex: session.currentIndex, mode: session.mode } : null);
-      });
-    }
-  }, [isExpanded, slug]);
+  const scoreHistory = useLiveQuery(() => db.history.where('slug').equals(slug).toArray(), [slug]) ?? [];
+  const savedSession = useLiveQuery(
+    () => isExpanded ? db.sessions.get(slug) : undefined,
+    [slug, isExpanded]
+  );
 
   const buildUrl = (mode: 'card' | 'spelling', reverse: boolean, resume: boolean) => {
     const params = new URLSearchParams();

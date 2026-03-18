@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import EndCard from "@/components/EndCard"
 import ProgressBar from "@/components/ProgressBar"
 import SpellingByWord from "@/components/SpellingByWord"
-import { saveSession, loadSession, clearSession, saveScore } from "@lib/storage"
+import { db, saveSession, clearSession, saveScore } from "@lib/storage"
+import { useLiveQuery } from "dexie-react-hooks"
 import { shuffle } from "@lib/utils"
 import type { ClassString, Question, SpellingData } from "@/types"
 
@@ -28,8 +29,41 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
   const displayData = reversed
     ? rawData.map((q) => ({ ...q, question: q.answer, answer: q.question }))
     : rawData
-  const [cards, setCards] = useState<SpellingEntry[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+
+  const [cards, setCards] = useState<SpellingEntry[]>(() =>
+    shuffle(displayData).map((q) => ({ question: q, status: null }))
+  )
+
+  const session = useLiveQuery(
+    () => resume ? db.sessions.get(slug) : undefined,
+    [slug, resume]
+  )
+  const [resumeApplied, setResumeApplied] = useState(false)
+
+  if (resume && session && !resumeApplied) {
+    const restored = session.shuffleOrder
+      .map((id) => displayData.find((q) => q.id === id))
+      .filter((q): q is Question => q != null)
+      .map((q) => {
+        const isCorrect = session.correctIds.includes(q.id)
+        const isWrong = session.incorrectIds.includes(q.id)
+        return {
+          question: q,
+          status: isCorrect ? ('correct' as const) : isWrong ? ('wrong' as const) : null,
+          ...(isCorrect ? { input: q.answer, expected: q.answer } : {}),
+          ...(isWrong ? { input: '', expected: q.answer } : {}),
+        }
+      })
+    if (restored.length === displayData.length) {
+      setCards(restored)
+      setResumeApplied(true)
+    }
+  }
+
+  if (!resume && !resumeApplied) {
+    clearSession(slug)
+    setResumeApplied(true)
+  }
 
   const currentIndex = cards.findIndex((c) => c.status === null)
   const isDone = cards.length > 0 && currentIndex === -1
@@ -58,40 +92,6 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
       run = 0
     }
   }
-
-  useEffect(() => {
-    const init = async () => {
-      if (!resume) await clearSession(slug)
-
-      if (resume) {
-        const session = await loadSession(slug)
-        if (session && session.shuffleOrder.length > 0) {
-          const restored = session.shuffleOrder
-            .map((id) => displayData.find((q) => q.id === id))
-            .filter((q): q is Question => q != null)
-            .map((q) => {
-              const isCorrect = session.correctIds.includes(q.id)
-              const isWrong = session.incorrectIds.includes(q.id)
-              return {
-                question: q,
-                status: isCorrect ? ('correct' as const) : isWrong ? ('wrong' as const) : null,
-                ...(isCorrect ? { input: q.answer, expected: q.answer } : {}),
-                ...(isWrong ? { input: '', expected: q.answer } : {}),
-              }
-            })
-          if (restored.length === displayData.length) {
-            setCards(restored)
-            setIsLoading(false)
-            return
-          }
-        }
-      }
-
-      setCards(shuffle(displayData).map((q) => ({ question: q, status: null })))
-      setIsLoading(false)
-    }
-    init()
-  }, [slug, resume])
 
   const onAnswer = (answeredRight: boolean, input: string, expected: string, _question: Question) => {
     if (currentIndex === -1) return
@@ -124,7 +124,7 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
     setCards(shuffle(dataToShuffle).map((q) => ({ question: q, status: null })))
   }
 
-  if (!rawData || cards.length === 0 || isLoading) return null
+  if (resume && !resumeApplied) return null
   return (
     <div className="min-h-screen p-4 flex flex-col items-center justify-center relative overflow-hidden">
       <AnimatePresence mode="wait">
