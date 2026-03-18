@@ -76,8 +76,7 @@ const Entry = ({
       animate={{ y: 0, opacity: 1, transition: { delay: animationDelay } }}
       exit={{ opacity: 0 }}
       whileHover={{
-        y: -3,
-        scale: 1.005,
+        scale: 1.02,
         transition: { type: "spring", stiffness: 400, damping: 30 },
       }}
       className="flex border-none font-[inherit] flex-col justify-center rounded bg-bg-400 overflow-hidden p-6 cursor-pointer outline-transparent relative focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--clr-card-accent)_20%,transparent),_0_4px_24px_color-mix(in_srgb,var(--clr-card-accent)_8%,transparent)] transition-shadow duration-300"
