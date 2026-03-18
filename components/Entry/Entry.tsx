@@ -2,9 +2,11 @@ import { getAccentForClass, getHumanReadableClass, groupBy } from "@lib/utils";
 import { getScoreHistory, loadSession } from "@lib/storage";
 import { AnimatePresence, motion } from "motion/react";
 import { Category, Danger, Edit, NoteText } from "@components/icons";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { FC, PropsWithChildren, useEffect, useState } from "react";
+
+const ScoreChart = dynamic(() => import("./ScoreChart"), { ssr: false, loading: () => null });
 import type { Topic } from "@/types";
 
 interface Props {
@@ -245,18 +247,7 @@ const Entry = ({
             {scoreHistory.length > 0 && (
               <div className="mt-4 rounded-md bg-bg-500 p-3 [&_svg]:outline-none" onClick={(e) => e.stopPropagation()}>
                 <p className="text-[0.65rem] tracking-[2px] text-text-muted font-medium mb-2">SCORE HISTORY</p>
-                <ResponsiveContainer width="100%" height={100}>
-                  <LineChart data={scoreHistory.map((h, i) => ({ i: i + 1, score: h.score }))}>
-                    <XAxis dataKey="i" hide />
-                    <YAxis domain={[0, 100]} hide />
-                    <Tooltip
-                      formatter={(v) => `${v}%`}
-                      contentStyle={{ background: "var(--color-bg-500)", border: "1px solid var(--color-bg-600)", borderRadius: "6px", fontSize: "0.75rem" }}
-                      labelFormatter={(l) => `Attempt ${l}`}
-                    />
-                    <Line type="monotone" dataKey="score" stroke={getAccentForClass(classString)} strokeWidth={2} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
+                <ScoreChart data={scoreHistory.map((h, i) => ({ i: i + 1, score: h.score }))} stroke={getAccentForClass(classString)} />
               </div>
             )}
           </motion.div>
