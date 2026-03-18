@@ -41,7 +41,17 @@ export default function HomeClient({ topics }: Props) {
   const toggleCollapse = () => setIsCollapsed((prev) => !prev)
 
   return (
-    <main className="px-8 py-8 mx-auto w-full max-w-[800px] flex flex-col">
+    <main className="relative px-8 py-8 mx-auto w-full max-w-[800px] flex flex-col">
+      <div
+        className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-8 w-[500px] h-[300px] rounded-full"
+        style={{
+          background: "radial-gradient(ellipse at center, var(--color-accent-blue), transparent 70%)",
+          filter: "blur(60px)",
+          opacity: 0.06,
+          zIndex: -1,
+        }}
+        aria-hidden="true"
+      />
       <motion.h1
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
