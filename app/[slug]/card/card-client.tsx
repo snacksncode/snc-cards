@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import FlipCard from '@components/FlipCard'
 import EndCard from '@components/EndCard'
 import ProgressBar from '@components/ProgressBar'
@@ -31,20 +31,21 @@ interface Props {
   rawData: Question[]
   dataClass: ClassString
   reversed?: boolean
+  resume?: boolean
 }
 
-export default function CardClient({ slug, title: _title, rawData, dataClass, reversed = false }: Props) {
+export default function CardClient({ slug, title: _title, rawData, dataClass, reversed = false, resume = false }: Props) {
   const displayData = reversed
     ? rawData.map((q) => ({ ...q, question: q.answer, answer: q.question }))
     : rawData
-  const [resumeSession] = useState(() => loadSession(slug))
-  const [showResume, setShowResume] = useState(resumeSession !== null)
   const [incorrectAnswers, setIncorrectAnswers] = useState<Question[]>([])
   const [correctAnswers, setCorrectAnswers] = useState<Question[]>([])
   const [streak, setStreak, maxStreak, resetStreak] = useStreak()
   const [showHints, setShowHints] = useState<boolean | null>(null)
-  const [cardStats] = useState(() => getCardStats(slug))
-  const { data, isShuffled, reshuffle } = useShuffledData(displayData, cardStats)
+  const [cardStats, setCardStats] = useState<Record<number, { correct: number; incorrect: number }>>({})
+  const [isLoading, setIsLoading] = useState(true)
+  const resumeApplied = useRef(false)
+  const { data: shuffledData, isShuffled, reshuffle, setOrder } = useShuffledData(displayData, cardStats)
   const {
     selectedItem,
     selectedIndex,
@@ -53,30 +54,45 @@ export default function CardClient({ slug, title: _title, rawData, dataClass, re
     resetIndex,
     amountOfItems,
     progress: { isDone },
-  } = useIndexSelectedData(data)
+    jumpToIndex,
+  } = useIndexSelectedData(shuffledData)
+
+  useEffect(() => {
+    const init = async () => {
+      if (!resume) {
+        await clearSession(slug)
+      }
+      const stats = await getCardStats(slug)
+      setCardStats(stats)
+      setIsLoading(false)
+    }
+    init()
+  }, [slug, resume])
+
+  useEffect(() => {
+    if (isLoading || resumeApplied.current || !resume) return
+    const applyResume = async () => {
+      const session = await loadSession(slug)
+      if (session && session.currentIndex > 0) {
+        if (session.shuffleOrder.length > 0) {
+          setOrder(session.shuffleOrder)
+        }
+        const correct = displayData.filter((q) => session.correctIds.includes(q.id))
+        const incorrect = displayData.filter((q) => session.incorrectIds.includes(q.id))
+        setCorrectAnswers(correct)
+        setIncorrectAnswers(incorrect)
+        jumpToIndex(session.currentIndex)
+      }
+      resumeApplied.current = true
+    }
+    applyResume()
+  }, [isLoading, slug, resume, displayData, jumpToIndex, setOrder])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
     const dismissed = localStorage.getItem('card-hints-dismissed')
     setShowHints(!dismissed)
   }, [])
-
-  const handleResume = () => {
-    if (!resumeSession) return
-    const correct = displayData.filter((q) => resumeSession.correctIds.includes(q.id))
-    const incorrect = displayData.filter((q) => resumeSession.incorrectIds.includes(q.id))
-    setCorrectAnswers(correct)
-    setIncorrectAnswers(incorrect)
-    for (let i = 0; i < resumeSession.currentIndex; i++) {
-      nextItem()
-    }
-    setShowResume(false)
-  }
-
-  const handleStartFresh = () => {
-    clearSession(slug)
-    setShowResume(false)
-  }
 
   const onAnswer = (rightAnswer: boolean, data: Question) => {
     updateCardStat(slug, data.id, rightAnswer)
@@ -89,12 +105,15 @@ export default function CardClient({ slug, title: _title, rawData, dataClass, re
     const nextIndex = selectedIndex + 1
     if (nextIndex >= amountOfItems) {
       clearSession(slug)
-      const correctCount = rightAnswer ? correctAnswers.length + 1 : correctAnswers.length
-      saveScore(slug, { score: Math.round((correctCount / rawData.length) * 100), total: rawData.length, mode: 'cards' })
+      const isFullRun = amountOfItems === rawData.length
+      if (isFullRun) {
+        const correctCount = rightAnswer ? correctAnswers.length + 1 : correctAnswers.length
+        saveScore(slug, { score: Math.round((correctCount / rawData.length) * 100), total: rawData.length, mode: 'cards' })
+      }
     } else {
       saveSession(slug, {
         currentIndex: nextIndex,
-        shuffleOrder: [],
+        shuffleOrder: shuffledData.map((q) => q.id),
         correctIds: newCorrectIds,
         incorrectIds: newIncorrectIds,
         mode: 'cards',
@@ -133,10 +152,6 @@ export default function CardClient({ slug, title: _title, rawData, dataClass, re
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (showHints) {
-        setShowHints(false)
-        localStorage.setItem('card-hints-dismissed', 'true')
-      }
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         e.preventDefault()
         handleUndo()
@@ -145,7 +160,7 @@ export default function CardClient({ slug, title: _title, rawData, dataClass, re
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedIndex, correctAnswers, incorrectAnswers, showHints])
+  }, [selectedIndex, correctAnswers, incorrectAnswers])
 
   const handleRestart = (newData: Question[] | null = null) => {
     resetIndex()
@@ -159,53 +174,26 @@ export default function CardClient({ slug, title: _title, rawData, dataClass, re
     return `${d.id}_${d.question}_${d.answer}`
   }
 
-  if (!rawData || !isShuffled || selectedItem == null) return null
+  if (!rawData || !isShuffled || selectedItem == null || isLoading) return null
   return (
     <div className="min-h-screen p-4 flex flex-col items-center justify-center relative overflow-hidden">
-      <AnimatePresence>
-        {showResume && resumeSession && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-bg-300/90 backdrop-blur-sm flex items-center justify-center z-50"
-          >
-            <div className="bg-bg-400 border border-bg-600 rounded-xl p-6 max-w-sm w-full mx-4 flex flex-col gap-4">
-              <p className="text-text font-semibold text-lg">Resume session?</p>
-              <p className="text-text-muted text-sm">
-                You left off at card {resumeSession.currentIndex + 1} of {rawData.length}
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={handleResume}
-                  className="flex-1 px-4 py-2 rounded-lg bg-accent-blue text-bg-300 font-medium hover:opacity-90 transition-opacity"
-                >
-                  Resume
-                </button>
-                <button
-                  onClick={handleStartFresh}
-                  className="flex-1 px-4 py-2 rounded-lg border border-bg-600 text-text-muted hover:text-text hover:border-text-muted transition-colors"
-                >
-                  Start Fresh
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {selectedIndex > 0 && !isDone && (
+        <button
+          onClick={handleUndo}
+          className="fixed top-4 left-4 flex items-center gap-1.5 text-sm text-text-muted hover:text-text transition-colors px-3 py-1.5 rounded-lg bg-bg-500 border border-bg-600 hover:border-text-muted cursor-pointer z-40"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 7v6h6" />
+            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+          </svg>
+          Undo
+        </button>
+      )}
       <AnimatePresence mode="wait">
         {!isDone ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="flex items-center justify-between gap-4 mb-4">
+            <div className="mb-4">
               <ProgressBar currentAmount={selectedIndex} maxAmount={amountOfItems} streak={streak} />
-              {selectedIndex > 0 && (
-                <button
-                  onClick={handleUndo}
-                  className="text-sm text-text-secondary hover:text-text-primary transition-colors px-3 py-1 rounded border border-text-secondary hover:border-text-primary"
-                >
-                  ↶ Undo
-                </button>
-              )}
             </div>
             <AnimatePresence>
               <FlipCard
@@ -228,22 +216,62 @@ export default function CardClient({ slug, title: _title, rawData, dataClass, re
           />
         )}
       </AnimatePresence>
+      <button
+        onClick={() => setShowHints(true)}
+        className="fixed bottom-4 right-4 w-10 h-10 rounded-full bg-bg-500 border border-bg-600 flex items-center justify-center text-text-muted hover:text-text hover:border-text-muted transition-colors cursor-pointer z-40"
+        aria-label="Show keyboard shortcuts"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      </button>
       <AnimatePresence>
         {showHints && (
           <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-            className="fixed bottom-0 left-0 right-0 bg-bg-500 border-t border-bg-600 px-4 py-3 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+            onClick={() => {
+              setShowHints(false)
+              localStorage.setItem('card-hints-dismissed', 'true')
+            }}
           >
-            <div className="max-w-4xl mx-auto flex flex-wrap gap-4 justify-center text-xs">
-              <Shortcut keys={['Enter', 'Space']} action="flip" />
-              <Shortcut keys={['Enter']} action="correct" />
-              <Shortcut keys={['Backspace']} action="wrong" />
-              <Shortcut keys={['Esc']} action="unflip" />
-              <Shortcut keys={['⌘Z', 'Ctrl+Z']} action="undo" />
-            </div>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-bg-400 border border-bg-600 rounded-xl p-6 max-w-md w-full mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-text m-0">Keyboard Shortcuts</h3>
+                <button
+                  onClick={() => {
+                    setShowHints(false)
+                    localStorage.setItem('card-hints-dismissed', 'true')
+                  }}
+                  className="text-text-muted hover:text-text transition-colors cursor-pointer bg-transparent border-none p-1"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Shortcut keys={['Space']} action="flip card" />
+                <Shortcut keys={['Enter']} action="mark correct (after flip)" />
+                <Shortcut keys={['Backspace']} action="mark wrong (after flip)" />
+                <Shortcut keys={['Esc']} action="unflip card" />
+                <Shortcut keys={['⌘Z', 'Ctrl+Z']} action="undo last answer" />
+              </div>
+              <p className="text-text-muted text-xs mt-4 m-0">
+                Click the <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-bg-600 text-[10px]">?</span> button to see this again.
+              </p>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

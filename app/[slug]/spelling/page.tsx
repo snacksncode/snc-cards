@@ -25,11 +25,11 @@ export default async function SpellingPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>
-  searchParams: Promise<{ dir?: string }>
+  searchParams: Promise<{ dir?: string; resume?: string }>
 }) {
   const { slug } = await params
-  const { dir } = await searchParams
+  const { dir, resume } = await searchParams
   const topic = getTopicBySlug(slug)
   if (!topic) notFound()
-  return <SpellingClient slug={slug} title={topic.title} rawData={topic.questions} dataClass={topic.class} reversed={dir === 'reverse'} />
+  return <SpellingClient slug={slug} title={topic.title} rawData={topic.questions} dataClass={topic.class} reversed={dir === 'reverse'} resume={resume === '1'} />
 }

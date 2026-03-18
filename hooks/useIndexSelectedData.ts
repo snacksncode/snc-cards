@@ -30,6 +30,16 @@ const useIndexSelectedData = <T>(dataArray: T[] | undefined, startingIndex?: num
     setSelectedIndex(startingIndex || 0);
   };
 
+  const jumpToIndex = (index: number) => {
+    if (dataArray == null) return;
+    if (index >= dataArray.length) {
+      setIsDone(true);
+      setSelectedIndex(dataArray.length - 1);
+    } else {
+      setSelectedIndex(Math.max(0, index));
+    }
+  };
+
   return {
     selectedItem,
     selectedIndex,
@@ -42,6 +52,7 @@ const useIndexSelectedData = <T>(dataArray: T[] | undefined, startingIndex?: num
     nextItem,
     prevItem,
     resetIndex,
+    jumpToIndex,
   };
 };
 

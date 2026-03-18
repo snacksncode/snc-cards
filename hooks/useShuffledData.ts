@@ -36,10 +36,19 @@ const useShuffledData = <T extends { id: number }>(
     setIsShuffled(true);
   }, [data]);
 
+  const setOrder = (ids: number[]) => {
+    const idMap = new Map(data.map((item) => [item.id, item]));
+    const ordered = ids.map((id) => idMap.get(id)).filter(Boolean) as T[];
+    if (ordered.length === data.length) {
+      setShuffledData(ordered);
+    }
+  };
+
   return {
     data: shuffledData,
     isShuffled,
     reshuffle,
+    setOrder,
   };
 };
 

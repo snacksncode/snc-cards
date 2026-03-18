@@ -1,5 +1,5 @@
 import { getAccentForClass, getHumanReadableClass, groupBy } from "@lib/utils";
-import { getScoreHistory } from "@lib/storage";
+import { getScoreHistory, loadSession } from "@lib/storage";
 import { AnimatePresence, motion } from "motion/react";
 import { Category, Danger, Edit, NoteText } from "@components/icons";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
@@ -22,6 +22,20 @@ const Tag: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
+const Toggle = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
+  <button
+    type="button"
+    role="switch"
+    aria-checked={checked}
+    onClick={(e) => { e.stopPropagation(); onChange(!checked); }}
+    className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer border-none ${checked ? 'bg-[var(--clr-card-accent)]' : 'bg-bg-600'}`}
+  >
+    <span
+      className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`}
+    />
+  </button>
+);
+
 const Entry = ({
   data: { title, slug, questions, class: classString },
   animationDelay,
@@ -30,14 +44,32 @@ const Entry = ({
 }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
   const [scoreHistory, setScoreHistory] = useState<{ date: string; score: number; total: number; mode: string }[]>([]);
+  const [savedSession, setSavedSession] = useState<{ currentIndex: number; mode: string } | null>(null);
+  const [reverseCards, setReverseCards] = useState(false);
+  const [reverseSpelling, setReverseSpelling] = useState(false);
   const hasDups = questions
     ? Object.values(groupBy(questions, (q) => q.question)).some((v) => v.length > 1)
     : false;
-  const lastScore = scoreHistory.at(-1);
 
   useEffect(() => {
-    setScoreHistory(getScoreHistory(slug));
+    getScoreHistory(slug).then(setScoreHistory);
   }, [slug]);
+
+  useEffect(() => {
+    if (isExpanded) {
+      loadSession(slug).then((session) => {
+        setSavedSession(session ? { currentIndex: session.currentIndex, mode: session.mode } : null);
+      });
+    }
+  }, [isExpanded, slug]);
+
+  const buildUrl = (mode: 'card' | 'spelling', reverse: boolean, resume: boolean) => {
+    const params = new URLSearchParams();
+    if (reverse) params.set('dir', 'reverse');
+    if (resume) params.set('resume', '1');
+    const query = params.toString();
+    return query ? `${slug}/${mode}?${query}` : `${slug}/${mode}`;
+  };
 
   return (
     <motion.button
@@ -46,7 +78,7 @@ const Entry = ({
       initial={{ y: -25, opacity: 0 }}
       animate={{ y: 0, opacity: 1, transition: { delay: animationDelay } }}
       exit={{ opacity: 0 }}
-      className="flex border-none font-[inherit] flex-col justify-center rounded shadow-[0_4px_15px_rgba(0,0,0,0.1)] bg-bg-400 overflow-hidden p-8 cursor-pointer outline-transparent relative focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+      className="flex border-none font-[inherit] flex-col justify-center rounded shadow-[0_4px_15px_rgba(0,0,0,0.1)] bg-bg-400 overflow-hidden p-6 cursor-pointer outline-transparent relative focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
       style={
         {
           "--clr-card-accent": getAccentForClass(classString),
@@ -89,7 +121,6 @@ const Entry = ({
               </motion.span>
             )}
           </Tag>
-          {lastScore && <Tag>Last: {lastScore.score}%</Tag>}
         </motion.div>
       </motion.div>
 
@@ -130,52 +161,89 @@ const Entry = ({
             animate={{ opacity: 1, height: "auto", transition: { delay: 0.15, ease: "circOut", duration: 0.3 } }}
             exit={{ opacity: 0, height: 0, transition: { ease: "circOut", duration: 0.3 } }}
           >
-            <div className="flex flex-wrap items-center justify-center mt-4 gap-6">
-              <div className="flex-1 flex flex-col gap-2">
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex w-full py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
-                  href={`${slug}/card`}
-                >
-                  <Category size={32} color="currentColor" />
-                  Cards
-                </Link>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex w-full py-1.5 px-4 rounded text-sm items-center justify-center gap-1.5 font-medium bg-bg-500 text-[var(--clr-card-accent)] opacity-60 hover:opacity-100 transition-opacity focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
-                  href={`${slug}/card?dir=reverse`}
-                >
-                  ↔ Reverse
-                </Link>
+            <div className="flex flex-col gap-3 mt-4">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 bg-bg-500 rounded-lg p-3" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-2">
+                  <Category size={24} color="var(--clr-card-accent)" />
+                  <span className="font-semibold text-[var(--clr-card-accent)]">Cards</span>
+                </div>
+                <div className="flex-1 min-w-0" />
+                <div className="flex items-center gap-2 text-xs text-text-muted">
+                  <span>Reverse</span>
+                  <Toggle checked={reverseCards} onChange={setReverseCards} />
+                </div>
+                {savedSession?.mode === 'cards' ? (
+                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <Link
+                      href={buildUrl('card', reverseCards, true)}
+                      className="px-3 py-1.5 rounded bg-[var(--clr-card-accent)] text-bg-300 text-sm font-semibold hover:opacity-90 transition-opacity text-center"
+                    >
+                      Resume ({savedSession.currentIndex}/{questions.length})
+                    </Link>
+                    <Link
+                      href={buildUrl('card', reverseCards, false)}
+                      className="px-3 py-1.5 rounded border border-bg-600 text-text-muted text-sm hover:text-text hover:border-text-muted transition-colors text-center"
+                    >
+                      New
+                    </Link>
+                  </div>
+                ) : (
+                  <Link
+                    href={buildUrl('card', reverseCards, false)}
+                    className="px-4 py-1.5 rounded bg-[var(--clr-card-accent)] text-bg-300 text-sm font-semibold hover:opacity-90 transition-opacity w-full sm:w-auto text-center"
+                  >
+                    Start
+                  </Link>
+                )}
               </div>
-              <div className="flex-1 flex flex-col gap-2">
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex w-full py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
-                  href={`${slug}/spelling`}
-                >
-                  <Edit size={32} color="currentColor" />
-                  Spelling
-                </Link>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex w-full py-1.5 px-4 rounded text-sm items-center justify-center gap-1.5 font-medium bg-bg-500 text-[var(--clr-card-accent)] opacity-60 hover:opacity-100 transition-opacity focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
-                  href={`${slug}/spelling?dir=reverse`}
-                >
-                  ↔ Reverse
-                </Link>
+
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 bg-bg-500 rounded-lg p-3" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-2">
+                  <Edit size={24} color="var(--clr-card-accent)" />
+                  <span className="font-semibold text-[var(--clr-card-accent)]">Spelling</span>
+                </div>
+                <div className="flex-1 min-w-0" />
+                <div className="flex items-center gap-2 text-xs text-text-muted">
+                  <span>Reverse</span>
+                  <Toggle checked={reverseSpelling} onChange={setReverseSpelling} />
+                </div>
+                {savedSession?.mode === 'spelling' ? (
+                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <Link
+                      href={buildUrl('spelling', reverseSpelling, true)}
+                      className="px-3 py-1.5 rounded bg-[var(--clr-card-accent)] text-bg-300 text-sm font-semibold hover:opacity-90 transition-opacity text-center"
+                    >
+                      Resume ({savedSession.currentIndex}/{questions.length})
+                    </Link>
+                    <Link
+                      href={buildUrl('spelling', reverseSpelling, false)}
+                      className="px-3 py-1.5 rounded border border-bg-600 text-text-muted text-sm hover:text-text hover:border-text-muted transition-colors text-center"
+                    >
+                      New
+                    </Link>
+                  </div>
+                ) : (
+                  <Link
+                    href={buildUrl('spelling', reverseSpelling, false)}
+                    className="px-4 py-1.5 rounded bg-[var(--clr-card-accent)] text-bg-300 text-sm font-semibold hover:opacity-90 transition-opacity w-full sm:w-auto text-center"
+                  >
+                    Start
+                  </Link>
+                )}
               </div>
+
               <Link
                 onClick={(e) => e.stopPropagation()}
-                className="flex flex-1 py-3 px-8 rounded-md text-base items-center justify-center relative gap-2 font-bold bg-bg-500 text-[var(--clr-card-accent)] [&_svg]:w-6 shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-shadow duration-250 focus:outline-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2"
+                className="flex items-center gap-2 bg-bg-500 rounded-lg p-3 text-[var(--clr-card-accent)] font-semibold hover:shadow-[0_4px_15px_rgba(0,0,0,0.2)] transition-shadow"
                 href={`${slug}/list`}
               >
-                <NoteText size={32} color="currentColor" />
+                <NoteText size={24} color="currentColor" />
                 List
               </Link>
             </div>
+
             {scoreHistory.length > 0 && (
-              <div className="mt-4 rounded-md bg-bg-500 p-3" onClick={(e) => e.stopPropagation()}>
+              <div className="mt-4 rounded-md bg-bg-500 p-3 [&_svg]:outline-none" onClick={(e) => e.stopPropagation()}>
                 <p className="text-[0.65rem] tracking-[2px] text-text-muted font-medium mb-2">SCORE HISTORY</p>
                 <ResponsiveContainer width="100%" height={100}>
                   <LineChart data={scoreHistory.map((h, i) => ({ i: i + 1, score: h.score }))}>
@@ -186,7 +254,7 @@ const Entry = ({
                       contentStyle={{ background: "var(--color-bg-500)", border: "1px solid var(--color-bg-600)", borderRadius: "6px", fontSize: "0.75rem" }}
                       labelFormatter={(l) => `Attempt ${l}`}
                     />
-                    <Line type="monotone" dataKey="score" stroke="var(--color-accent-blue)" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="score" stroke={getAccentForClass(classString)} strokeWidth={2} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
