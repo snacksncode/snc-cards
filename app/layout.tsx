@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Poppins, Source_Code_Pro, Instrument_Serif } from 'next/font/google'
+import LayoutTransition from '@components/LayoutTransition'
 import './globals.css'
 
 const poppins = Poppins({
@@ -37,7 +38,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} ${sourceCodePro.variable} ${instrumentSerif.variable}`}>
       <body className="min-h-screen w-screen! overflow-x-hidden flex flex-col bg-bg-300 text-text font-sans">
-        {children}
+        <LayoutTransition>
+          {children}
+        </LayoutTransition>
       </body>
     </html>
   )
