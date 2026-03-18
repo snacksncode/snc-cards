@@ -50,12 +50,24 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
         if (session.shuffleOrder.length > 0) {
           setOrder(session.shuffleOrder)
         }
+        if (session.correctIds.length > 0) {
+          const correct = displayData
+            .filter((q) => session.correctIds.includes(q.id))
+            .map((q) => ({ input: q.answer, expected: q.answer, data: q }))
+          setCorrectAnswers(correct)
+        }
+        if (session.incorrectIds.length > 0) {
+          const incorrect = displayData
+            .filter((q) => session.incorrectIds.includes(q.id))
+            .map((q) => ({ input: '', expected: q.answer, data: q }))
+          setIncorrectAnswers(incorrect)
+        }
         jumpToIndex(session.currentIndex)
       }
       resumeApplied.current = true
     }
     applyResume()
-  }, [isLoading, slug, resume, jumpToIndex, setOrder])
+  }, [isLoading, slug, resume, displayData, jumpToIndex, setOrder])
   const [incorrectAnswers, setIncorrectAnswers] = useState<SpellingData[]>([])
   const [correctAnswers, setCorrectAnswers] = useState<SpellingData[]>([])
   const [streak, setStreak, maxStreak, resetStreak] = useStreak()
@@ -70,6 +82,12 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
 
   const onAnswer = (answeredRight: boolean, input: string, expected: string, data: Question) => {
     const nextIndex = selectedIndex + 1
+    const newCorrectIds = answeredRight
+      ? [...correctAnswers.map((a) => a.data.id), data.id]
+      : correctAnswers.map((a) => a.data.id)
+    const newIncorrectIds = !answeredRight
+      ? [...incorrectAnswers.map((a) => a.data.id), data.id]
+      : incorrectAnswers.map((a) => a.data.id)
     if (nextIndex >= amountOfItems) {
       clearSession(slug)
       const isFullRun = amountOfItems === rawData.length
@@ -81,8 +99,8 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
       saveSession(slug, {
         currentIndex: nextIndex,
         shuffleOrder: shuffledData.map((q) => q.id),
-        correctIds: [],
-        incorrectIds: [],
+        correctIds: newCorrectIds,
+        incorrectIds: newIncorrectIds,
         mode: "spelling",
       })
     }

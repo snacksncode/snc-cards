@@ -179,7 +179,7 @@ export async function populateAllFakeData(
 
       if (i < 3) {
         const sessionProgress = Math.floor(Math.random() * (numQuestions - 2)) + 1
-        const shuffleOrder = Array.from({ length: numQuestions }, (_, idx) => idx)
+        const shuffleOrder = topic.questions.map((q) => q.id)
         for (let k = shuffleOrder.length - 1; k > 0; k--) {
           const j = Math.floor(Math.random() * (k + 1));
           [shuffleOrder[k], shuffleOrder[j]] = [shuffleOrder[j], shuffleOrder[k]]

@@ -45,7 +45,7 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
 
   useEventListener("keydown", (e) => {
     if (!(e instanceof KeyboardEvent) || !isFlipped || answeredRight != null) return;
-    if (e.key === "Enter" || e.key === " ") {
+    if (e.key === "Enter") {
       setAnsweredRight(true);
     }
     if (e.key === "Backspace") {

@@ -44,6 +44,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   const [cardStats, setCardStats] = useState<Record<number, { correct: number; incorrect: number }>>({})
   const [isLoading, setIsLoading] = useState(true)
   const resumeApplied = useRef(false)
+  const answerHistory = useRef<boolean[]>([])
   const { data: shuffledData, isShuffled, reshuffle, setOrder } = useShuffledData(displayData, cardStats)
   const {
     selectedItem,
@@ -129,19 +130,18 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
     if (rightAnswer === false) {
       setStreak(0)
     }
+    answerHistory.current.push(rightAnswer)
     nextItem()
   }
 
   const handleUndo = () => {
-    if (selectedIndex === 0) return
+    if (selectedIndex === 0 || answerHistory.current.length === 0) return
 
-    const lastCorrect = correctAnswers[correctAnswers.length - 1]
-    const lastIncorrect = incorrectAnswers[incorrectAnswers.length - 1]
-
-    if (lastCorrect && correctAnswers.length > 0) {
+    const wasCorrect = answerHistory.current.pop()
+    if (wasCorrect === true) {
       setCorrectAnswers((prev) => prev.slice(0, -1))
       setStreak((c) => c - 1)
-    } else if (lastIncorrect && incorrectAnswers.length > 0) {
+    } else if (wasCorrect === false) {
       setIncorrectAnswers((prev) => prev.slice(0, -1))
       setStreak(0)
     }
@@ -261,7 +261,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
                 </button>
               </div>
               <div className="flex flex-col gap-3">
-                <Shortcut keys={['Space']} action="flip card" />
+                <Shortcut keys={['Enter']} action="flip card" />
                 <Shortcut keys={['Enter']} action="mark correct (after flip)" />
                 <Shortcut keys={['Backspace']} action="mark wrong (after flip)" />
                 <Shortcut keys={['Esc']} action="unflip card" />
