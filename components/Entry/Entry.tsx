@@ -67,7 +67,9 @@ const Entry = ({
   };
 
   return (
-    <motion.button
+    <motion.div
+      role="button"
+      tabIndex={0}
       layout
       key={slug}
       initial={{ y: -25, opacity: 0 }}
@@ -82,6 +84,7 @@ const Entry = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onToggle(slug)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onToggle(slug); }}
     >
       <motion.div
         layout
@@ -246,7 +249,7 @@ const Entry = ({
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.button>
+    </motion.div>
   );
 };
 
