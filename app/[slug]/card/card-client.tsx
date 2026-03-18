@@ -1,14 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import FlipCard from '@components/FlipCard'
 import EndCard from '@components/EndCard'
 import ProgressBar from '@components/ProgressBar'
-import useIndexSelectedData from '@hooks/useIndexSelectedData'
-import useShuffledData from '@hooks/useShuffledData'
 import { AnimatePresence, motion } from 'motion/react'
-import useStreak from '@hooks/useStreak'
 import { saveSession, loadSession, clearSession, saveScore, getCardStats, updateCardStat } from '@lib/storage'
+import { shuffle, weightedShuffle } from '@lib/utils'
 import type { ClassString, Question } from '@/types'
 
 const Shortcut = ({ keys, action }: { keys: string[]; action: string }) => (
@@ -25,6 +23,11 @@ const Shortcut = ({ keys, action }: { keys: string[]; action: string }) => (
   </div>
 )
 
+interface CardEntry {
+  question: Question
+  status: 'correct' | 'wrong' | null
+}
+
 interface Props {
   slug: string
   rawData: Question[]
@@ -37,56 +40,68 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   const displayData = reversed
     ? rawData.map((q) => ({ ...q, question: q.answer, answer: q.question }))
     : rawData
-  const [incorrectAnswers, setIncorrectAnswers] = useState<Question[]>([])
-  const [correctAnswers, setCorrectAnswers] = useState<Question[]>([])
-  const [streak, setStreak, maxStreak, resetStreak] = useStreak()
-  const [showHints, setShowHints] = useState<boolean | null>(null)
-  const [cardStats, setCardStats] = useState<Record<number, { correct: number; incorrect: number }>>({})
+  const [cards, setCards] = useState<CardEntry[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const resumeApplied = useRef(false)
-  const answerHistory = useRef<boolean[]>([])
-  const { data: shuffledData, isShuffled, reshuffle, setOrder } = useShuffledData(displayData, cardStats)
-  const {
-    selectedItem,
-    selectedIndex,
-    nextItem,
-    prevItem,
-    resetIndex,
-    amountOfItems,
-    progress: { isDone },
-    jumpToIndex,
-  } = useIndexSelectedData(shuffledData)
+  const [showHints, setShowHints] = useState<boolean | null>(null)
+
+  const currentIndex = cards.findIndex((c) => c.status === null)
+  const isDone = cards.length > 0 && currentIndex === -1
+  const currentCard = currentIndex >= 0 ? cards[currentIndex] : null
+  const correctQuestions = cards.filter((c) => c.status === 'correct').map((c) => c.question)
+  const incorrectQuestions = cards.filter((c) => c.status === 'wrong').map((c) => c.question)
+
+  const answered = cards.filter((c) => c.status !== null)
+  let streak = 0
+  for (let i = answered.length - 1; i >= 0; i--) {
+    if (answered[i].status === 'correct') streak++
+    else break
+  }
+  let maxStreak = 0
+  let run = 0
+  for (const c of answered) {
+    if (c.status === 'correct') {
+      run++
+      if (run > maxStreak) maxStreak = run
+    } else {
+      run = 0
+    }
+  }
 
   useEffect(() => {
     const init = async () => {
-      if (!resume) {
-        await clearSession(slug)
+      if (!resume) await clearSession(slug)
+
+      if (resume) {
+        const session = await loadSession(slug)
+        if (session && session.shuffleOrder.length > 0) {
+          const restored = session.shuffleOrder
+            .map((id) => displayData.find((q) => q.id === id))
+            .filter((q): q is Question => q != null)
+            .map((q) => ({
+              question: q,
+              status: session.correctIds.includes(q.id)
+                ? ('correct' as const)
+                : session.incorrectIds.includes(q.id)
+                  ? ('wrong' as const)
+                  : null,
+            }))
+          if (restored.length === displayData.length) {
+            setCards(restored)
+            setIsLoading(false)
+            return
+          }
+        }
       }
+
       const stats = await getCardStats(slug)
-      setCardStats(stats)
+      const shuffled = Object.keys(stats).length > 0
+        ? weightedShuffle(displayData, stats)
+        : shuffle(displayData)
+      setCards(shuffled.map((q) => ({ question: q, status: null })))
       setIsLoading(false)
     }
     init()
   }, [slug, resume])
-
-  useEffect(() => {
-    if (isLoading || resumeApplied.current || !resume) return
-    const applyResume = async () => {
-      const session = await loadSession(slug)
-      if (session && session.currentIndex > 0) {
-        if (session.shuffleOrder.length > 0) {
-          setOrder(session.shuffleOrder)
-        }
-        const correct = displayData.filter((q) => session.correctIds.includes(q.id))
-        const incorrect = displayData.filter((q) => session.incorrectIds.includes(q.id))
-        setCorrectAnswers(correct)
-        setIncorrectAnswers(incorrect)
-        jumpToIndex(session.currentIndex)
-      }
-      resumeApplied.current = true
-    }
-    applyResume()
-  }, [isLoading, slug, resume, displayData, jumpToIndex, setOrder])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -94,59 +109,38 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
     setShowHints(!dismissed)
   }, [])
 
-  const onAnswer = (rightAnswer: boolean, data: Question) => {
-    updateCardStat(slug, data.id, rightAnswer)
-    const newCorrectIds = rightAnswer
-      ? [...correctAnswers.map((q) => q.id), data.id]
-      : correctAnswers.map((q) => q.id)
-    const newIncorrectIds = !rightAnswer
-      ? [...incorrectAnswers.map((q) => q.id), data.id]
-      : incorrectAnswers.map((q) => q.id)
-    const nextIndex = selectedIndex + 1
-    if (nextIndex >= amountOfItems) {
+  const onAnswer = (rightAnswer: boolean, _question: Question) => {
+    if (currentIndex === -1) return
+    const card = cards[currentIndex]
+    updateCardStat(slug, card.question.id, rightAnswer)
+
+    const newCards = cards.map((c, i) =>
+      i === currentIndex ? { ...c, status: rightAnswer ? ('correct' as const) : ('wrong' as const) } : c
+    )
+    setCards(newCards)
+
+    const nextIdx = newCards.findIndex((c) => c.status === null)
+    if (nextIdx === -1) {
       clearSession(slug)
-      const isFullRun = amountOfItems === rawData.length
-      if (isFullRun) {
-        const correctCount = rightAnswer ? correctAnswers.length + 1 : correctAnswers.length
+      if (newCards.length === rawData.length) {
+        const correctCount = newCards.filter((c) => c.status === 'correct').length
         saveScore(slug, { score: Math.round((correctCount / rawData.length) * 100), total: rawData.length, mode: 'cards' })
       }
     } else {
       saveSession(slug, {
-        currentIndex: nextIndex,
-        shuffleOrder: shuffledData.map((q) => q.id),
-        correctIds: newCorrectIds,
-        incorrectIds: newIncorrectIds,
+        currentIndex: nextIdx,
+        shuffleOrder: newCards.map((c) => c.question.id),
+        correctIds: newCards.filter((c) => c.status === 'correct').map((c) => c.question.id),
+        incorrectIds: newCards.filter((c) => c.status === 'wrong').map((c) => c.question.id),
         mode: 'cards',
       })
     }
-    const stateUpdater = rightAnswer ? setCorrectAnswers : setIncorrectAnswers
-    stateUpdater((prevState) => {
-      if (prevState == null) return [data]
-      return [...prevState, data]
-    })
-    if (rightAnswer === true) {
-      setStreak((c) => c + 1)
-    }
-    if (rightAnswer === false) {
-      setStreak(0)
-    }
-    answerHistory.current.push(rightAnswer)
-    nextItem()
   }
 
   const handleUndo = () => {
-    if (selectedIndex === 0 || answerHistory.current.length === 0) return
-
-    const wasCorrect = answerHistory.current.pop()
-    if (wasCorrect === true) {
-      setCorrectAnswers((prev) => prev.slice(0, -1))
-      setStreak((c) => c - 1)
-    } else if (wasCorrect === false) {
-      setIncorrectAnswers((prev) => prev.slice(0, -1))
-      setStreak(0)
-    }
-
-    prevItem()
+    const lastAnsweredIdx = cards.reduceRight<number>((found, c, i) => found >= 0 ? found : c.status !== null ? i : -1, -1)
+    if (lastAnsweredIdx === -1) return
+    setCards((prev) => prev.map((c, i) => i === lastAnsweredIdx ? { ...c, status: null } : c))
   }
 
   useEffect(() => {
@@ -161,27 +155,19 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
         handleUndo()
       }
     }
-
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedIndex, correctAnswers, incorrectAnswers, showHints])
+  }, [cards, showHints])
 
-  const handleRestart = (newData: Question[] | null = null) => {
-    resetIndex()
-    setIncorrectAnswers([])
-    setCorrectAnswers([])
-    reshuffle(newData)
-    resetStreak()
+  const handleRestart = (retryData: Question[] | null = null) => {
+    const dataToShuffle = retryData ?? displayData
+    setCards(shuffle(dataToShuffle).map((q) => ({ question: q, status: null })))
   }
 
-  const getKeyFromData = (d: Question) => {
-    return `${d.id}_${d.question}_${d.answer}`
-  }
-
-  if (!rawData || !isShuffled || selectedItem == null || isLoading) return null
+  if (!rawData || cards.length === 0 || isLoading) return null
   return (
     <div className="min-h-screen p-4 flex flex-col items-center justify-center relative overflow-hidden">
-      {selectedIndex > 0 && !isDone && (
+      {answered.length > 0 && !isDone && (
         <button
           onClick={handleUndo}
           className="fixed top-4 left-4 flex items-center gap-1.5 text-sm text-text-muted hover:text-text transition-colors px-3 py-1.5 rounded-lg bg-bg-500 border border-bg-600 hover:border-text-muted cursor-pointer z-40"
@@ -194,31 +180,31 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
         </button>
       )}
       <AnimatePresence mode="wait">
-        {!isDone ? (
+        {!isDone && currentCard ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <div className="mb-4">
-              <ProgressBar currentAmount={selectedIndex} maxAmount={amountOfItems} streak={streak} />
+              <ProgressBar currentAmount={answered.length} maxAmount={cards.length} streak={streak} />
             </div>
             <AnimatePresence>
               <FlipCard
-                key={getKeyFromData(selectedItem)}
+                key={`${currentCard.question.id}_${currentCard.question.question}_${currentCard.question.answer}`}
                 dataClass={dataClass}
                 onAnswer={onAnswer}
-                data={selectedItem}
+                data={currentCard.question}
               />
             </AnimatePresence>
           </motion.div>
-        ) : (
+        ) : isDone ? (
           <EndCard
             key="endcard"
             mode="cards"
-            data={{ correct: correctAnswers, incorrect: incorrectAnswers }}
+            data={{ correct: correctQuestions, incorrect: incorrectQuestions }}
             dataClass={dataClass}
             amount={rawData.length}
             onRestart={handleRestart}
             streak={maxStreak}
           />
-        )}
+        ) : null}
       </AnimatePresence>
       <button
         onClick={() => setShowHints(true)}
