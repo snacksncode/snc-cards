@@ -21,7 +21,7 @@ const Streak: FC<Props> = ({ streak }) => {
         <motion.div
           key="streak"
           initial={{ scale: 0.85, opacity: 0, y: -10 }}
-          animate={{ scale: shouldPulse ? 1.125 : 1, opacity: 1, y: 0 }}
+          animate={{ scale: shouldPulse ? 1.125 : 1, opacity: 1, y: 0, transition: { type: "spring", stiffness: 400, damping: 30 } }}
           exit={{ opacity: 0 }}
           className="mt-4 w-fit text-center text-[0.75em] font-medium relative isolate z-[1] rounded border-2 border-accent-peachy text-accent-peachy flex"
         >

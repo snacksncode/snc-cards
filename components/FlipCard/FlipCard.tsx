@@ -9,14 +9,14 @@ import { useEventListener } from "@hooks/useEventListener";
 import type { ClassString, Question } from "@/types";
 
 const flip = {
-  unflipped: { rotateX: 0, transition: { type: "spring" as const, stiffness: 100 } },
-  flipped: { rotateX: 180, transition: { type: "spring" as const, stiffness: 100 } },
+  unflipped: { rotateX: 0, transition: { type: "spring" as const, stiffness: 200, damping: 20 } },
+  flipped: { rotateX: 180, transition: { type: "spring" as const, stiffness: 200, damping: 20 } },
 };
 
 const card = {
   out: { opacity: 0, x: "50%", y: "-50%", scale: 0.25 },
-  in: { opacity: 1, x: "-50%", y: "-50%", scale: 1, transition: { type: "spring" as const, damping: 12 } },
-  outExit: { opacity: 0, x: "-150%", y: "-50%", scale: 0.25, transition: { type: "spring" as const, damping: 12 } },
+  in: { opacity: 1, x: "-50%", y: "-50%", scale: 1, transition: { type: "spring" as const, stiffness: 120, damping: 20 } },
+  outExit: { opacity: 0, x: "-150%", y: "-50%", scale: 0.25, transition: { type: "spring" as const, stiffness: 120, damping: 20 } },
 };
 
 interface Props {
