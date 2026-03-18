@@ -1,7 +1,8 @@
 import { cn } from "@lib/cn";
 import { MessageQuestion, ArrowRotateRight, Back } from "@components/icons";
-import { motion, AnimatePresence, LayoutGroup } from "motion/react";
-import { FC, useState } from "react";
+import { motion, AnimatePresence, LayoutGroup, useMotionValue, animate } from "motion/react";
+import { FC, useRef, useState } from "react";
+import confetti from "canvas-confetti";
 import EndCardReview from "@components/EndCardReview";
 import { getStreakEmojis } from "@lib/utils";
 import Link from "next/link";
@@ -29,6 +30,17 @@ const isSpellingData = (input: Question[] | SpellingData[]): input is SpellingDa
   return false;
 };
 
+const getAccentHex = (cls: ClassString) => {
+  switch (cls) {
+    case "en":
+      return "#6B9FE8";
+    case "de":
+      return "#E8A168";
+    case "geo":
+      return "#5EC87E";
+  }
+};
+
 const buttonBase = cn(
   "bg-transparent cursor-pointer border-2 border-[var(--accent)] text-[var(--accent)]",
   "rounded px-3 py-1.5 font-bold text-sm inline-flex items-center justify-center gap-2",
@@ -41,6 +53,29 @@ const buttonBase = cn(
 const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }) => {
   const [isReviewOpened, setIsReviewOpened] = useState(false);
   const score = (((amount - data.incorrect.length) / amount) * 100).toFixed(1);
+  const scoreNum = useMotionValue(0);
+  const scoreRef = useRef<HTMLSpanElement>(null);
+  const hasAnimated = useRef(false);
+
+  if (!hasAnimated.current) {
+    hasAnimated.current = true;
+    animate(scoreNum, parseFloat(score), {
+      duration: 1.5,
+      ease: "easeOut",
+      onUpdate: (v) => {
+        if (scoreRef.current) scoreRef.current.textContent = v.toFixed(1) + "%";
+      },
+    });
+    if (parseFloat(score) >= 80) {
+      const color = getAccentHex(dataClass);
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: [color, "#ffffff", color],
+      });
+    }
+  }
   const handleRestart = (newData: Question[] | SpellingData[] | null = null) => {
     setIsReviewOpened(false);
     if (newData && isSpellingData(newData)) {
@@ -65,9 +100,19 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
         layout="position"
         className="w-full max-w-[750px] mx-8 rounded z-[2] px-4"
       >
-        <h1 className="text-4xl sm:text-[2.75rem] font-serif font-bold leading-[120%] mb-4">
-          Your end score was <span className="text-accent-green">{score}%</span>
+        <h1 className="text-5xl sm:text-6xl font-serif font-bold leading-[120%] mb-4">
+          Your end score was{" "}
+          <span className="text-accent-green" ref={scoreRef}>
+            0.0%
+          </span>
         </h1>
+        <p className="text-text-muted text-sm mb-4 m-0">
+          {parseFloat(score) >= 80
+            ? "Amazing work! 🎉"
+            : parseFloat(score) >= 50
+              ? "Nice work! Keep it up."
+              : "Keep going! Practice makes progress."}
+        </p>
         {streak >= 5 && (
           <h3>
             Highest streak: {streak}
