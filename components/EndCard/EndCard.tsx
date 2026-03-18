@@ -42,10 +42,10 @@ const getAccentHex = (cls: ClassString) => {
 };
 
 const buttonBase = cn(
-  "bg-transparent cursor-pointer border-2 border-[var(--accent)] text-[var(--accent)]",
+  "bg-[var(--accent)]/8 cursor-pointer border-2 border-[var(--accent)] text-[var(--accent)]",
   "rounded px-3 py-1.5 font-bold text-sm inline-flex items-center justify-center gap-2",
   "transition-colors duration-200",
-  "hover:bg-[var(--accent)] hover:text-bg-200",
+  "hover:bg-[var(--accent)]/20",
   "focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
   "focus-visible:bg-[var(--accent)] focus-visible:text-bg-200"
 );

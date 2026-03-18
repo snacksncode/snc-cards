@@ -22,7 +22,7 @@ const FlipCardButton: FC<Props> = ({ isMobile, icon, onClick, position, color })
       transition={{ type: "spring" }}
       whileHover={{ scale: 1.125, transition: { duration: 0.2 } }}
       className={cn(
-        "absolute bg-transparent border-none cursor-pointer px-6 py-0 rounded text-[var(--clr-accent)] [&_svg]:w-[75px] [&_svg]:h-[75px] focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-accent)] focus-visible:outline-offset-[0.5rem]",
+        "absolute bg-[var(--clr-accent)]/8 border-none cursor-pointer px-6 py-0 rounded text-[var(--clr-accent)] [&_svg]:w-[75px] [&_svg]:h-[75px] focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-accent)] focus-visible:outline-offset-[0.5rem]",
         { "w-1/2 [&_svg]:w-[60px] [&_svg]:h-[60px]": isMobile }
       )}
       onClick={onClick}
