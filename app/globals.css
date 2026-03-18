@@ -1,34 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  /* Fonts */
   --font-sans: 'Poppins', system-ui, sans-serif;
   --font-mono: 'Source Code Pro', monospace;
+  --font-serif: 'Instrument Serif', Georgia, serif;
 
-  /* Background scale (dark theme) */
-  --color-bg-200: hsl(0 0% 10%);
-  --color-bg-300: hsl(0 0% 13%);
-  --color-bg-400: hsl(0 0% 16%);
-  --color-bg-500: hsl(0 0% 20%);
-  --color-bg-600: hsl(0 0% 30%);
-  --color-bg-card: hsl(0 0% 20%);
+  --color-bg-200: hsl(35 4% 10%);
+  --color-bg-300: hsl(35 4% 13%);
+  --color-bg-400: hsl(35 5% 16%);
+  --color-bg-500: hsl(35 5% 20%);
+  --color-bg-600: hsl(35 4% 30%);
+  --color-bg-card: hsl(35 5% 20%);
 
-  /* Text */
-  --color-text: hsl(0 0% 96%);
-  --color-text-muted: hsl(0 0% 70%);
+  --color-text: hsl(35 5% 96%);
+  --color-text-muted: hsl(35 4% 70%);
 
-  /* Accent colors */
   --color-accent-blue: hsl(212 75% 70%);
   --color-accent-green: hsl(124 60% 69%);
   --color-accent-green-darker: hsl(124 40% 56%);
-  --color-accent-peachy: hsl(23 90% 68%);
+  --color-accent-peachy: hsl(23 75% 65%);
   --color-accent-red: hsl(359 100% 70%);
   --color-accent-red-darker: hsl(359 63% 54%);
-  --color-accent-yellow: hsl(49 100% 50%);
-  --color-accent-pink: hsl(333 71% 51%);
+  --color-accent-yellow: hsl(49 85% 55%);
+  --color-accent-pink: hsl(333 55% 55%);
+  --color-accent-gold: hsl(43 85% 60%);
 }
 
-/* Custom 3D transform utilities for card flip */
 @utility perspective-1000 {
   perspective: 1000px;
 }
@@ -49,9 +46,20 @@
   will-change: transform;
 }
 
-/* Global resets */
 body {
   -webkit-tap-highlight-color: transparent;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
 }
 
 body.no-scroll {
