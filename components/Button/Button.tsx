@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 font-semibold transition-colors cursor-pointer rounded-lg border-none focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-[var(--btn-accent)]",
+  "inline-flex items-center justify-center gap-2 font-semibold transition-colors cursor-pointer rounded-lg focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-offset-2 focus-visible:outline-[var(--btn-accent)]",
   {
     variants: {
       variant: {

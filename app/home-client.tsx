@@ -17,6 +17,7 @@ export default function HomeClient({ topics }: Props) {
   const [inputValue, setInputValue] = useState('')
   const [filterString, setFilterString] = useState<string | null>(null)
   const [showDebug, setShowDebug] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [demoLoaded, setDemoLoaded] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(true)
 
@@ -33,6 +34,7 @@ export default function HomeClient({ topics }: Props) {
   }, [inputValue])
 
   useEffect(() => {
+    setMounted(true)
     if (localStorage.getItem('demo-loaded') === 'true') setDemoLoaded(true)
   }, [])
 
@@ -66,7 +68,7 @@ export default function HomeClient({ topics }: Props) {
         What would you like to learn?
       </motion.h1>
       <AnimatePresence>
-        {!demoLoaded && (
+        {mounted && !demoLoaded && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0, transition: { delay: 0.1, duration: 0.4 } }}
