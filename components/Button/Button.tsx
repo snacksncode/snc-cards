@@ -14,8 +14,6 @@ export const buttonVariants = cva(
           "bg-[var(--btn-accent)]/15 border border-[var(--btn-accent)]/30 text-[var(--btn-accent)] hover:bg-[var(--btn-accent)]/25",
         solid:
           "bg-[var(--btn-accent)] text-bg-200 border-2 border-[var(--btn-accent)] hover:opacity-90",
-        neutral:
-          "bg-transparent border border-bg-600 text-text-muted hover:text-text hover:border-text-muted",
       },
       size: {
         sm: "px-3 py-1.5 text-sm",

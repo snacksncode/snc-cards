@@ -4,6 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { AnimatePresence, motion } from "motion/react";
 import { Category, Danger, Edit, NoteText } from "@components/icons";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { LinkButton } from "@components/Button";
 import { FC, PropsWithChildren, useState } from "react";
 
@@ -183,14 +184,12 @@ const Entry = ({
                     >
                       Resume ({savedSession.currentIndex}/{questions.length})
                     </LinkButton>
-                    <LinkButton
+                    <Link
                       href={buildUrl('card', reverseCards, false)}
-                      variant="neutral"
-                      size="sm"
-                      className="text-center"
+                      className="px-3 py-1.5 rounded-lg border border-bg-600 text-text-muted text-sm font-semibold hover:text-text hover:border-text-muted transition-colors text-center"
                     >
                       New
-                    </LinkButton>
+                    </Link>
                   </div>
                 ) : (
                   <LinkButton
@@ -226,14 +225,12 @@ const Entry = ({
                     >
                       Resume ({savedSession.currentIndex}/{questions.length})
                     </LinkButton>
-                    <LinkButton
+                    <Link
                       href={buildUrl('spelling', reverseSpelling, false)}
-                      variant="neutral"
-                      size="sm"
-                      className="text-center"
+                      className="px-3 py-1.5 rounded-lg border border-bg-600 text-text-muted text-sm font-semibold hover:text-text hover:border-text-muted transition-colors text-center"
                     >
                       New
-                    </LinkButton>
+                    </Link>
                   </div>
                 ) : (
                   <LinkButton
@@ -248,16 +245,14 @@ const Entry = ({
                 )}
               </div>
 
-              <LinkButton
+              <Link
                 onClick={(e) => e.stopPropagation()}
-                variant="neutral"
-                size="sm"
-                className="w-full justify-start gap-2 text-[var(--clr-card-accent)] border-0 bg-bg-500 hover:bg-bg-600 hover:text-[var(--clr-card-accent)] hover:border-transparent"
+                className="flex items-center gap-2 bg-bg-500 rounded-lg p-3 text-[var(--clr-card-accent)] font-semibold hover:shadow-[0_4px_15px_rgba(0,0,0,0.2)] transition-shadow"
                 href={`/${slug}/list`}
               >
                 <NoteText size={24} color="currentColor" />
                 List
-              </LinkButton>
+              </Link>
             </div>
 
             {scoreHistory.length > 0 && (
