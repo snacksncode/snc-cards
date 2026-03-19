@@ -15,7 +15,7 @@ const Shortcut = ({ keys, action }: { keys: string[]; action: string }) => (
   <div className="flex items-center gap-2">
     {keys.map((key, i) => (
       <div key={key} className="flex items-center gap-1">
-        <kbd className="px-2 py-1 text-xs font-medium bg-bg-400 border border-bg-600 rounded text-text-secondary">
+        <kbd className="bg-bg-500 rounded-sm px-2 py-1 text-xs font-bold text-text-muted shadow-[0_3px_0px_var(--color-bg-300)]">
           {key}
         </kbd>
         {i < keys.length - 1 && <span className="text-text-muted">/</span>}
@@ -47,6 +47,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
     shuffle(displayData).map((q) => ({ question: q, status: null }))
   )
   const [shortcutsOpen, setShortcutsOpen] = useState(false)
+  const [isMac, setIsMac] = useState(false)
 
   const session = useLiveQuery(
     () => resume ? db.sessions.get(slug) : undefined,
@@ -99,6 +100,10 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
       run = 0
     }
   }
+
+  useEffect(() => {
+    setIsMac(/Mac|iPhone|iPad|iPod/.test(navigator.platform))
+  }, [])
 
   useEffect(() => {
     const dismissed = localStorage.getItem('shortcuts-dismissed')
@@ -231,7 +236,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
                     <Shortcut keys={['Enter']} action="flip / mark correct" />
                     <Shortcut keys={['Backspace']} action="mark wrong" />
                     <Shortcut keys={['Esc']} action="unflip" />
-                    <Shortcut keys={['⌘Z', 'Ctrl+Z']} action="undo" />
+                    <Shortcut keys={[isMac ? '⌘Z' : 'Ctrl+Z']} action="undo" />
                   </div>
                 </Popover.Popup>
               </Popover.Positioner>
