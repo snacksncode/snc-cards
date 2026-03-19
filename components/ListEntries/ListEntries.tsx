@@ -43,7 +43,7 @@ const ListEntries = ({ data, filterString }: Props) => {
                   data={topic}
                   isExpanded={expandedSlug === topic.slug}
                   onToggle={handleToggle}
-                  animationDelay={0.05 * Math.min(idx, 8)}
+                  animationDelay={0.5 + 0.05 * Math.min(idx, 8)}
                 />
               );
             })

@@ -73,7 +73,7 @@ const Entry = ({
       tabIndex={0}
       layout
       key={slug}
-      initial={{ y: -25, opacity: 0 }}
+      initial={{ y: 16, opacity: 0 }}
       animate={{ y: 0, opacity: 1, transition: { delay: animationDelay } }}
       exit={{ opacity: 0 }}
 

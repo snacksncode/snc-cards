@@ -61,8 +61,8 @@ export default function HomeClient({ topics }: Props) {
         aria-hidden="true"
       />
       <motion.h1
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        initial={{ y: 16, opacity: 0 }}
+        animate={{ y: 0, opacity: 1, transition: { delay: 0.1, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } }}
         className="mt-0 mb-8 text-[clamp(1.75rem,6vw,3rem)] font-serif font-bold"
       >
         What would you like to learn?
@@ -70,8 +70,8 @@ export default function HomeClient({ topics }: Props) {
       <AnimatePresence>
         {mounted && !demoLoaded && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0, transition: { delay: 0.1, duration: 0.4 } }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0, transition: { delay: 0.2, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } }}
             exit={{ opacity: 0, y: -8, transition: { duration: 0.3, ease: 'easeOut' } }}
             className="flex items-center gap-3 mb-6"
           >
@@ -95,7 +95,7 @@ export default function HomeClient({ topics }: Props) {
         animate={{
           opacity: 1,
           marginBottom: 24,
-          transition: { delay: 0.05, duration: 0.4, ease: 'easeOut' },
+          transition: { delay: 0.3, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
         }}
         className="overflow-hidden"
       >
