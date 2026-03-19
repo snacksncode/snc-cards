@@ -1,7 +1,7 @@
 import { ArrowRotateRight, Back, ArrowCircleDown2 } from "@components/icons";
 import { Button, LinkButton } from "@components/Button";
-import { motion, LayoutGroup, useMotionValue, animate, HTMLMotionProps } from "motion/react";
-import { FC, useRef } from "react";
+import { motion, AnimatePresence, LayoutGroup, useMotionValue, animate, HTMLMotionProps } from "motion/react";
+import { FC, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 import { Collapsible } from "@base-ui/react/collapsible";
 import { Menu } from "@base-ui/react/menu";
@@ -142,6 +142,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
     handleRestart();
   };
 
+  const [menuOpen, setMenuOpen] = useState(false);
   const { incorrect, correct } = data;
 
   return (
@@ -152,7 +153,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
         exit={{ opacity: 0 }}
         key="endcard"
         layout="position"
-        className="w-full max-w-[750px] mx-8 rounded z-[2] px-4"
+        className="w-full max-w-[750px] mx-8 rounded z-[2] px-4 pt-[15vh]"
       >
         <h1 className="text-5xl sm:text-6xl font-serif font-bold leading-[120%] mb-4">
           Your end score was{" "}
@@ -167,12 +168,24 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
               ? "Nice work! Keep it up."
               : "Keep going! Practice makes progress."}
         </p>
-        {streak >= 5 && (
-          <h3>
-            Highest streak: {streak}
-            {getStreakEmojis(streak)}
-          </h3>
-        )}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2 mb-2">
+          <div className="bg-bg-400 rounded-lg p-3">
+            <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">SCORE</p>
+            <p className="text-2xl font-bold text-accent-green m-0 mt-1">{score}%</p>
+          </div>
+          <div className="bg-bg-400 rounded-lg p-3">
+            <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">CORRECT</p>
+            <p className="text-2xl font-bold text-accent-green m-0 mt-1">{correct.length}<span className="text-sm text-text-muted font-normal">/{amount}</span></p>
+          </div>
+          <div className="bg-bg-400 rounded-lg p-3">
+            <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">INCORRECT</p>
+            <p className="text-2xl font-bold text-accent-red m-0 mt-1">{incorrect.length}</p>
+          </div>
+          <div className="bg-bg-400 rounded-lg p-3">
+            <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">BEST STREAK</p>
+            <p className="text-2xl font-bold text-accent-peachy m-0 mt-1">{streak} {getStreakEmojis(streak)}</p>
+          </div>
+        </div>
         <section className="flex flex-col gap-6 mt-8">
           <h5 className="text-xl text-accent-blue m-0 relative isolate">
             <span className="z-[1] pr-2 bg-bg-300 relative">What&apos;s next?</span>
@@ -186,7 +199,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
               <Back className="size-4" />
               Go Back
             </LinkButton>
-            <Menu.Root>
+            <Menu.Root open={menuOpen} onOpenChange={setMenuOpen}>
               <Menu.Trigger
                 render={
                   <Button variant="ghost" size="sm" accent="var(--color-accent-green)">
@@ -195,52 +208,67 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
                   </Button>
                 }
               />
-              <Menu.Portal>
-                <Menu.Positioner sideOffset={8} align="start">
-                  <Menu.Popup className="bg-bg-400 border border-bg-600 rounded-lg p-1 shadow-lg min-w-[200px] z-50">
-                    <Menu.Item
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-text rounded cursor-pointer hover:bg-bg-500 transition-colors"
-                      onClick={handleRestartAll}
-                    >
-                      <ArrowRotateRight className="size-4 text-accent-green" />
-                      Entire set
-                    </Menu.Item>
-                    {data.incorrect.length > 0 && (
-                      <Menu.Item
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-text rounded cursor-pointer hover:bg-bg-500 transition-colors"
-                        onClick={handleRestartIncorrect}
+              <AnimatePresence>
+                {menuOpen && (
+                  <Menu.Portal keepMounted>
+                    <Menu.Positioner sideOffset={8} align="start">
+                      <Menu.Popup
+                        render={
+                          <motion.div
+                            initial={{ opacity: 0, y: -4, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                            transition={{ duration: 0.12 }}
+                          />
+                        }
+                        className="bg-bg-400 border border-bg-600 rounded-lg p-1 shadow-lg min-w-[200px] z-50"
                       >
-                        <ArrowRotateRight className="size-4 text-accent-pink" />
-                        Only mistakes ({data.incorrect.length})
-                      </Menu.Item>
-                    )}
-                  </Menu.Popup>
-                </Menu.Positioner>
-              </Menu.Portal>
+                        <Menu.Item
+                          className="flex items-center gap-2 px-3 py-2 text-sm text-text rounded cursor-pointer hover:bg-bg-500 transition-colors"
+                          onClick={handleRestartAll}
+                        >
+                          <ArrowRotateRight className="size-4 text-accent-green" />
+                          Entire set
+                        </Menu.Item>
+                        {data.incorrect.length > 0 && (
+                          <Menu.Item
+                            className="flex items-center gap-2 px-3 py-2 text-sm text-text rounded cursor-pointer hover:bg-bg-500 transition-colors"
+                            onClick={handleRestartIncorrect}
+                          >
+                            <ArrowRotateRight className="size-4 text-accent-pink" />
+                            Only mistakes ({data.incorrect.length})
+                          </Menu.Item>
+                        )}
+                      </Menu.Popup>
+                    </Menu.Positioner>
+                  </Menu.Portal>
+                )}
+              </AnimatePresence>
             </Menu.Root>
           </div>
         </section>
         <section className="mt-6 flex flex-col gap-6">
           {incorrect.length > 0 && (
             <Collapsible.Root defaultOpen>
-              <Collapsible.Trigger className="group flex items-center gap-2 cursor-pointer bg-transparent border-none w-full text-left py-2">
-                <span className="text-[0.65rem] font-semibold tracking-[0.08em] uppercase text-accent-red">
+              <Collapsible.Trigger className="group flex items-center cursor-pointer bg-transparent border-none w-full text-left py-2 relative isolate">
+                <span className="z-[1] pr-2 bg-bg-300 relative text-lg text-accent-red flex items-center gap-2">
                   Incorrect ({incorrect.length})
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-text-muted transition-transform group-data-[panel-open]:rotate-180 size-4"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
                 </span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-text-muted transition-transform group-data-[panel-open]:rotate-180"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
+                <span className="absolute inset-0 top-1/2 h-0.5 -z-[1] bg-accent-red/30" aria-hidden="true" />
               </Collapsible.Trigger>
               <Collapsible.Panel
                 keepMounted
@@ -282,24 +310,25 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
           )}
           {correct.length > 0 && (
             <Collapsible.Root defaultOpen>
-              <Collapsible.Trigger className="group flex items-center gap-2 cursor-pointer bg-transparent border-none w-full text-left py-2">
-                <span className="text-[0.65rem] font-semibold tracking-[0.08em] uppercase text-accent-green">
+              <Collapsible.Trigger className="group flex items-center cursor-pointer bg-transparent border-none w-full text-left py-2 relative isolate">
+                <span className="z-[1] pr-2 bg-bg-300 relative text-lg text-accent-green flex items-center gap-2">
                   Correct ({correct.length})
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-text-muted transition-transform group-data-[panel-open]:rotate-180 size-4"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
                 </span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-text-muted transition-transform group-data-[panel-open]:rotate-180"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
+                <span className="absolute inset-0 top-1/2 h-0.5 -z-[1] bg-accent-green/30" aria-hidden="true" />
               </Collapsible.Trigger>
               <Collapsible.Panel
                 keepMounted
