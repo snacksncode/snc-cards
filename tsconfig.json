@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -11,19 +15,47 @@
     "module": "esnext",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@styles/*": ["./styles/*"],
-      "@components/*": ["./components/*"],
-      "@utils/*": ["./utils/*"],
-      "@hooks/*": ["./hooks/*"]
+      "@components/*": [
+        "./components/*"
+      ],
+      "@hooks/*": [
+        "./hooks/*"
+      ],
+      "@lib/*": [
+        "./lib/*"
+      ],
+      "@data/*": [
+        "./data/*"
+      ],
+      "@/types": [
+        "./types/index.ts"
+      ],
+      "@/*": [
+        "./*"
+      ]
     },
-    "incremental": true
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["*.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "*.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.d.ts",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

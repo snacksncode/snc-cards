@@ -17,7 +17,7 @@ function useWindowSize() {
         height: window.innerHeight,
       });
     }
-    if (!process.browser) return;
+    if (typeof window === 'undefined') return;
 
     // Add event listener
     window.addEventListener("resize", handleResize);

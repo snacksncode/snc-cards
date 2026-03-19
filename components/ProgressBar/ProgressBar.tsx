@@ -1,5 +1,4 @@
-import styles from "./ProgressBar.module.scss";
-import { animate, motion } from "framer-motion";
+import { animate, motion } from "motion/react";
 import { useEffect, useRef } from "react";
 import Streak from "@components/Streak";
 
@@ -7,9 +6,10 @@ interface Props {
   maxAmount: number;
   currentAmount: number;
   streak: number;
+  accentColor: string;
 }
 
-const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak }) => {
+const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak, accentColor }) => {
   const percentageRef = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
     const node = percentageRef.current;
@@ -26,17 +26,23 @@ const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak }) => {
   });
 
   return (
-    <div className={styles.progress}>
-      <div className={styles.bar}>
-        <motion.div
-          className={styles.bar__fill}
-          animate={{ width: `${(currentAmount / maxAmount) * 100}%` }}
-          transition={{ ease: "easeInOut" }}
-        >
-          <p className={styles.percentage}>
-            <span ref={percentageRef}>0.00%</span>
-          </p>
-        </motion.div>
+    <div className="fixed top-4 left-4 w-[calc(100%-2rem)] flex flex-col items-center justify-center">
+      <div className="w-full max-w-[450px] relative">
+        <p className="m-0 select-none text-center text-[0.65rem] font-mono font-bold text-text-muted mb-1">
+          <span ref={percentageRef}>0.00%</span>
+        </p>
+        <div className="w-full h-2 rounded-full bg-bg-500 overflow-hidden">
+          <motion.div
+            style={{
+              backgroundColor: accentColor,
+              boxShadow: `0 0 8px ${accentColor}`,
+            }}
+            className="h-full rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${(currentAmount / maxAmount) * 100}%` }}
+            transition={{ ease: "easeInOut", duration: 0.4 }}
+          />
+        </div>
       </div>
       <Streak streak={streak} />
     </div>
