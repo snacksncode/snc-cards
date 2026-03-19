@@ -207,59 +207,47 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
       <motion.div
         layout
         style={{ borderRadius: isOpen ? 12 : 9999 }}
-        transition={{ type: "spring", stiffness: 400, damping: 32 }}
+        transition={{ layout: { type: "spring", stiffness: 500, damping: 35 } }}
         className={cn(
           "fixed bottom-4 right-4 z-40 bg-bg-500 border border-bg-600 overflow-hidden max-sm:hidden",
-          isOpen ? "w-[240px] cursor-default" : "w-10 h-10 cursor-pointer"
+          isOpen ? "cursor-default" : "cursor-pointer"
         )}
         onClick={!isOpen ? () => setIsOpen(true) : undefined}
       >
-        <AnimatePresence mode="wait">
-          {isOpen ? (
-            <motion.div
-              key="open"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.12 }}
-              className="p-3"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[0.6rem] font-semibold text-text-muted tracking-[0.08em] uppercase">Shortcuts</span>
-                <button
-                  onClick={handleClose}
-                  className="text-text-muted hover:text-text transition-colors cursor-pointer bg-transparent border-none p-0.5 rounded leading-none"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Shortcut keys={['Enter']} action="flip / mark correct" />
-                <Shortcut keys={['Backspace']} action="mark wrong" />
-                <Shortcut keys={['Esc']} action="unflip" />
-                <Shortcut keys={['⌘Z', 'Ctrl+Z']} action="undo" />
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="closed"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.1 }}
-              className="w-10 h-10 flex items-center justify-center text-text-muted"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {isOpen ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { delay: 0.1, duration: 0.15 } }}
+            className="p-3 w-[240px]"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[0.6rem] font-semibold text-text-muted tracking-[0.08em] uppercase">Shortcuts</span>
+              <button
+                onClick={handleClose}
+                className="text-text-muted hover:text-text transition-colors cursor-pointer bg-transparent border-none p-0.5 rounded leading-none"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Shortcut keys={['Enter']} action="flip / mark correct" />
+              <Shortcut keys={['Backspace']} action="mark wrong" />
+              <Shortcut keys={['Esc']} action="unflip" />
+              <Shortcut keys={['⌘Z', 'Ctrl+Z']} action="undo" />
+            </div>
+          </motion.div>
+        ) : (
+          <div className="w-10 h-10 flex items-center justify-center text-text-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </div>
+        )}
       </motion.div>
     </div>
   )
