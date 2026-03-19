@@ -251,11 +251,14 @@ const Entry = ({
 
               <Link
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 bg-bg-500 rounded-lg p-3 text-[var(--clr-card-accent)] font-semibold hover:shadow-[0_4px_15px_rgba(0,0,0,0.2)] transition-shadow"
+                className="flex items-center justify-between py-4 px-3 bg-bg-500 rounded-lg text-[var(--clr-card-accent)] font-semibold"
                 href={`/${slug}/list`}
               >
-                <NoteText size={24} color="currentColor" />
-                List
+                <span className="flex items-center gap-2">
+                  <NoteText size={24} color="currentColor" />
+                  List
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><path d="M9 18l6-6-6-6"/></svg>
               </Link>
             </div>
 
