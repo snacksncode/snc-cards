@@ -113,18 +113,22 @@ export default function HomeClient({ topics }: Props) {
               </motion.svg>
             </Collapsible.Trigger>
             <Collapsible.Panel
-              render={(props, state) => (
-                <motion.div
-                  {...(props as HTMLMotionProps<'div'>)}
-                  initial={false}
-                  animate={{
-                    height: state.open ? 'auto' : 0,
-                    opacity: state.open ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.2, ease: 'easeInOut' }}
-                  className={`overflow-hidden ${props.className ?? ''}`.trim()}
-                />
-              )}
+              keepMounted
+              render={(props, state) => {
+                const { hidden, ...rest } = props
+                return (
+                  <motion.div
+                    {...(rest as HTMLMotionProps<'div'>)}
+                    initial={false}
+                    animate={{
+                      height: state.open ? 'auto' : 0,
+                      opacity: state.open ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    style={{ ...rest.style, overflow: 'hidden' }}
+                  />
+                )
+              }}
             >
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 pb-4">
                 <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
