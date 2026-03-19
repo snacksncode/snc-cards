@@ -16,6 +16,7 @@ export default function HomeClient({ topics }: Props) {
   const [inputValue, setInputValue] = useState('')
   const [filterString, setFilterString] = useState<string | null>(null)
   const [showDebug, setShowDebug] = useState(false)
+  const [demoLoaded, setDemoLoaded] = useState(() => typeof window !== 'undefined' && localStorage.getItem('demo-loaded') === 'true')
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -59,19 +60,28 @@ export default function HomeClient({ topics }: Props) {
       >
         What would you like to learn?
       </motion.h1>
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0, transition: { delay: 0.1, duration: 0.4 } }}
-        className="flex items-center gap-3 mb-6"
-      >
-        <button
-          onClick={() => setShowDebug(true)}
-          className="px-4 py-2 rounded-lg bg-accent-gold/15 text-accent-gold border border-accent-gold/30 hover:bg-accent-gold/25 transition-colors text-sm font-medium cursor-pointer"
-        >
-          ✨ Try with demo data
-        </button>
-        <span className="text-text-muted text-sm">See score history and all features in action</span>
-      </motion.div>
+      <AnimatePresence>
+        {!demoLoaded && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0, transition: { delay: 0.1, duration: 0.4 } }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.3, ease: 'easeOut' } }}
+            className="flex items-center gap-3 mb-6"
+          >
+            <button
+              onClick={async () => {
+                await populateAllFakeData(topics)
+                localStorage.setItem('demo-loaded', 'true')
+                setDemoLoaded(true)
+              }}
+              className="px-4 py-2 rounded-lg bg-accent-gold/15 text-accent-gold border border-accent-gold/30 hover:bg-accent-gold/25 transition-colors text-sm font-medium cursor-pointer"
+            >
+              ✨ Try with demo data
+            </button>
+            <span className="text-text-muted text-sm">See score history and all features in action</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <motion.section
         initial={{ opacity: 0, marginBottom: 0 }}
         animate={{

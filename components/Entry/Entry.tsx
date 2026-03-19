@@ -63,7 +63,7 @@ const Entry = ({
     if (reverse) params.set('dir', 'reverse');
     if (resume) params.set('resume', '1');
     const query = params.toString();
-    return query ? `${slug}/${mode}?${query}` : `${slug}/${mode}`;
+    return query ? `/${slug}/${mode}?${query}` : `/${slug}/${mode}`;
   };
 
   return (
