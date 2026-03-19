@@ -11,7 +11,7 @@ const Front = ({ data, isMobile }: Props) => {
     <div className="cursor-pointer absolute overflow-hidden w-full flex h-full backface-hidden bg-bg-400 rounded-lg border-[3px] border-accent-blue isolate">
       <Watermark size="lg" text="question" />
       <div className="m-auto relative">
-        <p className={cn("font-serif font-medium m-0 text-accent-blue", isMobile ? "text-2xl px-4" : "text-[2.25rem] px-8")}>
+        <p className={cn("font-medium m-0 text-accent-blue", isMobile ? "text-2xl px-4" : "text-[2.25rem] px-8")}>
           {data}
         </p>
       </div>

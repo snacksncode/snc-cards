@@ -38,6 +38,7 @@ const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak, accent
               boxShadow: `0 0 8px ${accentColor}`,
             }}
             className="h-full rounded-full"
+            initial={{ width: 0 }}
             animate={{ width: `${(currentAmount / maxAmount) * 100}%` }}
             transition={{ ease: "easeInOut", duration: 0.4 }}
           />
