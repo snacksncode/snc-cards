@@ -1,5 +1,5 @@
-import { cn } from "@lib/cn";
 import { MessageQuestion, ArrowRotateRight, Back } from "@components/icons";
+import { buttonVariants } from "@components/Button";
 import { motion, AnimatePresence, LayoutGroup, useMotionValue, animate } from "motion/react";
 import { FC, useRef, useState } from "react";
 import confetti from "canvas-confetti";
@@ -41,14 +41,7 @@ const getAccentHex = (cls: ClassString) => {
   }
 };
 
-const buttonBase = cn(
-  "bg-[var(--accent)]/8 cursor-pointer border-2 border-[var(--accent)] text-[var(--accent)]",
-  "rounded px-3 py-1.5 font-bold text-sm inline-flex items-center justify-center gap-2",
-  "transition-colors duration-200",
-  "hover:bg-[var(--accent)]/20",
-  "focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
-  "focus-visible:bg-[var(--accent)] focus-visible:text-bg-200"
-);
+const btnClass = buttonVariants({ variant: "ghost", size: "sm" });
 
 const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }) => {
   const [isReviewOpened, setIsReviewOpened] = useState(false);
@@ -130,23 +123,23 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
           <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
             <Link
               href="/"
-              className={buttonBase}
-              style={{ "--accent": "var(--color-accent-blue)" } as React.CSSProperties}
+              className={btnClass}
+              style={{ "--btn-accent": "var(--color-accent-blue)" } as React.CSSProperties}
             >
               <Back className="size-4" />
               Go Back
             </Link>
             <button
-              className={buttonBase}
-              style={{ "--accent": "var(--color-accent-peachy)" } as React.CSSProperties}
+              className={btnClass}
+              style={{ "--btn-accent": "var(--color-accent-peachy)" } as React.CSSProperties}
               onClick={() => setIsReviewOpened((s) => !s)}
             >
               <MessageQuestion className="size-4" />
               Review
             </button>
             <button
-              className={buttonBase}
-              style={{ "--accent": "var(--color-accent-green)" } as React.CSSProperties}
+              className={btnClass}
+              style={{ "--btn-accent": "var(--color-accent-green)" } as React.CSSProperties}
               onClick={handleRestartAll}
             >
               <ArrowRotateRight className="size-4" />
@@ -154,8 +147,8 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
             </button>
             {data.incorrect.length > 0 && (
               <button
-                className={buttonBase}
-                style={{ "--accent": "var(--color-accent-pink)" } as React.CSSProperties}
+                className={btnClass}
+                style={{ "--btn-accent": "var(--color-accent-pink)" } as React.CSSProperties}
                 onClick={handleRestartIncorrect}
               >
                 <ArrowRotateRight className="size-4" />

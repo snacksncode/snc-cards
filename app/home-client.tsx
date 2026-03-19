@@ -3,6 +3,7 @@
 import { ChangeEventHandler, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Category, Edit, NoteText } from '@components/icons'
+import { Button } from '@components/Button'
 import Filter from '@components/Filter'
 import ListEntries from '@components/ListEntries'
 import { populateAllFakeData, clearAllData } from '@lib/storage'
@@ -68,16 +69,17 @@ export default function HomeClient({ topics }: Props) {
             exit={{ opacity: 0, y: -8, transition: { duration: 0.3, ease: 'easeOut' } }}
             className="flex items-center gap-3 mb-6"
           >
-            <button
+            <Button
+              variant="subtle"
+              accent="var(--color-accent-gold)"
               onClick={async () => {
                 await populateAllFakeData(topics)
                 localStorage.setItem('demo-loaded', 'true')
                 setDemoLoaded(true)
               }}
-              className="px-4 py-2 rounded-lg bg-accent-gold/15 text-accent-gold border border-accent-gold/30 hover:bg-accent-gold/25 transition-colors text-sm font-medium cursor-pointer"
             >
               ✨ Try with demo data
-            </button>
+            </Button>
             <span className="text-text-muted text-sm">See score history and all features in action</span>
           </motion.div>
         )}
