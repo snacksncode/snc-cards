@@ -184,12 +184,14 @@ const Entry = ({
                     >
                       Resume ({savedSession.currentIndex}/{questions.length})
                     </LinkButton>
-                    <Link
+                    <LinkButton
                       href={buildUrl('card', reverseCards, false)}
-                      className="px-3 py-1.5 rounded-lg border border-bg-600 text-text-muted text-sm font-semibold hover:text-text hover:border-text-muted transition-colors text-center"
+                      variant="neutral"
+                      size="sm"
+                      className="text-center"
                     >
                       New
-                    </Link>
+                    </LinkButton>
                   </div>
                 ) : (
                   <LinkButton
@@ -225,12 +227,14 @@ const Entry = ({
                     >
                       Resume ({savedSession.currentIndex}/{questions.length})
                     </LinkButton>
-                    <Link
+                    <LinkButton
                       href={buildUrl('spelling', reverseSpelling, false)}
-                      className="px-3 py-1.5 rounded-lg border border-bg-600 text-text-muted text-sm font-semibold hover:text-text hover:border-text-muted transition-colors text-center"
+                      variant="neutral"
+                      size="sm"
+                      className="text-center"
                     >
                       New
-                    </Link>
+                    </LinkButton>
                   </div>
                 ) : (
                   <LinkButton

@@ -17,7 +17,7 @@ export default function HomeClient({ topics }: Props) {
   const [inputValue, setInputValue] = useState('')
   const [filterString, setFilterString] = useState<string | null>(null)
   const [showDebug, setShowDebug] = useState(false)
-  const [demoLoaded, setDemoLoaded] = useState(() => typeof window !== 'undefined' && localStorage.getItem('demo-loaded') === 'true')
+  const [demoLoaded, setDemoLoaded] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -31,6 +31,10 @@ export default function HomeClient({ topics }: Props) {
     }, TIMEOUT_MS)
     return () => clearTimeout(timeoutId)
   }, [inputValue])
+
+  useEffect(() => {
+    if (localStorage.getItem('demo-loaded') === 'true') setDemoLoaded(true)
+  }, [])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
