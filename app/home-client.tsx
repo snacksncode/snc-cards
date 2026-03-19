@@ -114,16 +114,12 @@ export default function HomeClient({ topics }: Props) {
             </Collapsible.Trigger>
             <AnimatePresence initial={false}>
               {howItWorksOpen && (
-                <Collapsible.Panel
-                  render={
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: 'easeInOut' }}
-                      className="overflow-hidden"
-                    />
-                  }
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  className="overflow-hidden"
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 pb-4">
                     <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
@@ -169,7 +165,7 @@ export default function HomeClient({ topics }: Props) {
                       </p>
                     </div>
                   </div>
-                </Collapsible.Panel>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
