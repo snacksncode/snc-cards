@@ -8,6 +8,7 @@ import Link from "next/link";
 import { LinkButton } from "@components/Button";
 import { FC, PropsWithChildren, useState } from "react";
 import { Switch } from "@base-ui/react/switch";
+import { Collapsible } from "@base-ui/react/collapsible";
 
 const ScoreChart = dynamic(() => import("./ScoreChart"), { ssr: false, loading: () => null });
 import type { Topic } from "@/types";
@@ -154,121 +155,126 @@ const Entry = ({
 
       <AnimatePresence>
         {isExpanded && (
-          <motion.div
-            layout
-            key="additional-content"
-            style={{ width: "100%", overflow: "hidden" }}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto", transition: { delay: 0.15, ease: "circOut", duration: 0.3 } }}
-            exit={{ opacity: 0, height: 0, transition: { ease: "circOut", duration: 0.3 } }}
-          >
-            <div className="flex flex-col gap-3 mt-4">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 bg-bg-500 rounded-lg p-3" onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center gap-2">
-                  <Category size={24} color="var(--clr-card-accent)" />
-                  <span className="font-semibold text-[var(--clr-card-accent)]">Cards</span>
-                </div>
-                <div className="flex-1 min-w-0" />
-                <div className="flex items-center gap-2 text-xs text-text-muted">
-                  <span>Reverse</span>
-                  <Toggle checked={reverseCards} onChange={setReverseCards} />
-                </div>
-                {savedSession?.mode === 'cards' ? (
-                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <LinkButton
-                      href={buildUrl('card', reverseCards, true)}
-                      variant="solid"
-                      size="sm"
-                      accent="var(--clr-card-accent)"
-                      className="text-center"
-                    >
-                      Resume ({savedSession.currentIndex}/{questions.length})
-                    </LinkButton>
+          <Collapsible.Root open={isExpanded}>
+            <Collapsible.Panel
+              render={
+                <motion.div
+                  key="additional-content"
+                  style={{ width: "100%", overflow: "hidden" }}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto", transition: { delay: 0.15, ease: "circOut", duration: 0.3 } }}
+                  exit={{ opacity: 0, height: 0, transition: { ease: "circOut", duration: 0.3 } }}
+                />
+              }
+            >
+              <div className="flex flex-col gap-3 mt-4">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 bg-bg-500 rounded-lg p-3" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-2">
+                    <Category size={24} color="var(--clr-card-accent)" />
+                    <span className="font-semibold text-[var(--clr-card-accent)]">Cards</span>
+                  </div>
+                  <div className="flex-1 min-w-0" />
+                  <div className="flex items-center gap-2 text-xs text-text-muted">
+                    <span>Reverse</span>
+                    <Toggle checked={reverseCards} onChange={setReverseCards} />
+                  </div>
+                  {savedSession?.mode === 'cards' ? (
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                      <LinkButton
+                        href={buildUrl('card', reverseCards, true)}
+                        variant="solid"
+                        size="sm"
+                        accent="var(--clr-card-accent)"
+                        className="text-center"
+                      >
+                        Resume ({savedSession.currentIndex}/{questions.length})
+                      </LinkButton>
+                      <LinkButton
+                        href={buildUrl('card', reverseCards, false)}
+                        variant="neutral"
+                        size="sm"
+                        className="text-center"
+                      >
+                        New
+                      </LinkButton>
+                    </div>
+                  ) : (
                     <LinkButton
                       href={buildUrl('card', reverseCards, false)}
-                      variant="neutral"
-                      size="sm"
-                      className="text-center"
-                    >
-                      New
-                    </LinkButton>
-                  </div>
-                ) : (
-                  <LinkButton
-                    href={buildUrl('card', reverseCards, false)}
-                    variant="solid"
-                    size="sm"
-                    accent="var(--clr-card-accent)"
-                    className="w-full sm:w-auto text-center"
-                  >
-                    Start
-                  </LinkButton>
-                )}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 bg-bg-500 rounded-lg p-3" onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center gap-2">
-                  <Edit size={24} color="var(--clr-card-accent)" />
-                  <span className="font-semibold text-[var(--clr-card-accent)]">Spelling</span>
-                </div>
-                <div className="flex-1 min-w-0" />
-                <div className="flex items-center gap-2 text-xs text-text-muted">
-                  <span>Reverse</span>
-                  <Toggle checked={reverseSpelling} onChange={setReverseSpelling} />
-                </div>
-                {savedSession?.mode === 'spelling' ? (
-                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <LinkButton
-                      href={buildUrl('spelling', reverseSpelling, true)}
                       variant="solid"
                       size="sm"
                       accent="var(--clr-card-accent)"
-                      className="text-center"
+                      className="w-full sm:w-auto text-center"
                     >
-                      Resume ({savedSession.currentIndex}/{questions.length})
+                      Start
                     </LinkButton>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 bg-bg-500 rounded-lg p-3" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-2">
+                    <Edit size={24} color="var(--clr-card-accent)" />
+                    <span className="font-semibold text-[var(--clr-card-accent)]">Spelling</span>
+                  </div>
+                  <div className="flex-1 min-w-0" />
+                  <div className="flex items-center gap-2 text-xs text-text-muted">
+                    <span>Reverse</span>
+                    <Toggle checked={reverseSpelling} onChange={setReverseSpelling} />
+                  </div>
+                  {savedSession?.mode === 'spelling' ? (
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                      <LinkButton
+                        href={buildUrl('spelling', reverseSpelling, true)}
+                        variant="solid"
+                        size="sm"
+                        accent="var(--clr-card-accent)"
+                        className="text-center"
+                      >
+                        Resume ({savedSession.currentIndex}/{questions.length})
+                      </LinkButton>
+                      <LinkButton
+                        href={buildUrl('spelling', reverseSpelling, false)}
+                        variant="neutral"
+                        size="sm"
+                        className="text-center"
+                      >
+                        New
+                      </LinkButton>
+                    </div>
+                  ) : (
                     <LinkButton
                       href={buildUrl('spelling', reverseSpelling, false)}
-                      variant="neutral"
+                      variant="solid"
                       size="sm"
-                      className="text-center"
+                      accent="var(--clr-card-accent)"
+                      className="w-full sm:w-auto text-center"
                     >
-                      New
+                      Start
                     </LinkButton>
-                  </div>
-                ) : (
-                  <LinkButton
-                    href={buildUrl('spelling', reverseSpelling, false)}
-                    variant="solid"
-                    size="sm"
-                    accent="var(--clr-card-accent)"
-                    className="w-full sm:w-auto text-center"
-                  >
-                    Start
-                  </LinkButton>
-                )}
+                  )}
+                </div>
+
+                <Link
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center justify-between py-4 px-3 bg-bg-500 rounded-lg text-[var(--clr-card-accent)] font-semibold"
+                  href={`/${slug}/list`}
+                >
+                  <span className="flex items-center gap-2">
+                    <NoteText size={24} color="currentColor" />
+                    List
+                  </span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><path d="M9 18l6-6-6-6"/></svg>
+                </Link>
               </div>
 
-              <Link
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-between py-4 px-3 bg-bg-500 rounded-lg text-[var(--clr-card-accent)] font-semibold"
-                href={`/${slug}/list`}
-              >
-                <span className="flex items-center gap-2">
-                  <NoteText size={24} color="currentColor" />
-                  List
-                </span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><path d="M9 18l6-6-6-6"/></svg>
-              </Link>
-            </div>
-
-            {scoreHistory.length > 0 && (
-              <div className="mt-4 rounded-md bg-bg-500 p-3 [&_svg]:outline-none" onClick={(e) => e.stopPropagation()}>
-                <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium mb-2">SCORE HISTORY</p>
-                <ScoreChart data={scoreHistory.map((h, i) => ({ i: i + 1, score: h.score }))} stroke={getAccentForClass(classString)} />
-              </div>
-            )}
-          </motion.div>
+              {scoreHistory.length > 0 && (
+                <div className="mt-4 rounded-md bg-bg-500 p-3 [&_svg]:outline-none" onClick={(e) => e.stopPropagation()}>
+                  <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium mb-2">SCORE HISTORY</p>
+                  <ScoreChart data={scoreHistory.map((h, i) => ({ i: i + 1, score: h.score }))} stroke={getAccentForClass(classString)} />
+                </div>
+              )}
+            </Collapsible.Panel>
+          </Collapsible.Root>
         )}
       </AnimatePresence>
     </motion.div>
