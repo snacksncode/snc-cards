@@ -96,7 +96,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
             0.0%
           </span>
         </h1>
-        <p className="text-text-muted text-sm mb-4 m-0">
+        <p className="text-text-muted text-sm mb-8 m-0">
           {parseFloat(score) >= 80
             ? "Amazing work! 🎉"
             : parseFloat(score) >= 50
@@ -109,7 +109,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
             {getStreakEmojis(streak)}
           </h3>
         )}
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-6 mt-8">
           <h5 className="text-xl text-accent-blue m-0 relative isolate">
             <span className="z-[1] pr-2 bg-bg-300 relative">What&apos;s next?</span>
             <span
@@ -117,7 +117,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
               aria-hidden="true"
             />
           </h5>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
+          <div className="flex flex-wrap gap-3">
             <LinkButton href="/" variant="ghost" size="sm" accent="var(--color-accent-blue)">
               <Back className="size-4" />
               Go Back
@@ -131,20 +131,31 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
               <MessageQuestion className="size-4" />
               Review
             </Button>
-            <Button variant="ghost" size="sm" accent="var(--color-accent-green)" onClick={handleRestartAll}>
-              <ArrowRotateRight className="size-4" />
-              Restart
-            </Button>
+          </div>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={handleRestartAll}
+              className="flex items-start gap-3 p-4 rounded-lg bg-bg-400 border border-bg-600 hover:border-accent-green/40 cursor-pointer transition-colors text-left w-full"
+            >
+              <ArrowRotateRight className="size-5 text-accent-green mt-0.5 shrink-0" />
+              <div>
+                <span className="text-sm font-semibold text-accent-green">Restart</span>
+                <p className="text-xs text-text-muted m-0 mt-1">Shuffle and go through the entire set from scratch</p>
+              </div>
+            </button>
             {data.incorrect.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                accent="var(--color-accent-pink)"
+              <button
                 onClick={handleRestartIncorrect}
+                className="flex items-start gap-3 p-4 rounded-lg bg-bg-400 border border-bg-600 hover:border-accent-pink/40 cursor-pointer transition-colors text-left w-full"
               >
-                <ArrowRotateRight className="size-4" />
-                Incorrect
-              </Button>
+                <ArrowRotateRight className="size-5 text-accent-pink mt-0.5 shrink-0" />
+                <div>
+                  <span className="text-sm font-semibold text-accent-pink">Practice mistakes</span>
+                  <p className="text-xs text-text-muted m-0 mt-1">
+                    Go through only the {data.incorrect.length} question{data.incorrect.length !== 1 ? "s" : ""} you got wrong
+                  </p>
+                </div>
+              </button>
             )}
           </div>
         </section>
