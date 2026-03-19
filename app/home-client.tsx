@@ -51,11 +51,11 @@ export default function HomeClient({ topics }: Props) {
   return (
     <main className="relative px-8 py-8 mx-auto w-full max-w-[800px] flex flex-col overflow-x-hidden">
       <div
-        className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-8 w-[500px] h-[300px] rounded-full"
+        className="pointer-events-none absolute -left-24 -top-8 w-[500px] h-[300px] rounded-full"
         style={{
-          background: "radial-gradient(ellipse at center, var(--color-accent-blue), transparent 70%)",
-          filter: "blur(60px)",
-          opacity: 0.06,
+          background: "radial-gradient(ellipse at center, var(--color-accent-gold), transparent 70%)",
+          filter: "blur(80px)",
+          opacity: 0.08,
           zIndex: -1,
         }}
         aria-hidden="true"
