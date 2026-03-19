@@ -5,6 +5,7 @@ import FlipCard from '@components/FlipCard'
 import EndCard from '@components/EndCard'
 import ProgressBar from '@components/ProgressBar'
 import { AnimatePresence, motion } from 'motion/react'
+import { cn } from '@lib/cn'
 import { db, saveSession, clearSession, saveScore } from '@lib/storage'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { shuffle, getAccentForClass } from '@lib/utils'
@@ -45,7 +46,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   const [cards, setCards] = useState<CardEntry[]>(() =>
     shuffle(displayData).map((q) => ({ question: q, status: null }))
   )
-  const [showHints, setShowHints] = useState<boolean | null>(null)
+  const [isOpen, setIsOpen] = useState(false)
 
   const session = useLiveQuery(
     () => resume ? db.sessions.get(slug) : undefined,
@@ -100,9 +101,8 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   }
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const dismissed = localStorage.getItem('card-hints-dismissed')
-    setShowHints(!dismissed)
+    const dismissed = localStorage.getItem('shortcuts-dismissed')
+    if (!dismissed && window.innerWidth >= 640) setIsOpen(true)
   }, [])
 
   const onAnswer = (rightAnswer: boolean, _question: Question) => {
@@ -137,11 +137,15 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
     setCards((prev) => prev.map((c, i) => i === lastAnsweredIdx ? { ...c, status: null } : c))
   }
 
+  const handleClose = () => {
+    setIsOpen(false)
+    localStorage.setItem('shortcuts-dismissed', 'true')
+  }
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showHints) {
-        setShowHints(false)
-        localStorage.setItem('card-hints-dismissed', 'true')
+      if (e.key === 'Escape' && isOpen) {
+        handleClose()
         return
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
@@ -151,7 +155,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [cards, showHints])
+  }, [cards, isOpen])
 
   const handleRestart = (retryData: Question[] | null = null) => {
     const dataToShuffle = retryData ?? displayData
@@ -200,65 +204,63 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
           />
         ) : null}
       </AnimatePresence>
-      <button
-        onClick={() => setShowHints(true)}
-        className="fixed bottom-4 right-4 w-10 h-10 rounded-full bg-bg-500 border border-bg-600 flex items-center justify-center text-text-muted hover:text-text hover:border-text-muted transition-colors cursor-pointer z-40"
-        aria-label="Show keyboard shortcuts"
+      <motion.div
+        layout
+        style={{ borderRadius: isOpen ? 12 : 9999 }}
+        transition={{ type: "spring", stiffness: 400, damping: 32 }}
+        className={cn(
+          "fixed bottom-4 right-4 z-40 bg-bg-500 border border-bg-600 overflow-hidden max-sm:hidden",
+          isOpen ? "w-[240px] cursor-default" : "w-10 h-10 cursor-pointer"
+        )}
+        onClick={!isOpen ? () => setIsOpen(true) : undefined}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-          <line x1="12" y1="17" x2="12.01" y2="17" />
-        </svg>
-      </button>
-      <AnimatePresence>
-        {showHints && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={() => {
-              setShowHints(false)
-              localStorage.setItem('card-hints-dismissed', 'true')
-            }}
-          >
+        <AnimatePresence mode="wait">
+          {isOpen ? (
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-bg-400 border border-bg-600 rounded-xl p-6 max-w-md w-full mx-4"
-              onClick={(e) => e.stopPropagation()}
+              key="open"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.12 }}
+              className="p-3"
             >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-text m-0">Keyboard Shortcuts</h3>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[0.6rem] font-semibold text-text-muted tracking-[0.08em] uppercase">Shortcuts</span>
                 <button
-                  onClick={() => {
-                    setShowHints(false)
-                    localStorage.setItem('card-hints-dismissed', 'true')
-                  }}
-                  className="text-text-muted hover:text-text transition-colors cursor-pointer bg-transparent border-none p-1"
+                  onClick={handleClose}
+                  className="text-text-muted hover:text-text transition-colors cursor-pointer bg-transparent border-none p-0.5 rounded leading-none"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18" />
                     <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 </button>
               </div>
-              <div className="flex flex-col gap-3">
-                <Shortcut keys={['Enter']} action="flip card" />
-                <Shortcut keys={['Enter']} action="mark correct (after flip)" />
-                <Shortcut keys={['Backspace']} action="mark wrong (after flip)" />
-                <Shortcut keys={['Esc']} action="unflip card" />
-                <Shortcut keys={['⌘Z', 'Ctrl+Z']} action="undo last answer" />
+              <div className="flex flex-col gap-2">
+                <Shortcut keys={['Enter']} action="flip / mark correct" />
+                <Shortcut keys={['Backspace']} action="mark wrong" />
+                <Shortcut keys={['Esc']} action="unflip" />
+                <Shortcut keys={['⌘Z', 'Ctrl+Z']} action="undo" />
               </div>
-              <p className="text-text-muted text-xs mt-4 m-0">
-                Click the <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-bg-600 text-[10px]">?</span> button to see this again.
-              </p>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          ) : (
+            <motion.div
+              key="closed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.1 }}
+              className="w-10 h-10 flex items-center justify-center text-text-muted"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   )
 }
