@@ -12,18 +12,10 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { shuffle, getAccentForClass } from '@lib/utils'
 import type { ClassString, Question } from '@/types'
 
-const Shortcut = ({ keys, action }: { keys: string[]; action: string }) => (
-  <div className="flex items-center gap-2">
-    {keys.map((key, i) => (
-      <div key={key} className="flex items-center gap-1">
-        <kbd className="bg-bg-500 rounded-sm px-2 py-1 text-xs font-bold text-text-muted shadow-[0_3px_0px_var(--color-bg-300)]">
-          {key}
-        </kbd>
-        {i < keys.length - 1 && <span className="text-text-muted">/</span>}
-      </div>
-    ))}
-    <span className="text-text-muted text-xs ml-1">{action}</span>
-  </div>
+const Kbd = ({ children }: { children: React.ReactNode }) => (
+  <kbd className="bg-bg-500 rounded-sm px-2 py-1 text-xs font-bold text-text-muted shadow-[0_3px_0_var(--color-bg-600)] inline-flex items-center justify-center min-w-[28px]">
+    {children}
+  </kbd>
 )
 
 interface CardEntry {
@@ -230,16 +222,39 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
                       transition={{ duration: 0.15 }}
                     />
                   }
-                  className="bg-bg-500 border border-bg-600 rounded-xl p-3 w-[240px] shadow-lg z-40"
+                  className="bg-bg-300 border border-bg-600 rounded-xl p-4 w-[280px] shadow-lg z-40"
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-[0.6rem] font-semibold text-text-muted tracking-[0.08em] uppercase">Shortcuts</span>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Shortcut keys={['Enter']} action="flip / mark correct" />
-                    <Shortcut keys={['Backspace']} action="mark wrong" />
-                    <Shortcut keys={['Esc']} action="unflip" />
-                    <Shortcut keys={[isMac ? '⌘Z' : 'Ctrl+Z']} action="undo" />
+                  <span className="text-[0.6rem] font-semibold text-text-muted tracking-[0.08em] uppercase block mb-4">Shortcuts</span>
+                  <div className="flex flex-col items-center gap-0">
+                    <div className="flex flex-col items-center">
+                      <Kbd>Enter</Kbd>
+                      <span className="text-[0.6rem] text-text-muted mt-1">flip card</span>
+                      <div className="w-px h-3 bg-bg-600 mt-1" />
+                      <div className="flex items-start gap-6 relative">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] h-px bg-bg-600" />
+                        <div className="flex flex-col items-center pt-2 relative">
+                          <div className="w-px h-2 bg-bg-600 absolute -top-0 left-1/2 -translate-x-1/2" />
+                          <Kbd>Enter</Kbd>
+                          <span className="text-[0.6rem] text-accent-green mt-1">correct</span>
+                        </div>
+                        <div className="flex flex-col items-center pt-2 relative">
+                          <div className="w-px h-2 bg-bg-600 absolute -top-0 left-1/2 -translate-x-1/2" />
+                          <Kbd>Backspace</Kbd>
+                          <span className="text-[0.6rem] text-accent-red mt-1">wrong</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full h-px bg-bg-600 my-3" />
+                    <div className="flex items-center justify-between w-full gap-4">
+                      <div className="flex items-center gap-2">
+                        <Kbd>Esc</Kbd>
+                        <span className="text-[0.6rem] text-text-muted">unflip</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Kbd>{isMac ? '⌘Z' : 'Ctrl+Z'}</Kbd>
+                        <span className="text-[0.6rem] text-text-muted">undo</span>
+                      </div>
+                    </div>
                   </div>
                 </Popover.Popup>
               </Popover.Positioner>
