@@ -14,6 +14,7 @@ type FilteredData = FuseResult<Topic>[] | Topic[];
 
 const ListEntries = ({ data, filterString }: Props) => {
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
+  const initialLoadDone = useRef(false);
   const fuse = useRef(
     new Fuse(data, {
       keys: ["title"],
@@ -43,7 +44,8 @@ const ListEntries = ({ data, filterString }: Props) => {
                   data={topic}
                   isExpanded={expandedSlug === topic.slug}
                   onToggle={handleToggle}
-                  animationDelay={0.5 + 0.05 * Math.min(idx, 8)}
+                  animationDelay={initialLoadDone.current ? 0 : 0.5 + 0.05 * Math.min(idx, 8)}
+                  onAnimated={() => { initialLoadDone.current = true }}
                 />
               );
             })

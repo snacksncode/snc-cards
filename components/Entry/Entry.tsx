@@ -1,7 +1,7 @@
 import { getAccentForClass, getHumanReadableClass, groupBy } from "@lib/utils";
 import { db } from "@lib/storage";
 import { useLiveQuery } from "dexie-react-hooks";
-import { AnimatePresence, motion } from "motion/react";
+import { motion, type HTMLMotionProps } from "motion/react";
 import { Category, Danger, Edit, NoteText } from "@components/icons";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -18,6 +18,7 @@ interface Props {
   animationDelay: number;
   isExpanded: boolean;
   onToggle: (slug: string) => void;
+  onAnimated?: () => void;
 }
 
 const Tag: FC<PropsWithChildren> = ({ children }) => {
@@ -46,6 +47,7 @@ const Entry = ({
   animationDelay,
   isExpanded,
   onToggle,
+  onAnimated,
 }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
   const [reverseCards, setReverseCards] = useState(false);
@@ -77,6 +79,7 @@ const Entry = ({
       initial={{ y: 16, opacity: 0 }}
       animate={{ y: 0, opacity: 1, transition: { delay: animationDelay } }}
       exit={{ opacity: 0 }}
+      onAnimationComplete={() => { onAnimated?.() }}
 
       className="flex border-none font-[inherit] flex-col justify-center rounded bg-bg-400 overflow-hidden p-6 cursor-pointer outline-transparent relative focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--clr-card-accent)_20%,transparent),_0_4px_24px_color-mix(in_srgb,var(--clr-card-accent)_8%,transparent)] transition-shadow duration-300"
       style={
@@ -153,20 +156,28 @@ const Entry = ({
         </svg>
       </motion.div>
 
-      <AnimatePresence>
-        {isExpanded && (
-          <Collapsible.Root open={isExpanded}>
-            <Collapsible.Panel
-              render={
-                <motion.div
-                  key="additional-content"
-                  style={{ width: "100%", overflow: "hidden" }}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto", transition: { delay: 0.15, ease: "circOut", duration: 0.3 } }}
-                  exit={{ opacity: 0, height: 0, transition: { ease: "circOut", duration: 0.3 } }}
-                />
-              }
-            >
+      <Collapsible.Root open={isExpanded}>
+        <Collapsible.Panel
+          keepMounted
+          render={(props, state) => {
+            const { hidden, ...rest } = props
+            return (
+              <motion.div
+                {...(rest as HTMLMotionProps<'div'>)}
+                initial={false}
+                animate={{
+                  height: state.open ? 'auto' : 0,
+                  opacity: state.open ? 1 : 0,
+                }}
+                transition={state.open
+                  ? { type: 'spring', stiffness: 500, damping: 30 }
+                  : { type: 'spring', stiffness: 500, damping: 40 }
+                }
+                style={{ ...rest.style, width: "100%", overflow: "hidden" }}
+              />
+            )
+          }}
+        >
               <div className="flex flex-col gap-3 mt-4">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2 bg-bg-500 rounded-lg p-3" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-2">
@@ -174,10 +185,10 @@ const Entry = ({
                     <span className="font-semibold text-[var(--clr-card-accent)]">Cards</span>
                   </div>
                   <div className="flex-1 min-w-0" />
-                  <div className="flex items-center gap-2 text-xs text-text-muted">
+                  <label className="flex items-center gap-2 text-xs text-text-muted cursor-pointer select-none">
                     <span>Reverse</span>
                     <Toggle checked={reverseCards} onChange={setReverseCards} />
-                  </div>
+                  </label>
                   {savedSession?.mode === 'cards' ? (
                     <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       <LinkButton
@@ -217,10 +228,10 @@ const Entry = ({
                     <span className="font-semibold text-[var(--clr-card-accent)]">Spelling</span>
                   </div>
                   <div className="flex-1 min-w-0" />
-                  <div className="flex items-center gap-2 text-xs text-text-muted">
+                  <label className="flex items-center gap-2 text-xs text-text-muted cursor-pointer select-none">
                     <span>Reverse</span>
                     <Toggle checked={reverseSpelling} onChange={setReverseSpelling} />
-                  </div>
+                  </label>
                   {savedSession?.mode === 'spelling' ? (
                     <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       <LinkButton
@@ -273,10 +284,8 @@ const Entry = ({
                   <ScoreChart data={scoreHistory.map((h, i) => ({ i: i + 1, score: h.score }))} stroke={getAccentForClass(classString)} />
                 </div>
               )}
-            </Collapsible.Panel>
-          </Collapsible.Root>
-        )}
-      </AnimatePresence>
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </motion.div>
   );
 };

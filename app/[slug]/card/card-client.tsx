@@ -6,6 +6,7 @@ import EndCard from '@components/EndCard'
 import ProgressBar from '@components/ProgressBar'
 import { AnimatePresence, motion } from 'motion/react'
 import { Popover } from '@base-ui/react/popover'
+import { Button } from '@components/Button'
 import { db, saveSession, clearSession, saveScore } from '@lib/storage'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { shuffle, getAccentForClass } from '@lib/utils'
@@ -162,16 +163,18 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   return (
     <div className="min-h-screen p-4 flex flex-col items-center justify-center relative overflow-hidden">
       {answered.length > 0 && !isDone && (
-        <button
+        <Button
+          variant="neutral"
+          size="sm"
           onClick={handleUndo}
-          className="fixed top-4 left-4 flex items-center gap-1.5 text-sm text-text-muted hover:text-text transition-colors px-3 py-1.5 rounded-lg bg-bg-500 border border-bg-600 hover:border-text-muted cursor-pointer z-40"
+          className="fixed top-4 left-4 z-40"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 7v6h6" />
             <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
           </svg>
           Undo
-        </button>
+        </Button>
       )}
       <AnimatePresence mode="wait">
         {!isDone && currentCard ? (

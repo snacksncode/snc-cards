@@ -26,7 +26,7 @@ export default function HomeClient({ topics }: Props) {
   }
 
   useEffect(() => {
-    const TIMEOUT_MS = inputValue.length === 0 ? 0 : 400
+    const TIMEOUT_MS = inputValue.length === 0 ? 0 : 150
     const timeoutId = window.setTimeout(() => {
       setFilterString(inputValue)
     }, TIMEOUT_MS)
@@ -124,7 +124,10 @@ export default function HomeClient({ topics }: Props) {
                       height: state.open ? 'auto' : 0,
                       opacity: state.open ? 1 : 0,
                     }}
-                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    transition={state.open
+                      ? { type: 'spring', stiffness: 500, damping: 30 }
+                      : { type: 'spring', stiffness: 500, damping: 40 }
+                    }
                     style={{ ...rest.style, overflow: 'hidden' }}
                   />
                 )
