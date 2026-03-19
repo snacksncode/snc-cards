@@ -48,6 +48,7 @@
 
 body {
   -webkit-tap-highlight-color: transparent;
+  position: relative;
 }
 
 body::after {
