@@ -1,7 +1,7 @@
 'use client'
 
 import { ChangeEventHandler, useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react'
 import { Collapsible } from '@base-ui/react/collapsible'
 import { Category, Edit, NoteText } from '@components/icons'
 import { Button } from '@components/Button'
@@ -113,15 +113,18 @@ export default function HomeClient({ topics }: Props) {
               </motion.svg>
             </Collapsible.Trigger>
             <Collapsible.Panel
-              render={
+              render={(props, state) => (
                 <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
+                  {...(props as HTMLMotionProps<'div'>)}
+                  initial={false}
+                  animate={{
+                    height: state.open ? 'auto' : 0,
+                    opacity: state.open ? 1 : 0,
+                  }}
                   transition={{ duration: 0.2, ease: 'easeInOut' }}
-                  className="overflow-hidden"
+                  className={`overflow-hidden ${props.className ?? ''}`.trim()}
                 />
-              }
+              )}
             >
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 pb-4">
                 <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
