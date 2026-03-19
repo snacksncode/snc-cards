@@ -112,62 +112,62 @@ export default function HomeClient({ topics }: Props) {
                 <polyline points="6 9 12 15 18 9" />
               </motion.svg>
             </Collapsible.Trigger>
-            <AnimatePresence initial={false}>
-              {howItWorksOpen && (
+            <Collapsible.Panel
+              render={
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.2, ease: 'easeInOut' }}
                   className="overflow-hidden"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 pb-4">
-                    <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
-                      <div className="flex items-center gap-2 text-accent-blue font-bold text-sm">
-                        <Category size={18} color="currentColor" />
-                        Cards
-                      </div>
-                      <p className="text-text-muted text-xs leading-relaxed m-0">
-                        See a question, answer in your head, then flip the card. Mark
-                        correct with{' '}
-                        <kbd className="bg-bg-300 px-1 rounded text-text font-mono">
-                          Enter
-                        </kbd>{' '}
-                        or wrong with{' '}
-                        <kbd className="bg-bg-300 px-1 rounded text-text font-mono">
-                          Backspace
-                        </kbd>{' '}
-                        — tracks your streak.
-                      </p>
-                    </div>
-                    <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
-                      <div className="flex items-center gap-2 text-accent-green font-bold text-sm">
-                        <Edit size={18} color="currentColor" />
-                        Spelling
-                      </div>
-                      <p className="text-text-muted text-xs leading-relaxed m-0">
-                        Type the answer letter by letter into masked inputs, then
-                        submit to check. Diacritics are simplified —{' '}
-                        <span className="text-text font-mono text-[0.65rem]">
-                          Straße = Strasse
-                        </span>
-                        .
-                      </p>
-                    </div>
-                    <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
-                      <div className="flex items-center gap-2 text-accent-peachy font-bold text-sm">
-                        <NoteText size={18} color="currentColor" />
-                        List
-                      </div>
-                      <p className="text-text-muted text-xs leading-relaxed m-0">
-                        Browse all Q&A pairs side by side. Shows a duplicate warning
-                        if the dataset contains repeated questions.
-                      </p>
-                    </div>
+                />
+              }
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 pb-4">
+                <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
+                  <div className="flex items-center gap-2 text-accent-blue font-bold text-sm">
+                    <Category size={18} color="currentColor" />
+                    Cards
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <p className="text-text-muted text-xs leading-relaxed m-0">
+                    See a question, answer in your head, then flip the card. Mark
+                    correct with{' '}
+                    <kbd className="bg-bg-300 px-1 rounded text-text font-mono">
+                      Enter
+                    </kbd>{' '}
+                    or wrong with{' '}
+                    <kbd className="bg-bg-300 px-1 rounded text-text font-mono">
+                      Backspace
+                    </kbd>{' '}
+                    — tracks your streak.
+                  </p>
+                </div>
+                <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
+                  <div className="flex items-center gap-2 text-accent-green font-bold text-sm">
+                    <Edit size={18} color="currentColor" />
+                    Spelling
+                  </div>
+                  <p className="text-text-muted text-xs leading-relaxed m-0">
+                    Type the answer letter by letter into masked inputs, then
+                    submit to check. Diacritics are simplified —{' '}
+                    <span className="text-text font-mono text-[0.65rem]">
+                      Straße = Strasse
+                    </span>
+                    .
+                  </p>
+                </div>
+                <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
+                  <div className="flex items-center gap-2 text-accent-peachy font-bold text-sm">
+                    <NoteText size={18} color="currentColor" />
+                    List
+                  </div>
+                  <p className="text-text-muted text-xs leading-relaxed m-0">
+                    Browse all Q&A pairs side by side. Shows a duplicate warning
+                    if the dataset contains repeated questions.
+                  </p>
+                </div>
+              </div>
+            </Collapsible.Panel>
           </div>
         </Collapsible.Root>
       </motion.section>
