@@ -4,6 +4,7 @@ import { removeDiacritics } from "@lib/utils"
 import MaskedInput from "@components/ui/masked-input"
 import { ArrowRight, Information } from "@components/icons"
 import { cn } from "@lib/cn"
+import { Button } from "@components/Button"
 import Watermark from "@components/Watermark"
 import ExpandingBlob from "@components/ExpandingBlob"
 import type { Question } from "@/types"
@@ -213,7 +214,7 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
   }
 
   const containerClasses = cn(
-    "rounded-[5px] overflow-hidden text-accent-blue font-bold text-[1.25rem] border-2 border-accent-blue min-h-[175px] relative isolate bg-bg-400 text-center flex flex-col items-center justify-center p-[1em] transition-colors duration-[350ms]",
+    "rounded-[5px] overflow-hidden text-accent-blue font-bold text-[1.25rem] border-2 border-accent-blue min-h-[225px] relative isolate bg-bg-400 text-center flex flex-col items-center justify-center p-[1em] transition-colors duration-[350ms]",
     "@min-[450px]:text-[2.25rem] @min-[450px]:p-[1.5em]",
     {
       "border-accent-green": shouldAnimateBlob && answered != null && answered[0] === true,
@@ -291,27 +292,24 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
           />
         )}
       </motion.div>
-      <motion.button
+      <motion.div
         initial={{ x: "-50%", y: -100, scale: 0 }}
         animate={{
           y: shouldAnimateBlob ? -100 : 0,
           scale: shouldAnimateBlob ? 0 : 1,
           transition: { delay: shouldAnimateBlob ? 0 : 0.5 },
         }}
-        whileTap={{ scale: 0.95, transition: { delay: 0 } }}
-        onClick={checkAnswer as unknown as React.MouseEventHandler<HTMLButtonElement>}
-        className={cn(
-          "relative isolate bottom-[-3.5rem] -z-10 left-1/2 bg-transparent text-accent-blue cursor-pointer border-none inline-flex py-[0.4em] px-[1.25em] text-[0.9rem] font-bold items-center rounded-[4px] justify-center transition-colors duration-200",
-          "hover:text-white focus-visible:text-white",
-          "focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-accent-blue focus-visible:outline-offset-[0.5rem]",
-          "after:content-[''] after:rounded-[inherit] after:absolute after:inset-0 after:scale-50 after:opacity-0 after:bg-accent-blue after:-z-10",
-          "after:transition-[scale,opacity] after:duration-300 after:[transition-timing-function:cubic-bezier(0.83,0,0.17,1)]",
-          "hover:after:scale-100 hover:after:opacity-100 focus-visible:after:scale-100 focus-visible:after:opacity-100"
-        )}
+        className="relative bottom-[-3.5rem] -z-10 left-1/2"
       >
-        Submit
-        <ArrowRight size={24} className="ml-[0.5em]" />
-      </motion.button>
+        <Button
+          variant="ghost"
+          accent="var(--color-accent-blue)"
+          onClick={checkAnswer as unknown as React.MouseEventHandler<HTMLButtonElement>}
+        >
+          Submit
+          <ArrowRight size={24} />
+        </Button>
+      </motion.div>
     </motion.div>
   )
 }
