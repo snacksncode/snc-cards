@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { LinkButton } from "@components/Button";
 import { FC, PropsWithChildren, useState } from "react";
+import { Switch } from "@base-ui/react/switch";
 
 const ScoreChart = dynamic(() => import("./ScoreChart"), { ssr: false, loading: () => null });
 import type { Topic } from "@/types";
@@ -27,17 +28,16 @@ const Tag: FC<PropsWithChildren> = ({ children }) => {
 };
 
 const Toggle = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
-  <button
-    type="button"
-    role="switch"
-    aria-checked={checked}
-    onClick={(e) => { e.stopPropagation(); onChange(!checked); }}
-    className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer border-none ${checked ? 'bg-[var(--clr-card-accent)]' : 'bg-bg-600'}`}
+  <Switch.Root
+    checked={checked}
+    onCheckedChange={(c) => { onChange(c) }}
+    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+    className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${checked ? 'bg-[var(--clr-card-accent)]' : 'bg-bg-600'}`}
   >
-    <span
+    <Switch.Thumb
       className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`}
     />
-  </button>
+  </Switch.Root>
 );
 
 const Entry = ({
