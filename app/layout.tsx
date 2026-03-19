@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Poppins, Source_Code_Pro, Instrument_Serif } from 'next/font/google'
 import LayoutTransition from '@components/LayoutTransition'
 import './globals.css'
@@ -24,6 +24,13 @@ const instrumentSerif = Instrument_Serif({
   display: 'swap',
   style: ['normal', 'italic'],
 })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
 
 export const metadata: Metadata = {
   title: 'Flash Card App',
