@@ -1,11 +1,10 @@
 import { MessageQuestion, ArrowRotateRight, Back } from "@components/icons";
-import { buttonVariants } from "@components/Button";
+import { Button, LinkButton } from "@components/Button";
 import { motion, AnimatePresence, LayoutGroup, useMotionValue, animate } from "motion/react";
 import { FC, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 import EndCardReview from "@components/EndCardReview";
 import { getStreakEmojis } from "@lib/utils";
-import Link from "next/link";
 import type { CardsReviewData, SpellingReviewData, ClassString, Question } from "@/types";
 
 interface SpellingData {
@@ -40,8 +39,6 @@ const getAccentHex = (cls: ClassString) => {
       return "#5EC87E";
   }
 };
-
-const btnClass = buttonVariants({ variant: "ghost", size: "sm" });
 
 const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }) => {
   const [isReviewOpened, setIsReviewOpened] = useState(false);
@@ -121,39 +118,33 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
             />
           </h5>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
-            <Link
-              href="/"
-              className={btnClass}
-              style={{ "--btn-accent": "var(--color-accent-blue)" } as React.CSSProperties}
-            >
+            <LinkButton href="/" variant="ghost" size="sm" accent="var(--color-accent-blue)">
               <Back className="size-4" />
               Go Back
-            </Link>
-            <button
-              className={btnClass}
-              style={{ "--btn-accent": "var(--color-accent-peachy)" } as React.CSSProperties}
+            </LinkButton>
+            <Button
+              variant="ghost"
+              size="sm"
+              accent="var(--color-accent-peachy)"
               onClick={() => setIsReviewOpened((s) => !s)}
             >
               <MessageQuestion className="size-4" />
               Review
-            </button>
-            <button
-              className={btnClass}
-              style={{ "--btn-accent": "var(--color-accent-green)" } as React.CSSProperties}
-              onClick={handleRestartAll}
-            >
+            </Button>
+            <Button variant="ghost" size="sm" accent="var(--color-accent-green)" onClick={handleRestartAll}>
               <ArrowRotateRight className="size-4" />
               Restart
-            </button>
+            </Button>
             {data.incorrect.length > 0 && (
-              <button
-                className={btnClass}
-                style={{ "--btn-accent": "var(--color-accent-pink)" } as React.CSSProperties}
+              <Button
+                variant="ghost"
+                size="sm"
+                accent="var(--color-accent-pink)"
                 onClick={handleRestartIncorrect}
               >
                 <ArrowRotateRight className="size-4" />
                 Incorrect
-              </button>
+              </Button>
             )}
           </div>
         </section>

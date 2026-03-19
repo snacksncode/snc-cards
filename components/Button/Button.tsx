@@ -1,3 +1,4 @@
+import { Button as BaseButton } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@lib/cn";
 import Link from "next/link";
@@ -40,7 +41,7 @@ interface ButtonProps
 
 export function Button({ className, variant, size, accent, style, ...props }: ButtonProps) {
   return (
-    <button
+    <BaseButton
       className={cn(buttonVariants({ variant, size }), className)}
       style={{ "--btn-accent": accent, ...style } as React.CSSProperties}
       {...props}
