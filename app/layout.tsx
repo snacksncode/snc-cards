@@ -44,7 +44,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${poppins.variable} ${sourceCodePro.variable} ${instrumentSerif.variable}`}>
-      <body className="min-h-screen w-screen! overflow-x-hidden flex flex-col bg-bg-300 text-text font-sans">
+      <body className="min-h-screen overflow-x-hidden flex flex-col bg-bg-300 text-text font-sans">
         <div style={{ isolation: 'isolate' }}>
           <LayoutTransition>
             {children}

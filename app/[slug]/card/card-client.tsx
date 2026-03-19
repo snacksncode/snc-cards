@@ -222,37 +222,38 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
                       transition={{ duration: 0.15 }}
                     />
                   }
-                  className="bg-bg-300 border border-bg-600 rounded-xl p-4 w-[280px] shadow-lg z-40"
+                  className="bg-bg-300 border border-bg-600 rounded-xl p-5 w-[320px] shadow-lg z-40"
                 >
-                  <span className="text-[0.6rem] font-semibold text-text-muted tracking-[0.08em] uppercase block mb-4">Shortcuts</span>
-                  <div className="flex flex-col items-center gap-0">
-                    <div className="flex flex-col items-center">
-                      <Kbd>Enter</Kbd>
-                      <span className="text-[0.6rem] text-text-muted mt-1">flip card</span>
-                      <div className="w-px h-3 bg-bg-600 mt-1" />
-                      <div className="flex items-start gap-6 relative">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] h-px bg-bg-600" />
-                        <div className="flex flex-col items-center pt-2 relative">
-                          <div className="w-px h-2 bg-bg-600 absolute -top-0 left-1/2 -translate-x-1/2" />
-                          <Kbd>Enter</Kbd>
-                          <span className="text-[0.6rem] text-accent-green mt-1">correct</span>
-                        </div>
-                        <div className="flex flex-col items-center pt-2 relative">
-                          <div className="w-px h-2 bg-bg-600 absolute -top-0 left-1/2 -translate-x-1/2" />
-                          <Kbd>Backspace</Kbd>
-                          <span className="text-[0.6rem] text-accent-red mt-1">wrong</span>
-                        </div>
+                  <span className="text-[0.65rem] font-semibold text-text-muted tracking-[0.08em] uppercase block mb-5">Shortcuts</span>
+                  <div className="flex flex-col items-center">
+                    <Kbd>Enter</Kbd>
+                    <span className="text-[0.65rem] text-text-muted mt-1.5 mb-1">flip card</span>
+                    <svg width="180" height="28" viewBox="0 0 180 28" className="text-bg-600">
+                      <line x1="90" y1="0" x2="90" y2="8" stroke="currentColor" strokeWidth="1" />
+                      <line x1="20" y1="8" x2="140" y2="8" stroke="currentColor" strokeWidth="1" />
+                      <line x1="20" y1="8" x2="20" y2="28" stroke="currentColor" strokeWidth="1" />
+                      <line x1="140" y1="8" x2="140" y2="28" stroke="currentColor" strokeWidth="1" />
+                    </svg>
+                    <div className="flex items-start justify-center gap-14 w-full">
+                      <div className="flex flex-col items-center">
+                        <Kbd>Enter</Kbd>
+                        <span className="text-[0.65rem] text-accent-green mt-1.5">correct</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <Kbd>Backspace</Kbd>
+                        <span className="text-[0.65rem] text-accent-red mt-1.5">wrong</span>
                       </div>
                     </div>
-                    <div className="w-full h-px bg-bg-600 my-3" />
-                    <div className="flex items-center justify-between w-full gap-4">
+                    <div className="w-full h-px bg-bg-600 my-4" />
+                    <div className="flex items-center justify-between w-full">
                       <div className="flex items-center gap-2">
                         <Kbd>Esc</Kbd>
-                        <span className="text-[0.6rem] text-text-muted">unflip</span>
+                        <span className="text-[0.65rem] text-text-muted">unflip</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Kbd>{isMac ? '⌘Z' : 'Ctrl+Z'}</Kbd>
-                        <span className="text-[0.6rem] text-text-muted">undo</span>
+                      <div className="flex items-center gap-1.5">
+                        <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+                        <Kbd>Z</Kbd>
+                        <span className="text-[0.65rem] text-text-muted ml-1">undo</span>
                       </div>
                     </div>
                   </div>
