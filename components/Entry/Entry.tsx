@@ -4,7 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { AnimatePresence, motion } from "motion/react";
 import { Category, Danger, Edit, NoteText } from "@components/icons";
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import { LinkButton } from "@components/Button";
 import { FC, PropsWithChildren, useState } from "react";
 
 const ScoreChart = dynamic(() => import("./ScoreChart"), { ssr: false, loading: () => null });
@@ -174,26 +174,34 @@ const Entry = ({
                 </div>
                 {savedSession?.mode === 'cards' ? (
                   <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <Link
+                    <LinkButton
                       href={buildUrl('card', reverseCards, true)}
-                      className="px-3 py-1.5 rounded bg-[var(--clr-card-accent)] text-bg-300 text-sm font-semibold hover:opacity-90 transition-opacity text-center"
+                      variant="solid"
+                      size="sm"
+                      accent="var(--clr-card-accent)"
+                      className="text-center"
                     >
                       Resume ({savedSession.currentIndex}/{questions.length})
-                    </Link>
-                    <Link
+                    </LinkButton>
+                    <LinkButton
                       href={buildUrl('card', reverseCards, false)}
-                      className="px-3 py-1.5 rounded border border-bg-600 text-text-muted text-sm hover:text-text hover:border-text-muted transition-colors text-center"
+                      variant="neutral"
+                      size="sm"
+                      className="text-center"
                     >
                       New
-                    </Link>
+                    </LinkButton>
                   </div>
                 ) : (
-                  <Link
+                  <LinkButton
                     href={buildUrl('card', reverseCards, false)}
-                    className="px-4 py-1.5 rounded bg-[var(--clr-card-accent)] text-bg-300 text-sm font-semibold hover:opacity-90 transition-opacity w-full sm:w-auto text-center"
+                    variant="solid"
+                    size="sm"
+                    accent="var(--clr-card-accent)"
+                    className="w-full sm:w-auto text-center"
                   >
                     Start
-                  </Link>
+                  </LinkButton>
                 )}
               </div>
 
@@ -209,37 +217,47 @@ const Entry = ({
                 </div>
                 {savedSession?.mode === 'spelling' ? (
                   <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <Link
+                    <LinkButton
                       href={buildUrl('spelling', reverseSpelling, true)}
-                      className="px-3 py-1.5 rounded bg-[var(--clr-card-accent)] text-bg-300 text-sm font-semibold hover:opacity-90 transition-opacity text-center"
+                      variant="solid"
+                      size="sm"
+                      accent="var(--clr-card-accent)"
+                      className="text-center"
                     >
                       Resume ({savedSession.currentIndex}/{questions.length})
-                    </Link>
-                    <Link
+                    </LinkButton>
+                    <LinkButton
                       href={buildUrl('spelling', reverseSpelling, false)}
-                      className="px-3 py-1.5 rounded border border-bg-600 text-text-muted text-sm hover:text-text hover:border-text-muted transition-colors text-center"
+                      variant="neutral"
+                      size="sm"
+                      className="text-center"
                     >
                       New
-                    </Link>
+                    </LinkButton>
                   </div>
                 ) : (
-                  <Link
+                  <LinkButton
                     href={buildUrl('spelling', reverseSpelling, false)}
-                    className="px-4 py-1.5 rounded bg-[var(--clr-card-accent)] text-bg-300 text-sm font-semibold hover:opacity-90 transition-opacity w-full sm:w-auto text-center"
+                    variant="solid"
+                    size="sm"
+                    accent="var(--clr-card-accent)"
+                    className="w-full sm:w-auto text-center"
                   >
                     Start
-                  </Link>
+                  </LinkButton>
                 )}
               </div>
 
-              <Link
+              <LinkButton
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 bg-bg-500 rounded-lg p-3 text-[var(--clr-card-accent)] font-semibold hover:shadow-[0_4px_15px_rgba(0,0,0,0.2)] transition-shadow"
-                href={`${slug}/list`}
+                variant="neutral"
+                size="sm"
+                className="w-full justify-start gap-2 text-[var(--clr-card-accent)] border-0 bg-bg-500 hover:bg-bg-600 hover:text-[var(--clr-card-accent)] hover:border-transparent"
+                href={`/${slug}/list`}
               >
                 <NoteText size={24} color="currentColor" />
                 List
-              </Link>
+              </LinkButton>
             </div>
 
             {scoreHistory.length > 0 && (
