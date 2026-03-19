@@ -192,6 +192,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
             amount={rawData.length}
             onRestart={handleRestart}
             streak={maxStreak}
+            slug={slug}
           />
         ) : null}
       </AnimatePresence>

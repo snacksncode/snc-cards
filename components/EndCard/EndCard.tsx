@@ -6,8 +6,13 @@ import confetti from "canvas-confetti";
 import { Collapsible } from "@base-ui/react/collapsible";
 import { Menu } from "@base-ui/react/menu";
 import { cn } from "@lib/cn";
-import { getStreakEmojis } from "@lib/utils";
+import { getStreakEmojis, getAccentForClass } from "@lib/utils";
+import { db } from "@lib/storage";
+import { useLiveQuery } from "dexie-react-hooks";
+import dynamic from "next/dynamic";
 import type { CardsReviewData, SpellingReviewData, ClassString, Question } from "@/types";
+
+const ScoreChart = dynamic(() => import("@components/Entry/ScoreChart"), { ssr: false, loading: () => null });
 
 interface SpellingData {
   input: string;
@@ -22,6 +27,7 @@ interface Props {
   amount: number;
   dataClass: ClassString;
   streak: number;
+  slug: string;
 }
 
 const isSpellingData = (input: Question[] | SpellingData[]): input is SpellingData[] => {
@@ -103,7 +109,8 @@ const EndCardList: FC<{
   );
 };
 
-const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }) => {
+const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, slug }) => {
+  const scoreHistory = useLiveQuery(() => db.history.where('slug').equals(slug).toArray(), [slug]) ?? [];
   const score = (((amount - data.incorrect.length) / amount) * 100).toFixed(1);
   const scoreNum = useMotionValue(0);
   const scoreRef = useRef<HTMLSpanElement>(null);
@@ -186,6 +193,15 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak }
             <p className="text-2xl font-bold text-accent-peachy m-0 mt-1">{streak} {getStreakEmojis(streak)}</p>
           </div>
         </div>
+        {scoreHistory.length > 0 && (
+          <div className="rounded-lg bg-bg-400 p-4 [&_svg]:outline-none">
+            <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium mb-2">SCORE HISTORY</p>
+            <ScoreChart
+              data={scoreHistory.map((h, i) => ({ i: i + 1, score: h.score }))}
+              stroke={getAccentForClass(dataClass)}
+            />
+          </div>
+        )}
         <section className="flex flex-col gap-6 mt-8">
           <h5 className="text-xl text-accent-blue m-0 relative isolate">
             <span className="z-[1] pr-2 bg-bg-300 relative">What&apos;s next?</span>

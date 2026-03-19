@@ -148,6 +148,7 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
             amount={rawData.length}
             onRestart={handleRestart}
             streak={maxStreak}
+            slug={slug}
           />
         ) : null}
       </AnimatePresence>
