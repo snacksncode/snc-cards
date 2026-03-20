@@ -28,6 +28,7 @@ interface Props {
   dataClass: ClassString;
   streak: number;
   slug: string;
+  elapsedTime?: number;
 }
 
 const isSpellingData = (input: Question[] | SpellingData[]): input is SpellingData[] => {
@@ -109,7 +110,14 @@ const EndCardList: FC<{
   );
 };
 
-const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, slug }) => {
+const formatTime = (seconds: number) => {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m === 0) return `${s}s`;
+  return `${m}m ${s}s`;
+};
+
+const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, slug, elapsedTime }) => {
   const scoreHistory = useLiveQuery(() => db.history.where('slug').equals(slug).toArray(), [slug]) ?? [];
   const score = (((amount - data.incorrect.length) / amount) * 100).toFixed(1);
   const scoreNum = useMotionValue(0);
@@ -176,17 +184,19 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, 
               : "Keep going! Practice makes progress."}
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2 mb-2">
-          <div className="bg-bg-400 rounded-lg p-3">
-            <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">SCORE</p>
-            <p className="text-2xl font-bold text-accent-green m-0 mt-1">{score}%</p>
-          </div>
+          {elapsedTime != null && elapsedTime > 0 && (
+            <div className="bg-bg-400 rounded-lg p-3">
+              <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">TIME</p>
+              <p className="text-2xl font-bold text-accent-blue m-0 mt-1">{formatTime(elapsedTime)}</p>
+            </div>
+          )}
           <div className="bg-bg-400 rounded-lg p-3">
             <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">CORRECT</p>
             <p className="text-2xl font-bold text-accent-green m-0 mt-1">{correct.length}<span className="text-sm text-text-muted font-normal">/{amount}</span></p>
           </div>
           <div className="bg-bg-400 rounded-lg p-3">
             <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">INCORRECT</p>
-            <p className="text-2xl font-bold text-accent-red m-0 mt-1">{incorrect.length}</p>
+            <p className="text-2xl font-bold text-accent-red m-0 mt-1">{incorrect.length}<span className="text-sm text-text-muted font-normal">/{amount}</span></p>
           </div>
           <div className="bg-bg-400 rounded-lg p-3">
             <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">BEST STREAK</p>

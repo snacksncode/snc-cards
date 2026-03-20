@@ -28,10 +28,7 @@ const Filter = ({ value, onChangeHandler }: Props) => {
   }, []);
 
   return (
-    <motion.div
-      initial={{ y: 16, opacity: 0 }}
-      animate={{ y: 0, opacity: 1, transition: { delay: 0.4, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } }}
-    >
+    <div>
       <label
         htmlFor="search"
         className="block cursor-pointer text-lg font-medium mb-2"
@@ -61,7 +58,7 @@ const Filter = ({ value, onChangeHandler }: Props) => {
           </div>
         </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

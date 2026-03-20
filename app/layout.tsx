@@ -43,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${sourceCodePro.variable} ${instrumentSerif.variable}`}>
+    <html lang="en" className={`${poppins.variable} ${sourceCodePro.variable} ${instrumentSerif.variable} [scrollbar-gutter:stable]`}>
       <body className="min-h-screen overflow-x-hidden flex flex-col bg-bg-300 text-text font-sans">
         <div style={{ isolation: 'isolate' }}>
           <LayoutTransition>

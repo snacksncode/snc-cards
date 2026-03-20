@@ -35,11 +35,12 @@ const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak, accent
           <motion.div
             style={{
               backgroundColor: accentColor,
-              boxShadow: `0 0 8px ${accentColor}`,
+              filter: `drop-shadow(0 0 8px ${accentColor})`,
+              transformOrigin: "left",
             }}
-            className="h-full rounded-full"
-            initial={{ width: 0 }}
-            animate={{ width: `${(currentAmount / maxAmount) * 100}%` }}
+            className="w-full h-full rounded-full"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: currentAmount / maxAmount }}
             transition={{ ease: "easeInOut", duration: 0.4 }}
           />
         </div>

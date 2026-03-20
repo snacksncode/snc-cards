@@ -13,19 +13,39 @@ const flip = {
   flipped: { rotateX: 180, transition: { type: "spring" as const, stiffness: 200, damping: 20 } },
 };
 
-const card = {
-  out: { opacity: 0, x: "50%", y: "-50%", scale: 0.25 },
-  in: { opacity: 1, x: "-50%", y: "-50%", scale: 1, transition: { type: "spring" as const, stiffness: 120, damping: 20 } },
-  outExit: { opacity: 0, x: "-150%", y: "-50%", scale: 0.25, transition: { type: "spring" as const, stiffness: 120, damping: 20 } },
+const springTransition = { type: "spring" as const, stiffness: 120, damping: 20 };
+
+const cardVariants = {
+  out: (dir: 'forward' | 'backward') => ({
+    opacity: 0,
+    x: dir === 'forward' ? "50%" : "-150%",
+    y: "-50%",
+    scale: 0.25,
+  }),
+  in: {
+    opacity: 1,
+    x: "-50%",
+    y: "-50%",
+    scale: 1,
+    transition: springTransition,
+  },
+  outExit: (dir: 'forward' | 'backward') => ({
+    opacity: 0,
+    x: dir === 'forward' ? "-150%" : "50%",
+    y: "-50%",
+    scale: 0.25,
+    transition: springTransition,
+  }),
 };
 
 interface Props {
   dataClass?: ClassString;
   data: Question;
   onAnswer: (rightAnswer: boolean, questionData: Question) => void;
+  direction?: 'forward' | 'backward';
 }
 
-const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
+const FlipCard = ({ data, dataClass, onAnswer, direction = 'forward' }: Props) => {
   if (dataClass == null) throw new Error("dataClass is not a string");
   const [isFlipped, setIsFlipped] = useState(false);
   const [answeredRight, setAnsweredRight] = useState<boolean | null>(null);
@@ -69,7 +89,8 @@ const FlipCard = ({ data, dataClass, onAnswer }: Props) => {
   return (
     <motion.div
       key={`card_${data.id}`}
-      variants={card}
+      custom={direction}
+      variants={cardVariants}
       initial="out"
       animate="in"
       exit="outExit"

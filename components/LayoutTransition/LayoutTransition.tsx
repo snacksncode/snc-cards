@@ -21,10 +21,10 @@ export default function LayoutTransition({ children }: { children: React.ReactNo
     <AnimatePresence mode="wait">
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.98 }}
-        transition={{ type: "spring", stiffness: 200, damping: 28 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15 }}
       >
         <FrozenRouter>
           {children}

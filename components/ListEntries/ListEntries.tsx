@@ -14,7 +14,6 @@ type FilteredData = FuseResult<Topic>[] | Topic[];
 
 const ListEntries = ({ data, filterString }: Props) => {
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
-  const initialLoadDone = useRef(false);
   const fuse = useRef(
     new Fuse(data, {
       keys: ["title"],
@@ -31,7 +30,7 @@ const ListEntries = ({ data, filterString }: Props) => {
     <div className="grid mt-6 gap-6 flex-1 grid-cols-1 auto-rows-min relative">
       <AnimatePresence mode="popLayout">
           {filteredData.length > 0 ? (
-            filteredData.map((d, idx) => {
+            filteredData.map((d) => {
               const isFuseResult = Boolean(
                 (d as FuseResult<Topic>).item
               );
@@ -44,8 +43,6 @@ const ListEntries = ({ data, filterString }: Props) => {
                   data={topic}
                   isExpanded={expandedSlug === topic.slug}
                   onToggle={handleToggle}
-                  animationDelay={initialLoadDone.current ? 0 : 0.5 + 0.05 * Math.min(idx, 8)}
-                  onAnimated={() => { initialLoadDone.current = true }}
                 />
               );
             })
@@ -53,8 +50,8 @@ const ListEntries = ({ data, filterString }: Props) => {
             <motion.h1
               key="nothing-found"
               className="w-full h-fit py-12 absolute text-center flex flex-col gap-4 items-center justify-center text-accent-red brightness-125 [&_svg]:w-12 [&_svg]:h-12"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0, transition: { delay: 0.25 } }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
               <CloseSquare size={32} color="currentColor" />

@@ -5,18 +5,64 @@ import FlipCard from '@components/FlipCard'
 import EndCard from '@components/EndCard'
 import ProgressBar from '@components/ProgressBar'
 import { AnimatePresence, motion } from 'motion/react'
-import { Popover } from '@base-ui/react/popover'
+import { useRef } from 'react'
 import { Button } from '@components/Button'
 import { db, saveSession, clearSession, saveScore } from '@lib/storage'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { shuffle, getAccentForClass } from '@lib/utils'
 import type { ClassString, Question } from '@/types'
 
-const Kbd = ({ children }: { children: React.ReactNode }) => (
-  <kbd className="bg-bg-500 rounded-sm px-2 py-1 text-xs font-bold text-text-muted shadow-[0_3px_0_var(--color-bg-600)] inline-flex items-center justify-center min-w-[28px]">
-    {children}
-  </kbd>
-)
+const ShortcutsDiagram = ({ isMac }: { isMac: boolean }) => {
+  const bg500 = 'var(--color-bg-500)'
+  const bg600 = 'var(--color-bg-600)'
+  const muted = 'var(--color-text-muted)'
+  const green = 'var(--color-accent-green)'
+  const red = 'var(--color-accent-red)'
+
+  const key = (x: number, y: number, text: string, w = 44) => (
+    <g>
+      <rect x={x - w / 2} y={y + 3} width={w} height={24} rx={4} fill={bg600} />
+      <rect x={x - w / 2} y={y} width={w} height={24} rx={4} fill={bg500} />
+      <text x={x} y={y + 12} textAnchor="middle" dominantBaseline="central" fill={muted} fontSize={11} fontWeight={700} fontFamily="inherit">{text}</text>
+    </g>
+  )
+
+  const label = (x: number, y: number, text: string, color = muted) => (
+    <text x={x} y={y} textAnchor="middle" dominantBaseline="central" fill={color} fontSize={10} fontFamily="inherit">{text}</text>
+  )
+
+  const undoKey = isMac ? '⌘' : 'Ctrl'
+  const undoW = isMac ? 30 : 40
+
+  return (
+    <svg viewBox="0 0 280 224" width="100%" className="block">
+      {label(140, 12, 'SHORTCUTS', muted)}
+
+      {key(140, 30, 'Enter', 54)}
+      {label(140, 68, 'flip card')}
+
+      <line x1={140} y1={76} x2={140} y2={90} stroke={bg600} strokeWidth={1} />
+      <line x1={68} y1={90} x2={212} y2={90} stroke={bg600} strokeWidth={1} />
+      <line x1={68} y1={90} x2={68} y2={104} stroke={bg600} strokeWidth={1} />
+      <line x1={212} y1={90} x2={212} y2={104} stroke={bg600} strokeWidth={1} />
+
+      {key(68, 104, 'Enter', 54)}
+      {label(68, 142, 'correct', green)}
+
+      {key(212, 104, 'Backspace', 74)}
+      {label(212, 142, 'wrong', red)}
+
+      <line x1={16} y1={160} x2={264} y2={160} stroke={bg600} strokeWidth={1} />
+
+      {key(68, 174, 'Esc', 40)}
+      {label(68, 208, 'unflip')}
+
+      {key(192, 174, undoKey, undoW)}
+      {key(192 + undoW / 2 + 20, 174, 'Z', 30)}
+      {label(192 + undoW / 4 + 10, 208, 'undo')}
+    </svg>
+  )
+}
 
 interface CardEntry {
   question: Question
@@ -39,8 +85,11 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   const [cards, setCards] = useState<CardEntry[]>(() =>
     shuffle(displayData).map((q) => ({ question: q, status: null }))
   )
-  const [shortcutsOpen, setShortcutsOpen] = useState(false)
+  const [shortcutsVisible, setShortcutsVisible] = useState(false)
+  const shortcutsTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [isMac, setIsMac] = useState(false)
+  const startTimeRef = useRef<number | null>(null)
+  const [elapsedTime, setElapsedTime] = useState(0)
 
   const session = useLiveQuery(
     () => resume ? db.sessions.get(slug) : undefined,
@@ -71,6 +120,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
     setResumeApplied(true)
   }
 
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward')
   const currentIndex = cards.findIndex((c) => c.status === null)
   const isDone = cards.length > 0 && currentIndex === -1
   const currentCard = currentIndex >= 0 ? cards[currentIndex] : null
@@ -100,11 +150,16 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
 
   useEffect(() => {
     const dismissed = localStorage.getItem('shortcuts-dismissed')
-    if (!dismissed && window.innerWidth >= 640) setShortcutsOpen(true)
+    if (!dismissed && window.innerWidth >= 640) setShortcutsVisible(true)
   }, [])
 
   const onAnswer = (rightAnswer: boolean, _question: Question) => {
     if (currentIndex === -1) return
+    setDirection('forward')
+
+    if (startTimeRef.current === null) {
+      startTimeRef.current = Date.now()
+    }
 
     const newCards = cards.map((c, i) =>
       i === currentIndex ? { ...c, status: rightAnswer ? ('correct' as const) : ('wrong' as const) } : c
@@ -113,6 +168,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
 
     const nextIdx = newCards.findIndex((c) => c.status === null)
     if (nextIdx === -1) {
+      setElapsedTime(Math.round((Date.now() - startTimeRef.current!) / 1000))
       clearSession(slug)
       if (newCards.length === rawData.length) {
         const correctCount = newCards.filter((c) => c.status === 'correct').length
@@ -132,6 +188,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   const handleUndo = () => {
     const lastAnsweredIdx = cards.reduceRight<number>((found, c, i) => found >= 0 ? found : c.status !== null ? i : -1, -1)
     if (lastAnsweredIdx === -1) return
+    setDirection('backward')
     setCards((prev) => prev.map((c, i) => i === lastAnsweredIdx ? { ...c, status: null } : c))
   }
 
@@ -147,6 +204,8 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   }, [cards])
 
   const handleRestart = (retryData: Question[] | null = null) => {
+    startTimeRef.current = null
+    setElapsedTime(0)
     const dataToShuffle = retryData ?? displayData
     setCards(shuffle(dataToShuffle).map((q) => ({ question: q, status: null })))
   }
@@ -158,8 +217,9 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
         <Button
           variant="neutral"
           size="sm"
-          onClick={handleUndo}
-          className="fixed top-4 left-4 z-40"
+          onClick={(e) => { handleUndo(); (e.currentTarget as HTMLElement).blur() }}
+          tabIndex={-1}
+          className="fixed left-4 max-lg:bottom-4 lg:top-4 z-40"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 7v6h6" />
@@ -174,12 +234,13 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
             <div className="mb-4">
               <ProgressBar currentAmount={answered.length} maxAmount={cards.length} streak={streak} accentColor={getAccentForClass(dataClass)} />
             </div>
-            <AnimatePresence>
+            <AnimatePresence custom={direction}>
               <FlipCard
                 key={`${currentCard.question.id}_${currentCard.question.question}_${currentCard.question.answer}`}
                 dataClass={dataClass}
                 onAnswer={onAnswer}
                 data={currentCard.question}
+                direction={direction}
               />
             </AnimatePresence>
           </motion.div>
@@ -193,77 +254,55 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
             onRestart={handleRestart}
             streak={maxStreak}
             slug={slug}
+            elapsedTime={elapsedTime}
           />
         ) : null}
       </AnimatePresence>
-      <Popover.Root
-        open={shortcutsOpen}
-        onOpenChange={(open) => {
-          setShortcutsOpen(open)
-          if (!open) localStorage.setItem('shortcuts-dismissed', 'true')
+      <div
+        className="fixed bottom-4 right-4 z-40 max-sm:hidden"
+        onMouseEnter={() => {
+          if (shortcutsTimeout.current) clearTimeout(shortcutsTimeout.current)
+          setShortcutsVisible(true)
+        }}
+        onMouseLeave={() => {
+          shortcutsTimeout.current = setTimeout(() => setShortcutsVisible(false), 150)
         }}
       >
-        <Popover.Trigger className="fixed bottom-4 right-4 w-10 h-10 rounded-full bg-bg-500 border border-bg-600 flex items-center justify-center text-text-muted hover:text-text cursor-pointer z-40 max-sm:hidden">
+        <div
+          tabIndex={0}
+          role="button"
+          aria-label="Keyboard shortcuts"
+          className="w-10 h-10 rounded-full bg-bg-500 border border-bg-600 flex items-center justify-center text-text-muted hover:text-text cursor-pointer"
+          onFocus={() => setShortcutsVisible(true)}
+          onKeyDown={(e) => {
+            if (e.key !== 'Tab') {
+              e.preventDefault()
+              setShortcutsVisible(false)
+              ;(e.currentTarget as HTMLElement).blur()
+            }
+          }}
+          onBlur={() => setShortcutsVisible(false)}
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />
             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
             <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
-        </Popover.Trigger>
+        </div>
         <AnimatePresence>
-          {shortcutsOpen && (
-            <Popover.Portal keepMounted>
-              <Popover.Positioner sideOffset={8} side="top" align="end">
-                <Popover.Popup
-                  render={
-                    <motion.div
-                      initial={{ opacity: 0, y: 4, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                    />
-                  }
-                  className="bg-bg-300 border border-bg-600 rounded-xl p-5 w-[320px] shadow-lg z-40"
-                >
-                  <span className="text-[0.65rem] font-semibold text-text-muted tracking-[0.08em] uppercase block mb-5">Shortcuts</span>
-                  <div className="flex flex-col items-center">
-                    <Kbd>Enter</Kbd>
-                    <span className="text-[0.65rem] text-text-muted mt-1.5 mb-1">flip card</span>
-                    <svg width="180" height="28" viewBox="0 0 180 28" className="text-bg-600">
-                      <line x1="90" y1="0" x2="90" y2="8" stroke="currentColor" strokeWidth="1" />
-                      <line x1="20" y1="8" x2="140" y2="8" stroke="currentColor" strokeWidth="1" />
-                      <line x1="20" y1="8" x2="20" y2="28" stroke="currentColor" strokeWidth="1" />
-                      <line x1="140" y1="8" x2="140" y2="28" stroke="currentColor" strokeWidth="1" />
-                    </svg>
-                    <div className="flex items-start justify-center gap-14 w-full">
-                      <div className="flex flex-col items-center">
-                        <Kbd>Enter</Kbd>
-                        <span className="text-[0.65rem] text-accent-green mt-1.5">correct</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <Kbd>Backspace</Kbd>
-                        <span className="text-[0.65rem] text-accent-red mt-1.5">wrong</span>
-                      </div>
-                    </div>
-                    <div className="w-full h-px bg-bg-600 my-4" />
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
-                        <Kbd>Esc</Kbd>
-                        <span className="text-[0.65rem] text-text-muted">unflip</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
-                        <Kbd>Z</Kbd>
-                        <span className="text-[0.65rem] text-text-muted ml-1">undo</span>
-                      </div>
-                    </div>
-                  </div>
-                </Popover.Popup>
-              </Popover.Positioner>
-            </Popover.Portal>
+          {shortcutsVisible && (
+            <motion.div
+              initial={{ opacity: 0, y: 4, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 4, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              className="absolute bottom-12 right-0 bg-bg-300 border border-bg-600 rounded-xl p-4 w-[340px] shadow-lg"
+            >
+              <ShortcutsDiagram isMac={isMac} />
+            </motion.div>
           )}
         </AnimatePresence>
-      </Popover.Root>
+      </div>
     </div>
   )
 }

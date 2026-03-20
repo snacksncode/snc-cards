@@ -1,13 +1,13 @@
 'use client'
 
 import { ChangeEventHandler, useEffect, useState } from 'react'
-import { AnimatePresence, motion, type HTMLMotionProps } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { Collapsible } from '@base-ui/react/collapsible'
-import { Category, Edit, NoteText } from '@components/icons'
 import { Button } from '@components/Button'
 import Filter from '@components/Filter'
 import ListEntries from '@components/ListEntries'
 import { populateAllFakeData } from '@lib/storage'
+import HowItWorks4 from '@components/HowItWorks4'
 import type { Topic } from '@/types'
 
 interface Props {
@@ -39,9 +39,9 @@ export default function HomeClient({ topics }: Props) {
   }, [])
 
   return (
-    <main className="relative px-8 py-8 mx-auto w-full max-w-[800px] flex flex-col">
+    <main className="relative px-8 py-8 mx-auto w-full max-w-200 flex flex-col">
       <div
-        className="pointer-events-none absolute left-0 -top-8 w-[350px] h-[250px] rounded-full"
+        className="pointer-events-none absolute left-0 -top-8 w-87.5 h-62.5 rounded-full"
         style={{
           background: "radial-gradient(ellipse at 20% 50%, var(--color-accent-gold), transparent 70%)",
           filter: "blur(72px)",
@@ -50,45 +50,34 @@ export default function HomeClient({ topics }: Props) {
         }}
         aria-hidden="true"
       />
-      <motion.h1
-        initial={{ y: 16, opacity: 0 }}
-        animate={{ y: 0, opacity: 1, transition: { delay: 0.1, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } }}
-        className="mt-0 mb-8 text-[clamp(1.75rem,6vw,3rem)] font-serif font-bold"
-      >
+      <h1 className="mt-0 mb-8 text-[clamp(1.75rem,6vw,3rem)] font-serif font-bold">
         What would you like to learn?
-      </motion.h1>
+      </h1>
       <AnimatePresence>
         {mounted && !demoLoaded && (
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0, transition: { delay: 0.2, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } }}
-            exit={{ opacity: 0, y: -8, transition: { duration: 0.3, ease: 'easeOut' } }}
-            className="flex items-center gap-3 mb-6"
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            style={{ overflow: 'hidden' }}
           >
-            <Button
-              variant="subtle"
-              accent="var(--color-accent-gold)"
-              onClick={async () => {
-                await populateAllFakeData(topics)
-                localStorage.setItem('demo-loaded', 'true')
-                setDemoLoaded(true)
-              }}
-            >
-              ✨ Try with demo data
-            </Button>
-            <span className="text-text-muted text-sm">See score history and all features in action</span>
+            <div className="flex items-center flex-wrap pb-4">
+              <Button
+                variant="subtle"
+                accent="var(--color-accent-gold)"
+                onClick={async () => {
+                  await populateAllFakeData(topics)
+                  localStorage.setItem('demo-loaded', 'true')
+                  setDemoLoaded(true)
+                }}
+              >
+                ✨ Try with demo data
+              </Button>
+              <span className="text-text-muted ml-3 text-sm">See score history and all features in action</span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-      <motion.section
-        initial={{ opacity: 0, marginBottom: 0 }}
-        animate={{
-          opacity: 1,
-          marginBottom: 24,
-          transition: { delay: 0.3, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
-        }}
-        className="overflow-hidden"
-      >
+      <section className="overflow-hidden mb-6">
         <Collapsible.Root open={howItWorksOpen} onOpenChange={setHowItWorksOpen}>
           <div className="bg-bg-400 rounded-lg border border-bg-600">
             <Collapsible.Trigger className="w-full flex items-center justify-between p-4 cursor-pointer bg-transparent border-none">
@@ -118,69 +107,26 @@ export default function HomeClient({ topics }: Props) {
                 const { hidden, ...rest } = props
                 return (
                   <motion.div
-                    {...(rest as HTMLMotionProps<'div'>)}
+                    {...(rest as React.ComponentProps<typeof motion.div>)}
                     initial={false}
                     animate={{
                       height: state.open ? 'auto' : 0,
                       opacity: state.open ? 1 : 0,
                     }}
-                    transition={state.open
-                      ? { type: 'spring', stiffness: 500, damping: 30 }
-                      : { type: 'spring', stiffness: 500, damping: 40 }
-                    }
+                    transition={{
+                      duration: state.open ? 0.4 : 0.3,
+                      ease: [0.66, 0, 0.34, 1],
+                    }}
                     style={{ ...rest.style, overflow: 'hidden' }}
                   />
                 )
               }}
             >
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 pb-4">
-                <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
-                  <div className="flex items-center gap-2 text-accent-blue font-bold text-sm">
-                    <Category size={18} color="currentColor" />
-                    Cards
-                  </div>
-                  <p className="text-text-muted text-xs leading-relaxed m-0">
-                    See a question, answer in your head, then flip the card. Mark
-                    correct with{' '}
-                    <kbd className="bg-bg-300 px-1 rounded text-text font-mono">
-                      Enter
-                    </kbd>{' '}
-                    or wrong with{' '}
-                    <kbd className="bg-bg-300 px-1 rounded text-text font-mono">
-                      Backspace
-                    </kbd>{' '}
-                    — tracks your streak.
-                  </p>
-                </div>
-                <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
-                  <div className="flex items-center gap-2 text-accent-green font-bold text-sm">
-                    <Edit size={18} color="currentColor" />
-                    Spelling
-                  </div>
-                  <p className="text-text-muted text-xs leading-relaxed m-0">
-                    Type the answer letter by letter into masked inputs, then
-                    submit to check. Diacritics are simplified —{' '}
-                    <span className="text-text font-mono text-[0.65rem]">
-                      Straße = Strasse
-                    </span>
-                    .
-                  </p>
-                </div>
-                <div className="bg-bg-500 rounded p-4 flex flex-col gap-2">
-                  <div className="flex items-center gap-2 text-accent-peachy font-bold text-sm">
-                    <NoteText size={18} color="currentColor" />
-                    List
-                  </div>
-                  <p className="text-text-muted text-xs leading-relaxed m-0">
-                    Browse all Q&A pairs side by side. Shows a duplicate warning
-                    if the dataset contains repeated questions.
-                  </p>
-                </div>
-              </div>
+              <HowItWorks4 open={howItWorksOpen} />
             </Collapsible.Panel>
           </div>
         </Collapsible.Root>
-      </motion.section>
+      </section>
       <Filter value={inputValue} onChangeHandler={handleInputChange} />
       <ListEntries filterString={filterString} data={topics} />
     </main>

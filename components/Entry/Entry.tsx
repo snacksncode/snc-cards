@@ -1,7 +1,8 @@
 import { getAccentForClass, getHumanReadableClass, groupBy } from "@lib/utils";
 import { db } from "@lib/storage";
 import { useLiveQuery } from "dexie-react-hooks";
-import { motion, type HTMLMotionProps } from "motion/react";
+import { motion } from "motion/react";
+import React from "react";
 import { Category, Danger, Edit, NoteText } from "@components/icons";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -15,10 +16,8 @@ import type { Topic } from "@/types";
 
 interface Props {
   data: Topic;
-  animationDelay: number;
   isExpanded: boolean;
   onToggle: (slug: string) => void;
-  onAnimated?: () => void;
 }
 
 const Tag: FC<PropsWithChildren> = ({ children }) => {
@@ -44,10 +43,8 @@ const Toggle = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 
 const Entry = ({
   data: { title, slug, questions, class: classString },
-  animationDelay,
   isExpanded,
   onToggle,
-  onAnimated,
 }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
   const [reverseCards, setReverseCards] = useState(false);
@@ -58,8 +55,8 @@ const Entry = ({
 
   const scoreHistory = useLiveQuery(() => db.history.where('slug').equals(slug).toArray(), [slug]) ?? [];
   const savedSession = useLiveQuery(
-    () => isExpanded ? db.sessions.get(slug) : undefined,
-    [slug, isExpanded]
+    () => db.sessions.get(slug),
+    [slug]
   );
 
   const buildUrl = (mode: 'card' | 'spelling', reverse: boolean, resume: boolean) => {
@@ -76,10 +73,7 @@ const Entry = ({
       tabIndex={0}
       layout
       key={slug}
-      initial={{ y: 16, opacity: 0 }}
-      animate={{ y: 0, opacity: 1, transition: { delay: animationDelay } }}
       exit={{ opacity: 0 }}
-      onAnimationComplete={() => { onAnimated?.() }}
 
       className="flex border-none font-[inherit] flex-col justify-center rounded bg-bg-400 overflow-hidden p-6 cursor-pointer outline-transparent relative focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--clr-card-accent)_20%,transparent),_0_4px_24px_color-mix(in_srgb,var(--clr-card-accent)_8%,transparent)] transition-shadow duration-300"
       style={
@@ -163,16 +157,16 @@ const Entry = ({
             const { hidden, ...rest } = props
             return (
               <motion.div
-                {...(rest as HTMLMotionProps<'div'>)}
+                {...(rest as React.ComponentProps<typeof motion.div>)}
                 initial={false}
                 animate={{
                   height: state.open ? 'auto' : 0,
                   opacity: state.open ? 1 : 0,
                 }}
-                transition={state.open
-                  ? { type: 'spring', stiffness: 500, damping: 30 }
-                  : { type: 'spring', stiffness: 500, damping: 40 }
-                }
+                transition={{
+                  duration: state.open ? 0.4 : 0.3,
+                  ease: [0.66, 0, 0.34, 1],
+                }}
                 style={{ ...rest.style, width: "100%", overflow: "hidden" }}
               />
             )
