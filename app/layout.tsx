@@ -4,14 +4,14 @@ import LayoutTransition from '@components/LayoutTransition'
 import './globals.css'
 
 const poppins = Poppins({
-  weight: ['400', '500', '700'],
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-poppins',
   display: 'swap',
 })
 
 const sourceCodePro = Source_Code_Pro({
-  weight: ['600'],
+  weight: ['400', '600', '700'],
   subsets: ['latin'],
   variable: '--font-source-code-pro',
   display: 'swap',

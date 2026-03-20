@@ -2,11 +2,11 @@
 
 import { ChangeEventHandler, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Collapsible } from '@base-ui/react/collapsible'
 import { Button } from '@components/Button'
+import { Collapsible } from '@base-ui/react/collapsible'
 import Filter from '@components/Filter'
 import ListEntries from '@components/ListEntries'
-import { populateAllFakeData } from '@lib/storage'
+import { populateAllFakeData, clearAllData } from '@lib/storage'
 import HowItWorks4 from '@components/HowItWorks4'
 import type { Topic } from '@/types'
 
@@ -17,8 +17,7 @@ interface Props {
 export default function HomeClient({ topics }: Props) {
   const [inputValue, setInputValue] = useState('')
   const [filterString, setFilterString] = useState<string | null>(null)
-  const [mounted, setMounted] = useState(false)
-  const [demoLoaded, setDemoLoaded] = useState(false)
+  const [demoState, setDemoState] = useState<'loading' | 'available' | 'loaded'>('loading')
   const [howItWorksOpen, setHowItWorksOpen] = useState(false)
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -34,8 +33,7 @@ export default function HomeClient({ topics }: Props) {
   }, [inputValue])
 
   useEffect(() => {
-    setMounted(true)
-    if (localStorage.getItem('demo-loaded') === 'true') setDemoLoaded(true)
+    setDemoState(localStorage.getItem('demo-loaded') === 'true' ? 'loaded' : 'available')
   }, [])
 
   return (
@@ -53,30 +51,6 @@ export default function HomeClient({ topics }: Props) {
       <h1 className="mt-0 mb-8 text-[clamp(1.75rem,6vw,3rem)] font-serif font-bold">
         What would you like to learn?
       </h1>
-      <AnimatePresence>
-        {mounted && !demoLoaded && (
-          <motion.div
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            style={{ overflow: 'hidden' }}
-          >
-            <div className="flex items-center flex-wrap pb-4">
-              <Button
-                variant="subtle"
-                accent="var(--color-accent-gold)"
-                onClick={async () => {
-                  await populateAllFakeData(topics)
-                  localStorage.setItem('demo-loaded', 'true')
-                  setDemoLoaded(true)
-                }}
-              >
-                ✨ Try with demo data
-              </Button>
-              <span className="text-text-muted ml-3 text-sm">See score history and all features in action</span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
       <section className="overflow-hidden mb-6">
         <Collapsible.Root open={howItWorksOpen} onOpenChange={setHowItWorksOpen}>
           <div className="bg-bg-400 rounded-lg border border-bg-600">
@@ -129,6 +103,60 @@ export default function HomeClient({ topics }: Props) {
       </section>
       <Filter value={inputValue} onChangeHandler={handleInputChange} />
       <ListEntries filterString={filterString} data={topics} />
+
+      {/* Demo data FAB */}
+      <AnimatePresence mode="wait">
+        {demoState === 'available' && (
+          <motion.div
+            key="load-demo"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-6 right-4 z-50 group"
+          >
+            <Button
+              variant="subtle"
+              accent="var(--color-accent-gold)"
+              onClick={async () => {
+                await populateAllFakeData(topics)
+                localStorage.setItem('demo-loaded', 'true')
+                setDemoState('loaded')
+              }}
+            >
+              ✨ Try demo data
+            </Button>
+            <div className="absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-bg-500 border border-bg-600 rounded-lg text-xs text-text-muted whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              See score history and all features in action
+            </div>
+          </motion.div>
+        )}
+        {demoState === 'loaded' && (
+          <motion.div
+            key="clear-demo"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-6 right-4 z-50 group"
+          >
+            <Button
+              variant="subtle"
+              accent="var(--color-accent-red)"
+              onClick={async () => {
+                await clearAllData()
+                localStorage.removeItem('demo-loaded')
+                setDemoState('available')
+              }}
+            >
+              Clear demo data
+            </Button>
+            <div className="absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-bg-500 border border-bg-600 rounded-lg text-xs text-text-muted whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              Remove all score history and sessions
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   )
 }
