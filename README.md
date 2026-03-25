@@ -1,38 +1,86 @@
-# snc-cards v2
+<p align="center">
+  <img src="app/icon.svg" width="64" height="64" alt="Flash Cards logo" />
+</p>
 
-A flashcard demo app built with the modern web stack. Showcases card flip animations, spelling mode, and fuzzy search — all statically generated.
+<h1 align="center">Flash Cards</h1>
 
-## Stack
+<p align="center">
+  A flashcard app for drilling vocabulary. Polish to English, Polish to German, geography.
+  <br />
+  Whatever you throw into the data file.
+  <br />
+  <a href="https://snc-cards.vercel.app">snc-cards.vercel.app</a>
+</p>
 
-- **Next.js 16** (App Router, React Server Components)
-- **React 19** + **TypeScript 5**
-- **Tailwind CSS v4** (CSS-first configuration)
-- **motion/react** (formerly framer-motion)
-- **Bun** (package manager + runtime)
+---
 
-## Getting Started
+## What is this
+
+I built this to help myself study vocabulary. You see a word, try to recall the translation, flip the card, and mark if you got it right. There's also a spelling mode where you type the answer letter by letter.
+
+Everything runs in the browser. No accounts, no backend, no tracking. Your progress is saved locally in IndexedDB so you can pick up where you left off.
+
+## Features
+
+- **Flashcards** - flip cards with keyboard or tap. Mark correct/wrong. Tracks your streak
+- **Spelling mode** - type the answer character by character. Forces you to actually know it
+- **List view** - browse all Q&A pairs in a topic at once
+- **Score history** - charts showing how you've done over time, stored locally
+- **Session resume** - close the tab mid-session, come back later, pick up where you stopped
+- **Fuzzy search** - `Cmd+K` / `Ctrl+K` to quickly jump between topics
+- **Keyboard-first** - Enter to flip, Enter/Backspace for correct/wrong, Ctrl+Z to undo
+- **Interactive tutorial** - a "How It Works" section on the home page with playable demo cards
+
+## Running locally
+
+You need [Bun](https://bun.sh) installed.
 
 ```bash
 bun install
 bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Opens at [localhost:3000](http://localhost:3000).
 
-## Build
+For a production build:
 
 ```bash
 bun run build
 bun run start
 ```
 
-## Features
+## Adding your own topics
 
-- **Cards Mode**: Flip-card study with keyboard navigation and streak tracking
-- **Spelling Mode**: Type-the-answer with per-character masked inputs
-- **List View**: Browse all Q&A pairs with duplicate detection
-- **Search**: Fuzzy search with Cmd+K (Mac) / Ctrl+K (Windows) shortcut
+All the data lives in `data/topics.json`. The format is straightforward:
 
-## Demo Data
+```json
+{
+  "id": "1",
+  "title": "Common Greetings",
+  "slug": "common-greetings",
+  "class": "en",
+  "questions": [
+    { "id": 1, "question": "Dzień dobry", "answer": "Good morning" },
+    { "id": 2, "question": "Do widzenia", "answer": "Goodbye" }
+  ]
+}
+```
 
-All data is local (`data/topics.json`) — no backend required. Topics cover English phrases, German vocabulary, and European capitals.
+The `class` field controls the color theme: `en` for English (blue), `de` for German (peach/orange), `geo` for geography (green).
+
+## Tech stack
+
+- **Next.js 16** with App Router and React Server Components
+- **React 19** + TypeScript
+- **Tailwind CSS v4**
+- **motion/react** for animations (card flips, page transitions, spring physics)
+- **Dexie** for IndexedDB storage (sessions, score history)
+- **Recharts** for score history charts
+- **fuse.js** for fuzzy search
+- **Bun** as the package manager and runtime
+
+Deployed on **Vercel**.
+
+## License
+
+MIT
