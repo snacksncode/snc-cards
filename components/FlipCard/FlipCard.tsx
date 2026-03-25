@@ -3,12 +3,13 @@ import { useState } from "react";
 import Back from "../Back";
 import Front from "../Front";
 import useWindowSize from "@hooks/useWindowSize";
+import { getCardDimensions } from "@lib/utils";
 import FlipCardButton from "@components/FlipCardButton";
 import { CloseSquare, TickSquare, MessageQuestion } from "@components/icons";
 import { useEventListener } from "@hooks/useEventListener";
 import type { ClassString, Question } from "@/types";
 
-const flip = {
+const flipVariants = {
   unflipped: { rotateX: 0, transition: { type: "spring" as const, stiffness: 200, damping: 20 } },
   flipped: { rotateX: 180, transition: { type: "spring" as const, stiffness: 200, damping: 20 } },
 };
@@ -43,42 +44,29 @@ interface Props {
   data: Question;
   onAnswer: (rightAnswer: boolean, questionData: Question) => void;
   direction?: 'forward' | 'backward';
+  onFlipChange?: (flipped: boolean) => void;
 }
 
-const FlipCard = ({ data, dataClass, onAnswer, direction = 'forward' }: Props) => {
+const FlipCard = ({ data, dataClass, onAnswer, direction = 'forward', onFlipChange }: Props) => {
   if (dataClass == null) throw new Error("dataClass is not a string");
   const [isFlipped, setIsFlipped] = useState(false);
   const [answeredRight, setAnsweredRight] = useState<boolean | null>(null);
   const { width } = useWindowSize();
+  const { isMobile, cardWidth } = getCardDimensions(data.question, data.answer, width);
 
-  const getCardWidth = () => {
-    if (!width) return { isMobile: undefined, cardWidth: undefined };
-    const contentSize = Math.max(data.answer.replace(" | ", "").length, data.question.length);
-    let calculatedWidth = Math.max(contentSize * 8 * 2.85 + 128, 350);
-    if (calculatedWidth > 1000) calculatedWidth /= 1.75;
-    const isMobile = width - 320 < calculatedWidth;
-    if (isMobile) calculatedWidth = width - 32;
-    return { isMobile: isMobile, cardWidth: calculatedWidth };
-  };
-
-  const { isMobile, cardWidth } = getCardWidth();
+  const flip = () => { setIsFlipped(true); onFlipChange?.(true); };
+  const unflip = () => { setIsFlipped(false); onFlipChange?.(false); };
 
   useEventListener("keydown", (e) => {
     if (!(e instanceof KeyboardEvent) || !isFlipped || answeredRight != null) return;
-    if (e.key === "Enter") {
-      setAnsweredRight(true);
-    }
-    if (e.key === "Backspace") {
-      setAnsweredRight(false);
-    }
-    if (e.key === "Escape") {
-      setIsFlipped(false);
-    }
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setAnsweredRight(true); }
+    if (e.key === "Backspace") setAnsweredRight(false);
+    if (e.key === "Escape") unflip();
   });
 
   useEventListener("keydown", (e) => {
     if (!(e instanceof KeyboardEvent) || isFlipped || answeredRight != null) return;
-    if (e.key === "Enter") setIsFlipped(true);
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); }
   });
 
   const forwardAnswer = () => {
@@ -94,7 +82,10 @@ const FlipCard = ({ data, dataClass, onAnswer, direction = 'forward' }: Props) =
       initial="out"
       animate="in"
       exit="outExit"
-      onClickCapture={() => setIsFlipped(true)}
+      tabIndex={0}
+      role="button"
+      aria-label="Flip card"
+      onClickCapture={flip}
       className="perspective-1000 w-full h-[50vh] max-h-[calc(5*3em)] select-none absolute top-1/2 isolate rounded-lg left-1/2 will-change-transform focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-accent-blue focus-visible:outline-offset-[2rem]"
       style={{
         maxWidth: cardWidth,
@@ -109,7 +100,9 @@ const FlipCard = ({ data, dataClass, onAnswer, direction = 'forward' }: Props) =
               animate={{ y: "calc(-100% - 20px)", opacity: 1 }}
               transition={{ type: "spring", stiffness: 100 }}
               exit={{ y: 0, opacity: 0 }}
-              onClickCapture={() => setIsFlipped(false)}
+              role="button"
+              aria-label="Back to question"
+              onClickCapture={unflip}
             >
               <MessageQuestion color="currentColor" />
               {data.question}
@@ -120,6 +113,7 @@ const FlipCard = ({ data, dataClass, onAnswer, direction = 'forward' }: Props) =
               icon={<CloseSquare color="currentColor" />}
               color="red"
               position="left"
+              aria-label="Mark as wrong"
             />
             <FlipCardButton
               icon={<TickSquare color="currentColor" />}
@@ -127,12 +121,13 @@ const FlipCard = ({ data, dataClass, onAnswer, direction = 'forward' }: Props) =
               onClick={() => setAnsweredRight(true)}
               color="green"
               position="right"
+              aria-label="Mark as correct"
             />
           </>
         )}
       </AnimatePresence>
       <motion.div
-        variants={flip}
+        variants={flipVariants}
         initial="unflipped"
         animate={isFlipped ? "flipped" : "unflipped"}
         className="relative text-center w-full h-full preserve-3d shadow-[0_4px_15px_rgba(0,0,0,0.15)]"

@@ -66,7 +66,7 @@ const EndCardList: FC<{
       >
         <div className="text-center text-lg font-medium sm:text-left">{question}</div>
         <div className="hidden sm:block h-full w-[3px] rounded-sm bg-bg-500 place-self-center" />
-        <ArrowCircleDown2 className="size-5 place-self-center m-1 text-white sm:hidden" />
+        <ArrowCircleDown2 aria-hidden="true" className="size-5 place-self-center m-1 text-white sm:hidden" />
         <div className="text-center text-lg font-bold text-[var(--clr-accent)] sm:text-right">
           {answer}
         </div>
@@ -99,7 +99,7 @@ const EndCardList: FC<{
         </div>
       </div>
       <div className="hidden sm:block h-full w-[3px] rounded-sm bg-bg-500 place-self-center" />
-      <ArrowCircleDown2 className="size-5 place-self-center m-1 text-white sm:hidden" />
+      <ArrowCircleDown2 aria-hidden="true" className="size-5 place-self-center m-1 text-white sm:hidden" />
       <div>
         <small className="text-text-muted block mb-2 text-center sm:text-right">You typed</small>
         <div className="text-center text-lg font-bold text-[var(--clr-accent)] sm:text-right">
@@ -187,20 +187,20 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, 
           {elapsedTime != null && elapsedTime > 0 && (
             <div className="bg-bg-400 rounded-lg p-3">
               <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">TIME</p>
-              <p className="text-2xl font-bold text-accent-blue m-0 mt-1">{formatTime(elapsedTime)}</p>
+              <p className="text-2xl font-bold text-accent-blue m-0 mt-1 tabular-nums">{formatTime(elapsedTime)}</p>
             </div>
           )}
           <div className="bg-bg-400 rounded-lg p-3">
             <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">CORRECT</p>
-            <p className="text-2xl font-bold text-accent-green m-0 mt-1">{correct.length}<span className="text-sm text-text-muted font-normal">/{amount}</span></p>
+            <p className="text-2xl font-bold text-accent-green m-0 mt-1 tabular-nums">{correct.length}<span className="text-sm text-text-muted font-normal">/{amount}</span></p>
           </div>
           <div className="bg-bg-400 rounded-lg p-3">
             <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">INCORRECT</p>
-            <p className="text-2xl font-bold text-accent-red m-0 mt-1">{incorrect.length}<span className="text-sm text-text-muted font-normal">/{amount}</span></p>
+            <p className="text-2xl font-bold text-accent-red m-0 mt-1 tabular-nums">{incorrect.length}<span className="text-sm text-text-muted font-normal">/{amount}</span></p>
           </div>
           <div className="bg-bg-400 rounded-lg p-3">
             <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium m-0">BEST STREAK</p>
-            <p className="text-2xl font-bold text-accent-peachy m-0 mt-1">{streak} {getStreakEmojis(streak)}</p>
+            <p className="text-2xl font-bold text-accent-peachy m-0 mt-1 tabular-nums">{streak} {getStreakEmojis(streak)}</p>
           </div>
         </div>
         {scoreHistory.length > 0 && (
@@ -222,14 +222,14 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, 
           </h5>
           <div className="flex flex-wrap gap-3">
             <LinkButton href="/" variant="ghost" size="sm" accent="var(--color-accent-blue)">
-              <Back className="size-4" />
+              <Back aria-hidden="true" className="size-4" />
               Go Back
             </LinkButton>
             <Menu.Root open={menuOpen} onOpenChange={setMenuOpen}>
               <Menu.Trigger
                 render={
                   <Button variant="ghost" size="sm" accent="var(--color-accent-green)">
-                    <ArrowRotateRight className="size-4" />
+                    <ArrowRotateRight aria-hidden="true" className="size-4" />
                     Restart
                   </Button>
                 }
@@ -253,7 +253,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, 
                           className="flex items-center gap-2 px-3 py-2 text-sm text-text rounded cursor-pointer hover:bg-bg-500 transition-colors"
                           onClick={handleRestartAll}
                         >
-                          <ArrowRotateRight className="size-4 text-accent-green" />
+                          <ArrowRotateRight aria-hidden="true" className="size-4 text-accent-green" />
                           Entire set
                         </Menu.Item>
                         {data.incorrect.length > 0 && (
@@ -261,7 +261,7 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, 
                             className="flex items-center gap-2 px-3 py-2 text-sm text-text rounded cursor-pointer hover:bg-bg-500 transition-colors"
                             onClick={handleRestartIncorrect}
                           >
-                            <ArrowRotateRight className="size-4 text-accent-pink" />
+                            <ArrowRotateRight aria-hidden="true" className="size-4 text-accent-pink" />
                             Only mistakes ({data.incorrect.length})
                           </Menu.Item>
                         )}
@@ -276,10 +276,11 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, 
         <section className="mt-6 flex flex-col gap-6">
           {incorrect.length > 0 && (
             <Collapsible.Root defaultOpen>
-              <Collapsible.Trigger className="group flex items-center cursor-pointer bg-transparent border-none w-full text-left py-2 relative isolate">
+              <Collapsible.Trigger className="group flex items-center cursor-pointer bg-transparent border-none w-full text-left py-2 relative isolate focus-visible:ring-2 focus-visible:ring-offset-2">
                 <span className="z-[1] pr-2 bg-bg-300 relative text-lg text-accent-red flex items-center gap-2">
                   Incorrect ({incorrect.length})
                   <svg
+                    aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
@@ -299,24 +300,24 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, 
               <Collapsible.Panel
                 keepMounted
                 render={(props, state) => {
-                  const { hidden, ...rest } = props;
-                  return (
-                    <motion.div
-                      {...(rest as HTMLMotionProps<"div">)}
-                      initial={false}
-                      animate={{
-                        height: state.open ? "auto" : 0,
-                        opacity: state.open ? 1 : 0,
-                      }}
-                      transition={
-                        state.open
-                          ? { type: "spring", stiffness: 500, damping: 30 }
-                          : { type: "spring", stiffness: 500, damping: 40 }
-                      }
-                      style={{ ...rest.style, overflow: "hidden" }}
-                    />
-                  );
-                }}
+                    const { hidden, ...rest } = props;
+                    return (
+                      <motion.div
+                        {...(rest as HTMLMotionProps<"div">)}
+                        initial={false}
+                        animate={{
+                          height: state.open ? "auto" : 0,
+                          opacity: state.open ? 1 : 0,
+                        }}
+                        transition={
+                          state.open
+                            ? { type: "spring", stiffness: 500, damping: 30 }
+                            : { type: "spring", stiffness: 500, damping: 40 }
+                        }
+                        style={{ ...rest.style, overflow: "hidden" }}
+                      />
+                    );
+                  }}
               >
                 <div
                   className="grid grid-cols-1 gap-y-3 pb-4"
@@ -336,10 +337,11 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, 
           )}
           {correct.length > 0 && (
             <Collapsible.Root defaultOpen>
-              <Collapsible.Trigger className="group flex items-center cursor-pointer bg-transparent border-none w-full text-left py-2 relative isolate">
+              <Collapsible.Trigger className="group flex items-center cursor-pointer bg-transparent border-none w-full text-left py-2 relative isolate focus-visible:ring-2 focus-visible:ring-offset-2">
                 <span className="z-[1] pr-2 bg-bg-300 relative text-lg text-accent-green flex items-center gap-2">
                   Correct ({correct.length})
                   <svg
+                    aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
@@ -359,24 +361,24 @@ const EndCard: FC<Props> = ({ amount, data, onRestart, mode, dataClass, streak, 
               <Collapsible.Panel
                 keepMounted
                 render={(props, state) => {
-                  const { hidden, ...rest } = props;
-                  return (
-                    <motion.div
-                      {...(rest as HTMLMotionProps<"div">)}
-                      initial={false}
-                      animate={{
-                        height: state.open ? "auto" : 0,
-                        opacity: state.open ? 1 : 0,
-                      }}
-                      transition={
-                        state.open
-                          ? { type: "spring", stiffness: 500, damping: 30 }
-                          : { type: "spring", stiffness: 500, damping: 40 }
-                      }
-                      style={{ ...rest.style, overflow: "hidden" }}
-                    />
-                  );
-                }}
+                    const { hidden, ...rest } = props;
+                    return (
+                      <motion.div
+                        {...(rest as HTMLMotionProps<"div">)}
+                        initial={false}
+                        animate={{
+                          height: state.open ? "auto" : 0,
+                          opacity: state.open ? 1 : 0,
+                        }}
+                        transition={
+                          state.open
+                            ? { type: "spring", stiffness: 500, damping: 30 }
+                            : { type: "spring", stiffness: 500, damping: 40 }
+                        }
+                        style={{ ...rest.style, overflow: "hidden" }}
+                      />
+                    );
+                  }}
               >
                 <div
                   className="grid grid-cols-1 gap-y-3 pb-4"

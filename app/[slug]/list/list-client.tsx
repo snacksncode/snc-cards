@@ -38,7 +38,7 @@ export default function ListClient({ topic }: Props) {
   const accentStyle = { '--clr-accent': getAccentForClass(classString) } as React.CSSProperties
 
   return (
-    <>
+    <main>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -47,7 +47,7 @@ export default function ListClient({ topic }: Props) {
       >
         <div>
           <Link href="/" className="px-4 py-2 rounded text-sm inline-flex items-center gap-2 bg-bg-400">
-            <Back size={18} />
+            <Back aria-hidden="true" size={18} />
             Go Back
           </Link>
         </div>
@@ -70,10 +70,10 @@ export default function ListClient({ topic }: Props) {
           animate={{ opacity: 1, transition: { delay: 0.3 } }}
           className="mx-auto mt-4 w-[calc(100%-3rem)] max-w-[750px] rounded p-4 mb-8 flex flex-col text-[var(--color-bg-300)] bg-accent-yellow"
         >
-          <h1 className="text-2xl sm:text-[2rem] m-0 flex flex-col sm:flex-row items-start sm:items-center">
-            <Danger size={32} className="w-12 h-12 sm:mr-3 mb-1 sm:mb-0 flex-shrink-0" />
+          <h2 className="text-2xl sm:text-[2rem] m-0 flex flex-col sm:flex-row items-start sm:items-center">
+            <Danger aria-hidden="true" size={32} className="w-12 h-12 sm:mr-3 mb-1 sm:mb-0 flex-shrink-0" />
             Duplicates found in this dataset
-          </h1>
+          </h2>
           <p className="mb-2">Please combine them into one for a better learning experience by using e.x. a comma</p>
           <h3 className="m-0 mb-2">List of duplicates</h3>
           <ol className="m-0 pl-4 font-medium list-disc">
@@ -99,6 +99,7 @@ export default function ListClient({ topic }: Props) {
           <header className="grid grid-cols-[1fr_60px_1fr] gap-8 text-2xl font-bold px-4">
             <p className="m-0">Question</p>
             <ArrowCircleRight2
+              aria-hidden="true"
               size={32}
               className={cn(
                 'place-self-center text-[var(--clr-accent)] transition-opacity duration-150',
@@ -116,7 +117,7 @@ export default function ListClient({ topic }: Props) {
             const { answer, question } = d
             return (
               <motion.div
-                key={index}
+                key={d.id}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1, transition: { delay: 0.05 * index + 0.3 } }}
                 className="p-4 shadow rounded bg-bg-400 grid grid-rows-[auto_40px_auto] sm:grid-rows-[auto] sm:grid-cols-[1fr_20px_1fr] gap-x-4"
@@ -124,6 +125,7 @@ export default function ListClient({ topic }: Props) {
                 <div className="text-center text-lg font-medium sm:text-left">{question}</div>
                 <div className="hidden sm:block h-full w-[3px] rounded-[3px] bg-bg-500 place-self-center" />
                 <ArrowCircleDown2
+                  aria-hidden="true"
                   size={32}
                   className="w-6 h-6 place-self-center m-1 sm:hidden text-[var(--clr-accent)]"
                 />
@@ -135,6 +137,6 @@ export default function ListClient({ topic }: Props) {
           })}
         </div>
       </div>
-    </>
+    </main>
   )
 }

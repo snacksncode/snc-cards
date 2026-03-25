@@ -87,7 +87,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   )
   const [shortcutsVisible, setShortcutsVisible] = useState(false)
   const shortcutsTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [isMac, setIsMac] = useState(false)
+  const isMac = useRef(false)
   const startTimeRef = useRef<number | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)
 
@@ -116,9 +116,14 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   }
 
   if (!resume && !resumeApplied) {
-    clearSession(slug)
     setResumeApplied(true)
   }
+
+  useEffect(() => {
+    if (!resume) {
+      clearSession(slug)
+    }
+  }, []) // runs once on mount — if not resuming, clear stale session
 
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward')
   const currentIndex = cards.findIndex((c) => c.status === null)
@@ -145,12 +150,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
   }
 
   useEffect(() => {
-    setIsMac(/Mac|iPhone|iPad|iPod/.test(navigator.platform))
-  }, [])
-
-  useEffect(() => {
-    const dismissed = localStorage.getItem('shortcuts-dismissed')
-    if (!dismissed && window.innerWidth >= 640) setShortcutsVisible(true)
+    isMac.current = /Mac|iPhone|iPad|iPod/.test(navigator.userAgent)
   }, [])
 
   const onAnswer = (rightAnswer: boolean, _question: Question) => {
@@ -268,14 +268,17 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
           shortcutsTimeout.current = setTimeout(() => setShortcutsVisible(false), 150)
         }}
       >
-        <div
-          tabIndex={0}
-          role="button"
+        <button
+          type="button"
           aria-label="Keyboard shortcuts"
-          className="w-10 h-10 rounded-full bg-bg-500 border border-bg-600 flex items-center justify-center text-text-muted hover:text-text cursor-pointer"
+          aria-expanded={shortcutsVisible}
+          className="appearance-none bg-transparent border-none p-0 w-10 h-10 rounded-full bg-bg-500 border border-bg-600 flex items-center justify-center text-text-muted hover:text-text cursor-pointer"
           onFocus={() => setShortcutsVisible(true)}
           onKeyDown={(e) => {
-            if (e.key !== 'Tab') {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setShortcutsVisible((v) => !v)
+            } else if (e.key === 'Escape') {
               e.preventDefault()
               setShortcutsVisible(false)
               ;(e.currentTarget as HTMLElement).blur()
@@ -288,7 +291,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
             <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
-        </div>
+        </button>
         <AnimatePresence>
           {shortcutsVisible && (
             <motion.div
@@ -298,7 +301,7 @@ export default function CardClient({ slug, rawData, dataClass, reversed = false,
               transition={{ duration: 0.15 }}
               className="absolute bottom-12 right-0 bg-bg-300 border border-bg-600 rounded-xl p-4 w-[340px] shadow-lg"
             >
-              <ShortcutsDiagram isMac={isMac} />
+              <ShortcutsDiagram isMac={isMac.current} />
             </motion.div>
           )}
         </AnimatePresence>

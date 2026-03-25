@@ -1,6 +1,8 @@
-import { FC, useState, useEffect, FormEventHandler, useRef, FocusEventHandler } from "react"
+import { FC, useState, useRef, FocusEventHandler } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { removeDiacritics } from "@lib/utils"
+import { removeDiacritics, getCardDimensions } from "@lib/utils"
+import useWindowSize from "@hooks/useWindowSize"
+import { useMeasure } from "@hooks/useMeasure"
 import MaskedInput from "@components/ui/masked-input"
 import { ArrowRight, Information } from "@components/icons"
 import { cn } from "@lib/cn"
@@ -12,6 +14,7 @@ import type { Question } from "@/types"
 interface Props {
   data: Question
   onAnswer: (answeredRight: boolean, input: string, expected: string, data: Question) => void
+  onWrongAnswer?: () => void
 }
 
 interface InputProps {
@@ -26,8 +29,8 @@ const SEPARATOR = "/"
 
 const card = {
   out: { opacity: 0, x: "50%", y: "-50%", scale: 0.25 },
-  in: { opacity: 1, x: "-50%", scale: 1, transition: { type: "spring" as const, damping: 12 } },
-  outExit: { opacity: 0, x: "-150%", scale: 0.25, transition: { type: "spring" as const, damping: 12 } },
+  in: { opacity: 1, x: "-50%", y: "-50%", scale: 1, transition: { type: "spring" as const, stiffness: 120, damping: 20 } },
+  outExit: { opacity: 0, x: "-150%", scale: 0.25, transition: { type: "spring" as const, stiffness: 120, damping: 20 } },
 }
 
 const getCleanedValue = (value: string): string => {
@@ -45,12 +48,13 @@ const WordInput: FC<{
   id: string
   autoFocus?: boolean
   maskPlaceholder?: string
-}> = ({ id, mask, isCorrect, onChangeCallback, onFocusCallback, autoFocus = false, maskPlaceholder = "_" }) => {
+  "aria-label"?: string
+}> = ({ id, mask, isCorrect, onChangeCallback, onFocusCallback, autoFocus = false, maskPlaceholder = "_", "aria-label": ariaLabel }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const inputIsEmpty = useRef(true)
 
   const classes = cn(
-    "bg-bg-300 border-none text-text font-semibold py-[0.35em] px-[0.5em] text-center isolate tracking-[1px] rounded transition-[transform,box-shadow] duration-200 shadow-[0_3px_0_var(--color-bg-400),0_3px_8px_rgba(0,0,0,0.25)] focus-visible:outline-none",
+    "bg-bg-300 border-none text-text font-semibold py-[0.35em] px-[0.5em] text-center isolate tracking-[1px] rounded transition-[box-shadow] duration-200 shadow-[0_3px_0_var(--color-bg-400),0_3px_8px_rgba(0,0,0,0.25)] focus-visible:outline-none",
     {
       "focus-visible:shadow-[0_3px_0_var(--color-accent-blue),0_3px_8px_rgba(0,0,0,0.25)] focus-visible:-translate-y-[3px]":
         isCorrect === null,
@@ -70,6 +74,9 @@ const WordInput: FC<{
         width: `calc(${mask.length}ch + 1.8em + ${mask.filter((e) => !(e instanceof RegExp)).length} * 0.5ch)`,
       }}
       autoFocus={autoFocus}
+      aria-label={ariaLabel}
+      autoComplete="off"
+      spellCheck={false}
       data-id={id}
       onKeyDown={(e) => {
         if (!(e.target instanceof HTMLInputElement)) return
@@ -138,9 +145,11 @@ const generateInputData = (answer: string): [InputData, string[]] => {
   return [generatedData, idsInOrder]
 }
 
-const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
+const SpellingByWord: FC<Props> = ({ data, onAnswer, onWrongAnswer }) => {
   const answer = data.answer
   const inputArray = splitInput(answer)
+  const { width } = useWindowSize()
+  const { cardWidth } = getCardDimensions(data.question, answer, width)
 
   const [hasFinishedEntering, setHasFinishedEntering] = useState(false)
   const [shouldAnimateBlob, setShouldAnimateBlob] = useState(false)
@@ -149,6 +158,8 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
   const currentlyFocusedInput = useRef<HTMLInputElement | null>(null)
   const [shouldShowCorrectAnswer, setShouldShowCorrectAnswer] = useState(false)
 
+  const [infoRef, { height: infoHeight }] = useMeasure<HTMLDivElement>()
+
   const inputIdsInOrder = useRef<string[] | null>(null)
   const [inputData, setInputData] = useState<InputData | null>(() => {
     const [generatedData, idsInOrder] = generateInputData(answer)
@@ -156,35 +167,37 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
     return generatedData
   })
 
-  // trigger blob animation on answer which itself triggers onAnswer in parent component
-  useEffect(() => {
-    if (answered == null || hasFinishedEntering === false) return
-    if (answered[0] === false) {
-      setShouldShowCorrectAnswer(true)
-      return
-    }
-    setShouldAnimateBlob(true)
-  }, [answered, hasFinishedEntering, shouldShowCorrectAnswer])
-
-  const checkAnswer: FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault()
+  const doCheckAnswer = () => {
     if (hasFinishedEntering === false || inputIdsInOrder.current == null || inputData == null) return
+
+    // Second press after wrong answer — continue to blob
     if (shouldShowCorrectAnswer === true) {
       setShouldAnimateBlob(true)
+      return
     }
 
     let verdict = true
     const userInput: string[] = []
-    const inputDataClone = Object.assign({}, inputData)
+    const inputDataClone = { ...inputData }
     inputIdsInOrder.current.forEach((id) => {
       const input = inputDataClone[id]
       const inputVerdict = getCleanedValue(input.value).toLowerCase() === input.expectedValue.toLowerCase()
       if (inputVerdict === false) verdict = false
       userInput.push(input.value)
-      input.isCorrect = inputVerdict
+      inputDataClone[id] = { ...input, isCorrect: inputVerdict }
     })
     setInputData(inputDataClone)
-    setTimeout(() => setAnswered([verdict, userInput.join(" ")]), 100)
+
+    const userInputStr = userInput.join(" ")
+    setTimeout(() => {
+      setAnswered([verdict, userInputStr])
+      if (verdict) {
+        setShouldAnimateBlob(true)
+      } else {
+        setShouldShowCorrectAnswer(true)
+        onWrongAnswer?.()
+      }
+    }, 100)
   }
 
   const onChangeHandler = (value: string, id: string) => {
@@ -233,55 +246,63 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
       onAnimationComplete={() => {
         if (!hasFinishedEntering) setHasFinishedEntering(true)
       }}
-      className="fixed top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-[600px]"
+      className="absolute top-1/2 left-1/2"
+      style={{ width: cardWidth }}
     >
       <motion.div className={containerClasses}>
-        <p className="m-0 mb-6 text-inherit">{data.question}</p>
         <Watermark size="md" text="spelling" />
-        <form
-          onSubmit={checkAnswer}
-          className="flex flex-wrap items-center relative justify-center gap-3 font-mono text-[1.125rem]"
+        <motion.div
+          initial={false}
+          animate={{ y: shouldShowCorrectAnswer ? 0 : infoHeight / 2 }}
+          transition={{ duration: 0.25, ease: [0.33, 1, 0.68, 1] }}
         >
-          {inputArray.map((word, wordIdx) => {
-            if (word === SEPARATOR) {
-              return (
-                <span
-                  key={`sep_${wordIdx}`}
-                  className="text-text-muted font-bold select-none px-1"
-                >
-                  /
-                </span>
-              )
-            }
-            const mask = generateMask(word)
-            const id = `${word}_${wordIdx}`
-            const inputProps = inputData[id]
-            const isFirstInput = inputIdsInOrder.current?.[0] === id
-            const props = {
-              id: id,
-              mask: mask,
-              isCorrect: inputProps.isCorrect,
-              maskPlaceholder: "_",
-              autoFocus: isFirstInput,
-              onFocusCallback: onFocusHandler,
-              onChangeCallback: onChangeHandler,
-            }
-            return <WordInput key={id} {...props} />
-          })}
-          <input className="hidden" type="submit" />
-        </form>
-        <AnimatePresence>
-          {shouldShowCorrectAnswer && (
-            <motion.div
-              className="text-[0.9rem] font-medium inline-flex items-center justify-center text-text gap-[0.35rem] mt-5 @min-[450px]:text-[1.25rem]"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-            >
-              <Information size="1.25em" className="text-accent-blue" />
-              {answer}
-            </motion.div>
-          )}
-        </AnimatePresence>
+          <p className="m-0 mb-6 text-inherit">{data.question}</p>
+          <form
+            onSubmit={(e) => { e.preventDefault(); doCheckAnswer(); }}
+            className="flex flex-wrap items-center relative justify-center gap-3 font-mono text-[1.125rem]"
+          >
+            {inputArray.map((word, wordIdx) => {
+              if (word === SEPARATOR) {
+                return (
+                  <span
+                    key={`sep_${wordIdx}`}
+                    className="text-text-muted font-bold select-none px-1"
+                  >
+                    /
+                  </span>
+                )
+              }
+              const mask = generateMask(word)
+              const id = `${word}_${wordIdx}`
+              const inputProps = inputData[id]
+              const isFirstInput = inputIdsInOrder.current?.[0] === id
+              const inputIndex = inputIdsInOrder.current?.indexOf(id) ?? 0
+              const props = {
+                id: id,
+                mask: mask,
+                isCorrect: inputProps.isCorrect,
+                maskPlaceholder: "_",
+                autoFocus: isFirstInput,
+                "aria-label": `Enter word ${inputIndex + 1}`,
+                onFocusCallback: onFocusHandler,
+                onChangeCallback: onChangeHandler,
+              }
+              return <WordInput key={id} {...props} />
+            })}
+            <input className="hidden" type="submit" />
+          </form>
+        </motion.div>
+        <motion.div
+          ref={infoRef}
+          className="text-[0.9rem] font-medium inline-flex items-center justify-center text-text gap-[0.35rem] pt-5 @min-[450px]:text-[1.25rem]"
+          initial={false}
+          animate={{ opacity: shouldShowCorrectAnswer ? 1 : 0, y: shouldShowCorrectAnswer ? 0 : 6 }}
+          transition={{ duration: 0.25, ease: [0.33, 1, 0.68, 1] }}
+          aria-hidden={!shouldShowCorrectAnswer}
+        >
+          <Information aria-hidden="true" size="1.25em" className="text-accent-blue" />
+          {answer}
+        </motion.div>
 
         {answered != null && shouldAnimateBlob && (
           <ExpandingBlob
@@ -293,22 +314,50 @@ const SpellingByWord: FC<Props> = ({ data, onAnswer }) => {
         )}
       </motion.div>
       <motion.div
-        initial={{ x: "-50%", y: -100, scale: 0 }}
+        initial={{ scale: 0 }}
         animate={{
-          y: shouldAnimateBlob ? -100 : 0,
           scale: shouldAnimateBlob ? 0 : 1,
           transition: { delay: shouldAnimateBlob ? 0 : 0.5 },
         }}
-        className="relative bottom-[-3.5rem] -z-10 left-1/2"
+        className="absolute left-1/2 -translate-x-1/2 top-full mt-6 flex justify-center w-full -z-10"
       >
-        <Button
-          variant="ghost"
-          accent="var(--color-accent-blue)"
-          onClick={checkAnswer as unknown as React.MouseEventHandler<HTMLButtonElement>}
-        >
-          Submit
-          <ArrowRight size={24} />
-        </Button>
+        <AnimatePresence mode="wait">
+          {shouldShowCorrectAnswer ? (
+            <motion.div
+              key="continue"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Button
+                variant="ghost"
+                accent="var(--color-accent-green)"
+                onClick={() => doCheckAnswer()}
+              >
+                Continue
+                <ArrowRight aria-hidden="true" size={24} />
+              </Button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="check"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Button
+                variant="ghost"
+                accent="var(--color-accent-blue)"
+                onClick={() => doCheckAnswer()}
+              >
+                Check
+                <ArrowRight aria-hidden="true" size={24} />
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </motion.div>
   )

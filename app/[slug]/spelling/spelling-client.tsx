@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import EndCard from "@/components/EndCard"
 import ProgressBar from "@/components/ProgressBar"
@@ -61,9 +61,14 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
   }
 
   if (!resume && !resumeApplied) {
-    clearSession(slug)
     setResumeApplied(true)
   }
+
+  useEffect(() => {
+    if (!resume) {
+      clearSession(slug)
+    }
+  }, []) // runs once on mount — if not resuming, clear stale session
 
   const currentIndex = cards.findIndex((c) => c.status === null)
   const isDone = cards.length > 0 && currentIndex === -1
@@ -126,7 +131,7 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
 
   if (resume && !resumeApplied) return null
   return (
-    <div className="min-h-screen p-4 flex flex-col items-center justify-center relative overflow-hidden">
+    <main className="min-h-screen p-4 flex flex-col items-center justify-center relative overflow-hidden">
       <AnimatePresence mode="wait">
         {!isDone && currentCard ? (
           <motion.div key="cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -152,6 +157,6 @@ export default function SpellingClient({ slug, rawData, dataClass, reversed = fa
           />
         ) : null}
       </AnimatePresence>
-    </div>
+    </main>
   )
 }
