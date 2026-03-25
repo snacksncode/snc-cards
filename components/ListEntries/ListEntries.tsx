@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "motion/react";
-import { useRef, useState } from "react";
-import Fuse, { type FuseResult } from "fuse.js";
+import { useMemo, useRef, useState } from "react";
+import uFuzzy from "@leeoniya/ufuzzy";
 import { CloseSquare } from "@components/icons";
 import Entry from "@components/Entry";
+import AddTopicCard from "@components/AddTopicCard/AddTopicCard";
 import type { Topic } from "@/types";
 
 interface Props {
@@ -10,17 +11,17 @@ interface Props {
   filterString: string | null;
 }
 
-type FilteredData = FuseResult<Topic>[] | Topic[];
-
 const ListEntries = ({ data, filterString }: Props) => {
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
-  const fuse = useRef(
-    new Fuse(data, {
-      keys: ["title"],
-    })
-  );
+  const uf = useRef(new uFuzzy({ intraMode: 1 }));
+  const haystack = useMemo(() => data.map((t) => t.title), [data]);
 
-  const filteredData: FilteredData = filterString ? fuse.current.search(filterString) : data;
+  const filteredData: Topic[] = useMemo(() => {
+    if (!filterString) return data;
+    const [idxs] = uf.current.search(haystack, filterString);
+    if (!idxs) return [];
+    return idxs.map((i) => data[i]);
+  }, [data, filterString, haystack]);
 
   const handleToggle = (slug: string) => {
     setExpandedSlug((prev) => (prev === slug ? null : slug));
@@ -28,24 +29,29 @@ const ListEntries = ({ data, filterString }: Props) => {
 
   return (
     <div className="grid mt-6 gap-6 flex-1 grid-cols-1 auto-rows-min relative">
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence mode="popLayout" initial={false}>
           {filteredData.length > 0 ? (
-            filteredData.map((d) => {
-              const isFuseResult = Boolean(
-                (d as FuseResult<Topic>).item
-              );
-              const topic = isFuseResult
-                ? (d as FuseResult<Topic>).item
-                : (d as Topic);
-              return (
+            <>
+              {filteredData.map((topic) => (
                 <Entry
                   key={topic.slug}
                   data={topic}
                   isExpanded={expandedSlug === topic.slug}
                   onToggle={handleToggle}
                 />
-              );
-            })
+              ))}
+              {!filterString && (
+                <motion.div
+                  key="add-topic"
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <AddTopicCard />
+                </motion.div>
+              )}
+            </>
           ) : (
             <motion.h1
               key="nothing-found"
