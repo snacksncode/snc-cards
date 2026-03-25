@@ -1,13 +1,14 @@
 'use client'
 
-import { ChangeEventHandler, useEffect, useState } from 'react'
+import { ChangeEventHandler, useDeferredValue, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Button } from '@components/Button'
 import { Collapsible } from '@base-ui/react/collapsible'
 import Filter from '@components/Filter'
 import ListEntries from '@components/ListEntries'
 import { populateAllFakeData, clearAllData } from '@lib/storage'
-import HowItWorks4 from '@components/HowItWorks4'
+import HowItWorksInteractive from '@components/HowItWorksInteractive'
+import { Sparkles } from 'lucide-react'
 import type { Topic } from '@/types'
 
 interface Props {
@@ -16,21 +17,13 @@ interface Props {
 
 export default function HomeClient({ topics }: Props) {
   const [inputValue, setInputValue] = useState('')
-  const [filterString, setFilterString] = useState<string | null>(null)
+  const filterString = useDeferredValue(inputValue)
   const [demoState, setDemoState] = useState<'loading' | 'available' | 'loaded'>('loading')
   const [howItWorksOpen, setHowItWorksOpen] = useState(false)
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     setInputValue(e.target.value)
   }
-
-  useEffect(() => {
-    const TIMEOUT_MS = inputValue.length === 0 ? 0 : 150
-    const timeoutId = window.setTimeout(() => {
-      setFilterString(inputValue)
-    }, TIMEOUT_MS)
-    return () => clearTimeout(timeoutId)
-  }, [inputValue])
 
   useEffect(() => {
     setDemoState(localStorage.getItem('demo-loaded') === 'true' ? 'loaded' : 'available')
@@ -54,11 +47,12 @@ export default function HomeClient({ topics }: Props) {
       <section className="overflow-hidden mb-6">
         <Collapsible.Root open={howItWorksOpen} onOpenChange={setHowItWorksOpen}>
           <div className="bg-bg-400 rounded-lg border border-bg-600">
-            <Collapsible.Trigger className="w-full flex items-center justify-between p-4 cursor-pointer bg-transparent border-none">
+            <Collapsible.Trigger className="w-full flex items-center justify-between p-4 cursor-pointer bg-transparent border-none focus-visible:outline-2 focus-visible:outline-offset-[-2px]">
               <h2 className="text-sm font-semibold tracking-widest uppercase text-text-muted m-0">
                 How It Works
               </h2>
               <motion.svg
+                aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="20"
@@ -96,7 +90,9 @@ export default function HomeClient({ topics }: Props) {
                 )
               }}
             >
-              <HowItWorks4 open={howItWorksOpen} />
+              <div inert={!howItWorksOpen || undefined}>
+                <HowItWorksInteractive open={howItWorksOpen} onComplete={() => setHowItWorksOpen(false)} />
+              </div>
             </Collapsible.Panel>
           </div>
         </Collapsible.Root>
@@ -124,7 +120,7 @@ export default function HomeClient({ topics }: Props) {
                 setDemoState('loaded')
               }}
             >
-              ✨ Try demo data
+              <Sparkles size={16} aria-hidden="true" /> Try demo data
             </Button>
             <div className="absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-bg-500 border border-bg-600 rounded-lg text-xs text-text-muted whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               See score history and all features in action
