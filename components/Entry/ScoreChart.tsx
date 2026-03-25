@@ -41,7 +41,7 @@ export default function ScoreChart({ data, stroke }: Props) {
           </span>
         </span>
       </div>
-      <div role="img" aria-label="Score history chart showing performance over time">
+      <div role="img" aria-label="Score history chart">
       <ResponsiveContainer width="100%" height={64}>
         <AreaChart data={data} margin={{ top: 4, right: 4, left: 4, bottom: 4 }}>
           <defs>

@@ -73,6 +73,8 @@ const Entry = ({
       tabIndex={0}
       layout
       key={slug}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
 
       className="flex border-none font-[inherit] flex-col justify-center rounded bg-bg-400 overflow-hidden p-6 cursor-pointer outline-transparent relative focus-visible:outline-2 focus-visible:outline-dashed focus-visible:outline-[var(--clr-card-accent)] focus-visible:outline-offset-2 hover:shadow-[0_0_0_1px_color-mix(in_srgb,var(--clr-card-accent)_20%,transparent),_0_4px_24px_color-mix(in_srgb,var(--clr-card-accent)_8%,transparent)] transition-shadow duration-300"
@@ -125,15 +127,10 @@ const Entry = ({
 
       <motion.div
         layout
-        initial={{
-          left: "calc(50% - 0.75rem)",
-          bottom: 0,
-          y: 90,
-          position: "absolute",
-        }}
+        initial={{ y: 90 }}
         animate={{ y: isExpanded ? 90 : isHovered ? 50 : 90 }}
         key="indicator"
-        className="w-6 h-20 rounded-full bg-[var(--clr-card-accent)]/10 flex justify-center pt-1 [&_svg]:w-4 [&_svg]:h-4"
+        className="absolute left-[calc(50%-0.75rem)] bottom-0 w-6 h-20 rounded-full bg-[var(--clr-card-accent)]/10 flex justify-center pt-1 [&_svg]:w-4 [&_svg]:h-4"
       >
         <svg
           aria-hidden="true"
@@ -271,14 +268,14 @@ const Entry = ({
                   </span>
                   <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><path d="M9 18l6-6-6-6"/></svg>
                 </Link>
-              </div>
 
               {scoreHistory.length > 0 && (
-                <div className="mt-4 rounded-md bg-bg-500 p-3 [&_svg]:outline-none" onClick={(e) => e.stopPropagation()}>
+                <div className="rounded-md bg-bg-500 p-3 [&_svg]:outline-none" onClick={(e) => e.stopPropagation()}>
                   <p className="text-[0.65rem] tracking-[0.08em] text-text-muted font-medium mb-2">SCORE HISTORY</p>
                   <ScoreChart data={scoreHistory.map((h, i) => ({ i: i + 1, score: h.score }))} stroke={getAccentForClass(classString)} />
                 </div>
               )}
+              </div>
         </Collapsible.Panel>
       </Collapsible.Root>
     </motion.div>

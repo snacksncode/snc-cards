@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  color-scheme: dark;
+}
+
 @theme {
   --font-sans: 'Poppins', system-ui, sans-serif;
   --font-mono: 'Source Code Pro', monospace;
