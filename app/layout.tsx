@@ -28,8 +28,8 @@ const instrumentSerif = Instrument_Serif({
 
 
 export const metadata: Metadata = {
-  title: 'Flash Card App',
-  description: 'A demo flashcard app for learning vocabulary and more.',
+  title: 'Cram: Study Cards',
+  description: 'A flashcard app for drilling vocabulary.',
 }
 
 export default function RootLayout({

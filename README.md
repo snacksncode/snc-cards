@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="app/icon.svg" width="64" height="64" alt="Flash Cards logo" />
+  <img src="app/icon.svg" width="64" height="64" alt="Cram logo" />
 </p>
 
-<h1 align="center">Flash Cards</h1>
+<h1 align="center">Cram: Study Cards</h1>
 
 <p align="center">
   A flashcard app for drilling vocabulary. Polish to English, Polish to German, geography.
@@ -25,6 +25,7 @@ Everything runs in the browser. No accounts, no backend, no tracking. Your progr
 - **Flashcards** - flip cards with keyboard or tap. Mark correct/wrong. Tracks your streak
 - **Spelling mode** - type the answer character by character. Forces you to actually know it
 - **List view** - browse all Q&A pairs in a topic at once
+- **Topic creator** - built-in JSON generator so anyone can create new topic data without touching code
 - **Score history** - charts showing how you've done over time, stored locally
 - **Session resume** - close the tab mid-session, come back later, pick up where you stopped
 - **Fuzzy search** - `Cmd+K` / `Ctrl+K` to quickly jump between topics
@@ -68,6 +69,8 @@ All the data lives in `data/topics.json`. The format is straightforward:
 
 The `class` field controls the color theme: `en` for English (blue), `de` for German (peach/orange), `geo` for geography (green).
 
+You can also use the built-in topic creator (the + card on the home page) to generate this JSON without writing it by hand.
+
 ## Tech stack
 
 - **Next.js 16** with App Router and React Server Components
@@ -76,7 +79,8 @@ The `class` field controls the color theme: `en` for English (blue), `de` for Ge
 - **motion/react** for animations (card flips, page transitions, spring physics)
 - **Dexie** for IndexedDB storage (sessions, score history)
 - **Recharts** for score history charts
-- **fuse.js** for fuzzy search
+- **uFuzzy** for typo-tolerant fuzzy search
+- **Shiki** for syntax-highlighted JSON output
 - **Bun** as the package manager and runtime
 
 Deployed on **Vercel**.

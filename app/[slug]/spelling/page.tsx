@@ -17,7 +17,7 @@ export async function generateMetadata({
   const { slug } = await params
   const topic = getTopicBySlug(slug)
   if (!topic) return { title: 'Not Found' }
-  return { title: `${topic.title} | Spelling Mode | Flash Card App` }
+  return { title: `${topic.title} | Spelling Mode | Cram` }
 }
 
 export default async function SpellingPage({

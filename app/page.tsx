@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 import HomeClient from './home-client'
 
 export const metadata: Metadata = {
-  title: 'Flash Card App',
-  description: 'A demo flashcard app for learning vocabulary.',
+  title: 'Cram: Study Cards',
+  description: 'A flashcard app for drilling vocabulary.',
 }
 
 export default function HomePage() {

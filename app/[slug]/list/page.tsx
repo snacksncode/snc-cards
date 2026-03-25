@@ -17,7 +17,7 @@ export async function generateMetadata({
   const { slug } = await params
   const topic = getTopicBySlug(slug)
   if (!topic) return { title: 'Not Found' }
-  return { title: `${topic.title} | List View | Flash Card App` }
+  return { title: `${topic.title} | List View | Cram` }
 }
 
 export default async function ListPage({
