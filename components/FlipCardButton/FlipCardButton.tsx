@@ -8,9 +8,10 @@ interface Props {
   icon: ReactNode;
   position: "left" | "right";
   color: "green" | "red";
+  "aria-label": string;
 }
 
-const FlipCardButton: FC<Props> = ({ isMobile, icon, onClick, position, color }) => {
+const FlipCardButton: FC<Props> = ({ isMobile, icon, onClick, position, color, "aria-label": ariaLabel }) => {
   const accentColor = color === "green" ? "var(--color-accent-green)" : "var(--color-accent-red)";
   const xOffset = position === "left" ? -150 : 150;
   return (
@@ -26,6 +27,7 @@ const FlipCardButton: FC<Props> = ({ isMobile, icon, onClick, position, color })
         { "w-1/2 flex items-center justify-center [&_svg]:w-[60px] [&_svg]:h-[60px]": isMobile }
       )}
       onClick={onClick}
+      aria-label={ariaLabel}
     >
       {icon}
     </motion.button>

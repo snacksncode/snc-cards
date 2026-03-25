@@ -11,7 +11,6 @@ interface Props {
 const ExpandingBlob: FC<Props> = ({ type, onAnimationComplete }) => {
   return (
     <motion.div
-      tabIndex={0}
       className={cn(
         "z-2 absolute top-0 left-0 w-full h-full",
         type === "wrong" ? "bg-accent-red-darker" : "bg-accent-green-darker"

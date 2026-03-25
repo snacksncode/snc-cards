@@ -59,6 +59,17 @@ export function getStreakEmojis(streak: number): string {
   return '🔥'.repeat(multiplicator)
 }
 
+// Calculate card width based on content — shared between FlipCard and SpellingByWord
+export function getCardDimensions(question: string, answer: string, windowWidth: number | undefined) {
+  if (!windowWidth) return { isMobile: undefined, cardWidth: undefined }
+  const contentSize = Math.max(answer.replace(' | ', '').length, question.length)
+  let calculatedWidth = Math.max(contentSize * 8 * 2.85 + 128, 350)
+  if (calculatedWidth > 1000) calculatedWidth /= 1.75
+  const isMobile = windowWidth - 320 < calculatedWidth
+  if (isMobile) calculatedWidth = windowWidth - 32
+  return { isMobile, cardWidth: calculatedWidth }
+}
+
 // Remove diacritics using native String.normalize
 export function removeDiacritics(str: string): string {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')

@@ -1,6 +1,6 @@
 import { getStreakEmojis } from "@lib/utils";
 import { AnimatePresence, motion } from "motion/react";
-import { FC, useEffect, useState } from "react";
+import { FC, useRef, useState } from "react";
 
 interface Props {
   streak: number;
@@ -9,11 +9,14 @@ const ACTIVATE_AT = 5;
 
 const Streak: FC<Props> = ({ streak }) => {
   const [shouldPulse, setShouldPulse] = useState(false);
-  useEffect(() => {
-    if (streak > ACTIVATE_AT) {
-      setShouldPulse(true);
-    }
-  }, [streak]);
+  const prevStreak = useRef(streak);
+
+  // Trigger pulse when streak increases past threshold (no useEffect needed)
+  if (streak > ACTIVATE_AT && streak !== prevStreak.current) {
+    prevStreak.current = streak;
+    if (!shouldPulse) setShouldPulse(true);
+  }
+  prevStreak.current = streak;
 
   return (
     <AnimatePresence>

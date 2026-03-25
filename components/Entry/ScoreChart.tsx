@@ -24,23 +24,24 @@ export default function ScoreChart({ data, stroke }: Props) {
       <div className="flex gap-4 text-[0.65rem] mb-2">
         <span className="text-text-muted">
           Runs:{" "}
-          <span className="font-semibold" style={{ color: stroke }}>
+          <span className="font-semibold tabular-nums" style={{ color: stroke }}>
             {data.length}
           </span>
         </span>
         <span className="text-text-muted">
           Best:{" "}
-          <span className="font-semibold" style={{ color: stroke }}>
+          <span className="font-semibold tabular-nums" style={{ color: stroke }}>
             {best.toFixed(1)}%
           </span>
         </span>
         <span className="text-text-muted">
           Latest:{" "}
-          <span className="font-semibold" style={{ color: stroke }}>
+          <span className="font-semibold tabular-nums" style={{ color: stroke }}>
             {latest.toFixed(1)}%
           </span>
         </span>
       </div>
+      <div role="img" aria-label="Score history chart showing performance over time">
       <ResponsiveContainer width="100%" height={64}>
         <AreaChart data={data} margin={{ top: 4, right: 4, left: 4, bottom: 4 }}>
           <defs>
@@ -64,6 +65,7 @@ export default function ScoreChart({ data, stroke }: Props) {
           />
         </AreaChart>
       </ResponsiveContainer>
+      </div>
     </div>
   )
 }

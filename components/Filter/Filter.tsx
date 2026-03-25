@@ -11,7 +11,7 @@ const Filter = ({ value, onChangeHandler }: Props) => {
   const [modKey, setModKey] = useState("Ctrl");
 
   useEffect(() => {
-    if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) setModKey("⌘");
+    if (/Mac|iPhone|iPad|iPod/.test(navigator.userAgent)) setModKey("⌘");
   }, []);
 
   useEffect(() => {
@@ -43,7 +43,8 @@ const Filter = ({ value, onChangeHandler }: Props) => {
           placeholder="Search for title"
           value={value}
           onChange={onChangeHandler}
-          className="w-full text-base bg-bg-400 border-2 border-bg-600 rounded px-4 py-3 shadow-[0_4px_10px_rgba(0,0,0,0.1)] text-text font-medium tracking-wide focus:outline-none focus:border-accent-blue"
+          autoComplete="off"
+          className="w-full text-base bg-bg-400 border-2 border-bg-600 rounded px-4 py-3 shadow-[0_4px_10px_rgba(0,0,0,0.1)] text-text font-medium tracking-wide focus-visible:outline-2 focus-visible:outline-accent-blue focus-visible:outline-offset-2"
         />
         <motion.div
           initial={{ opacity: 0 }}

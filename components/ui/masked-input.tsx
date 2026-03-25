@@ -18,6 +18,9 @@ interface MaskedInputProps {
   className?: string
   style?: CSSProperties
   'data-id'?: string
+  'aria-label'?: string
+  autoComplete?: string
+  spellCheck?: boolean
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void
   onFocus?: (e: FocusEvent<HTMLInputElement>) => void
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
@@ -61,6 +64,9 @@ const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
       className,
       style,
       'data-id': dataId,
+      'aria-label': ariaLabel,
+      autoComplete,
+      spellCheck,
       onChange,
       onFocus,
       onKeyDown,
@@ -79,6 +85,9 @@ const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
         className={className}
         style={style}
         data-id={dataId}
+        aria-label={ariaLabel}
+        autoComplete={autoComplete}
+        spellCheck={spellCheck}
         inputRef={(el: HTMLInputElement | null) => {
           if (typeof forwardedRef === 'function') {
             forwardedRef(el)

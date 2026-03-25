@@ -23,7 +23,7 @@ const ProgressBar: React.FC<Props> = ({ currentAmount, maxAmount, streak, accent
       },
     });
     return () => controls.stop();
-  });
+  }, [currentAmount, maxAmount]);
 
   return (
     <div className="fixed top-4 left-4 w-[calc(100%-2rem)] flex flex-col items-center justify-center">

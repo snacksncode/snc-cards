@@ -1,6 +1,7 @@
-import type { Metadata, Viewport } from 'next'
+import type { Metadata } from 'next'
 import { Poppins, Source_Code_Pro, Instrument_Serif } from 'next/font/google'
 import LayoutTransition from '@components/LayoutTransition'
+import Providers from '@components/Providers'
 import './globals.css'
 
 const poppins = Poppins({
@@ -25,12 +26,6 @@ const instrumentSerif = Instrument_Serif({
   style: ['normal', 'italic'],
 })
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-}
 
 export const metadata: Metadata = {
   title: 'Flash Card App',
@@ -45,11 +40,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} ${sourceCodePro.variable} ${instrumentSerif.variable} [scrollbar-gutter:stable]`}>
       <body className="min-h-screen overflow-x-hidden flex flex-col bg-bg-300 text-text font-sans">
-        <div style={{ isolation: 'isolate' }}>
-          <LayoutTransition>
-            {children}
-          </LayoutTransition>
-        </div>
+        <Providers>
+          <div style={{ isolation: 'isolate' }}>
+            <LayoutTransition>
+              {children}
+            </LayoutTransition>
+          </div>
+        </Providers>
       </body>
     </html>
   )

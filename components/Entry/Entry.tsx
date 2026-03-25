@@ -33,7 +33,7 @@ const Toggle = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean
     checked={checked}
     onCheckedChange={(c) => { onChange(c) }}
     onClick={(e: React.MouseEvent) => e.stopPropagation()}
-    className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${checked ? 'bg-[var(--clr-card-accent)]' : 'bg-bg-600'}`}
+    className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2 ${checked ? 'bg-[var(--clr-card-accent)]' : 'bg-bg-600'}`}
   >
     <Switch.Thumb
       className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`}
@@ -116,7 +116,7 @@ const Entry = ({
                 key="dups"
                 className="absolute -top-2 -right-2 flex items-center justify-center text-accent-yellow"
               >
-                <Danger size="1rem" color="currentColor" />
+                <Danger aria-hidden="true" size="1rem" color="currentColor" />
               </motion.span>
             )}
           </Tag>
@@ -136,6 +136,7 @@ const Entry = ({
         className="w-6 h-20 rounded-full bg-[var(--clr-card-accent)]/10 flex justify-center pt-1 [&_svg]:w-4 [&_svg]:h-4"
       >
         <svg
+          aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -172,10 +173,10 @@ const Entry = ({
             )
           }}
         >
-              <div className="flex flex-col gap-3 mt-4">
+              <div className="flex flex-col gap-3 mt-4" inert={!isExpanded || undefined}>
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2 bg-bg-500 rounded-lg p-3" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-2">
-                    <Category size={24} color="var(--clr-card-accent)" />
+                    <Category aria-hidden="true" size={24} color="var(--clr-card-accent)" />
                     <span className="font-semibold text-[var(--clr-card-accent)]">Cards</span>
                   </div>
                   <div className="flex-1 min-w-0" />
@@ -192,7 +193,7 @@ const Entry = ({
                         accent="var(--clr-card-accent)"
                         className="text-center"
                       >
-                        Resume ({savedSession.currentIndex}/{questions.length})
+                        <span className="tabular-nums">Resume ({savedSession.currentIndex}/{questions.length})</span>
                       </LinkButton>
                       <LinkButton
                         href={buildUrl('card', reverseCards, false)}
@@ -218,7 +219,7 @@ const Entry = ({
 
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2 bg-bg-500 rounded-lg p-3" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-2">
-                    <Edit size={24} color="var(--clr-card-accent)" />
+                    <Edit aria-hidden="true" size={24} color="var(--clr-card-accent)" />
                     <span className="font-semibold text-[var(--clr-card-accent)]">Spelling</span>
                   </div>
                   <div className="flex-1 min-w-0" />
@@ -235,7 +236,7 @@ const Entry = ({
                         accent="var(--clr-card-accent)"
                         className="text-center"
                       >
-                        Resume ({savedSession.currentIndex}/{questions.length})
+                        <span className="tabular-nums">Resume ({savedSession.currentIndex}/{questions.length})</span>
                       </LinkButton>
                       <LinkButton
                         href={buildUrl('spelling', reverseSpelling, false)}
@@ -265,10 +266,10 @@ const Entry = ({
                   href={`/${slug}/list`}
                 >
                   <span className="flex items-center gap-2">
-                    <NoteText size={24} color="currentColor" />
+                    <NoteText aria-hidden="true" size={24} color="currentColor" />
                     List
                   </span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><path d="M9 18l6-6-6-6"/></svg>
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><path d="M9 18l6-6-6-6"/></svg>
                 </Link>
               </div>
 
